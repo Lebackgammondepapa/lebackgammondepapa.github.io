@@ -96,7 +96,9 @@ body {
 .score small { font-family: var(--font-ui); font-size: 11px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; font-weight: 600; }
 .iconbtn { border: 1px solid var(--panel-line); background: var(--panel); color: var(--fg); border-radius: 12px; width: 38px; height: 38px; display: grid; place-items: center; cursor: pointer; font-size: 18px; flex: none; padding: 0; }
 #boardwrap { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; }
-#board { display: block; filter: drop-shadow(0 14px 24px rgba(10,20,50,.35)); }
+#boardwrap { position: relative; }
+#boardBg { position: absolute; left: 0; top: 0; display: block; pointer-events: none; filter: drop-shadow(0 14px 24px rgba(0,0,0,.4)); }
+#board { display: block; position: relative; will-change: transform; }
 .status { color: var(--fg); font-size: 14px; line-height: 1.3; min-width: 0; }
 .status b { font-weight: 700; display: block; }
 .status .hint { color: var(--muted); font-size: 11.5px; display: block; margin-top: 3px; }
@@ -184,7 +186,7 @@ input.code { -webkit-user-select: text; user-select: text; font-size: 22px; widt
     <div class="who" id="whoB"><div class="pawn b"></div><div class="wtxt"><div class="name" id="nameB">Marbre</div><div class="lvl" id="lvlB"></div><div class="sub" id="subB"></div></div></div>
     <div class="who active" id="whoW"><div class="pawn w"></div><div class="wtxt"><div class="name" id="nameW">Nacre</div><div class="lvl" id="lvlW"></div><div class="sub" id="subW"></div></div></div>
   </aside>
-  <div id="boardwrap"><svg id="board" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Plateau de backgammon"></svg></div>
+  <div id="boardwrap"><svg id="boardBg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"></svg><svg id="board" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Plateau de backgammon"></svg></div>
   <aside class="side right">
     <div class="topline"><div class="score"><span id="scB">0</span><small>à</small><span id="scW">0</span></div><button class="iconbtn" id="menuBtn" aria-label="Menu">≡</button></div>
     <div class="status" id="status"></div>
@@ -647,6 +649,13 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
     }
     bw = Math.max(bw, 160); bh = bw * H / W;
     svg.style.width = bw + 'px'; svg.style.height = bh + 'px';
+    syncBg();
+  }
+  function syncBg() {
+    const bg = $('boardBg'); if (!bg) return;
+    bg.setAttribute('viewBox', svg.getAttribute('viewBox')); bg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    bg.style.width = svg.style.width; bg.style.height = svg.style.height;
+    bg.style.left = svg.offsetLeft + 'px'; bg.style.top = svg.offsetTop + 'px';
   }
   const txt = (p) => portrait ? `rotate(-90 ${p.x} ${p.y})` : '';
   // coordonnées écran -> coordonnées du plateau (tient compte de la rotation)
@@ -677,7 +686,7 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
   const THEMES = {
     marine: {
       name: 'Marine', sides: ['Ivoire', 'Ébène'], ui: { bg: '#0a1020', bg2: '#121c33', fg: '#eef0f6', muted: '#a3adc4', panel: 'rgba(18,28,51,.86)', line: 'rgba(238,240,246,.13)', accent: '#b08d4a', accent2: '#d9b870', ink: '#14100a', chip: 'rgba(217,184,112,.16)' },
-      frame: WALNUT, field: { tex: 'felt', base: '#1b2d4f', vary: ['#22395f', '#142340'], vig: '#020610', vigA: .55 },
+      frame: WALNUT, field: { tex: 'wood', base: '#7a5535', dark: '#4f331d', light: '#a27852', vig: '#1a0c03', vigA: .4 },
       ptA: ['#f0e7d1', '#d8c8a4'], ptB: ['#7e9ccb', '#5a78a8'], ptStroke: 'rgba(5,10,30,.3)', ptShine: 'rgba(255,255,255,.16)',
       tray: { base: '#13223d', edge: '#0a1428' }, light: IVORY, dark: EBONY, diceL: DICE_IVORY, diceD: DICE_EBONY,
       hi: '#f2cd72', hiRing: '#fff3d1', hinge: true, shadow: '#03050c'
@@ -801,6 +810,7 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
     if (T.field.tex !== 'gradient') { const [u, s] = textureFor(T.field, 'field'); pattern('texField', u, s); }
     else radial('field', T.field.stops, { cx: '50%', cy: '40%', r: '75%' });
     radial('fieldVig', [[0, T.field.vig, 0], [.6, T.field.vig, 0], [1, T.field.vig, T.field.vigA]], { cx: '50%', cy: '50%', r: '72%' });
+    radial('chkSh', [[0, T.shadow, .5], [.74, T.shadow, .4], [1, T.shadow, 0]], { cx: '50%', cy: '50%', r: '50%' });
     radial('shadeW', [[0, '#fff', 0], [.62, '#fff', 0], [.86, T.light.shade, .22], [1, T.light.shade, .5]], { cx: '50%', cy: '50%', r: '50%' });
     radial('shadeB', [[0, '#fff', 0], [.62, '#fff', 0], [.86, T.dark.shade, .3], [1, T.dark.shade, .7]], { cx: '50%', cy: '50%', r: '50%' });
     radial('glossW', [[0, T.light.gloss, T.light.glossA], [.5, T.light.gloss, .16], [1, T.light.gloss, 0]], { cx: '36%', cy: '30%', r: '45%' });
@@ -821,7 +831,10 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
   }
 
   const root = el('g', { id: 'root' }, svg);
-  const gStatic = el('g', {}, root), gHi = el('g', {}, root), gChk = el('g', { filter: 'url(#chkShadow)' }, root), gDice = el('g', {}, root), gLabels = el('g', {}, root), gDrag = el('g', {}, root);
+  // le plateau fixe est dessiné dans un second SVG, placé dessous : il forme son propre calque et n'est jamais redessiné pendant les animations
+  const svgBg = $('boardBg');
+  const gStatic = el('g', {}, svgBg);
+  const gHi = el('g', {}, root), gChk = el('g', {}, root), gDice = el('g', {}, root), gLabels = el('g', {}, root), gDrag = el('g', {}, root);
   function buildStatic() {
     const T = THEME; gStatic.innerHTML = '';
     // cadre
@@ -859,8 +872,8 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
     const bottom = [H / 2 + 6, innerB - H / 2 - 6], top = [innerT, H / 2 - 6 - innerT];
     for (const [r, [y, hh]] of [[trayHiW, flip ? top : bottom], [trayHiB, flip ? bottom : top]]) { r.setAttribute('x', trayX); r.setAttribute('y', y); r.setAttribute('width', TRAY); r.setAttribute('height', hh); r.setAttribute('fill', T.hi); r.setAttribute('stroke', T.hi); }
   }
-  const trayHiW = el('rect', { rx: 8, 'fill-opacity': .18, 'stroke-width': 3, opacity: 0 });
-  const trayHiB = el('rect', { rx: 8, 'fill-opacity': .18, 'stroke-width': 3, opacity: 0 });
+  const trayHiW = el('rect', { rx: 8, 'fill-opacity': .3, 'stroke-width': 3, opacity: 0 });
+  const trayHiB = el('rect', { rx: 8, 'fill-opacity': .3, 'stroke-width': 3, opacity: 0 });
   // couleurs de l'interface autour du plateau
   function applyThemeUI() {
     const T = THEME, u = T.ui, st = document.documentElement.style;
@@ -895,9 +908,11 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
   const kOf = p => (p === 1 ? 0 : 1);
 
   /* ===== Rendu ===== */
-  function drawChecker(x, y, p, count, parent) {
+  function drawChecker(x, y, p, count, parent, lifted) {
     const L = p === 1 ? THEME.light : THEME.dark;
     const g = el('g', { transform: `translate(${x} ${y})` }, parent || gChk);
+    if (lifted) el('circle', { cx: 0, cy: 11, r: R * 1.3, fill: 'url(#chkSh)', opacity: .85 }, g);
+    else el('circle', { cx: 0, cy: 2.6, r: R * 1.12, fill: 'url(#chkSh)' }, g);
     el('circle', { r: R, fill: p === 1 ? 'url(#texL)' : 'url(#texD)' }, g);
     el('circle', { r: R, fill: p === 1 ? 'url(#shadeW)' : 'url(#shadeB)' }, g);
     if (L.grooves) for (const f of L.grooves) { el('circle', { r: R * f, fill: 'none', stroke: L.grooveDark, 'stroke-width': 1.7 }, g); el('circle', { cx: .5, cy: .8, r: R * f - 1.3, fill: 'none', stroke: L.grooveLight, 'stroke-width': .9 }, g); }
@@ -930,10 +945,11 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
   }
   function render() {
     gChk.innerHTML = ''; gHi.innerHTML = ''; gDice.innerHTML = ''; gLabels.innerHTML = '';
-    gHi.appendChild(trayHiW); gHi.appendChild(trayHiB); for (const t of [trayHiW, trayHiB]) { t.setAttribute('opacity', 0); t.setAttribute('stroke-width', 3); }
+    gHi.appendChild(trayHiW); gHi.appendChild(trayHiB); for (const t of [trayHiW, trayHiB]) { t.setAttribute('opacity', 0); t.setAttribute('stroke-width', 3); t.removeAttribute('class'); }
     const s = G.state; if (!s) return;
     const interactive = G.phase === 'move' && isHuman(G.player) && !G.busy;
     const movable = new Set(interactive ? G.steps.map(st => st.from) : []);
+    if (interactive && G.required >= 2 && G.steps.some(st => st.to === OFF)) for (let i = 0; i < 24; i++) if (!movable.has(i) && s.pts[i] * G.player > 0 && viaBearOff(i).length) movable.add(i);
     const src = G.drag ? G.drag.from : G.selected;
     const dests = interactive ? destinationsFor(src) : [];
     if (src != null && src !== BAR && !G.drag) {
@@ -962,7 +978,7 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
       for (let k = 0; k < n; k++) drawSlab(trayPos(p, k), p, k);
     }
     for (const d of dests) {
-      if (d.to === OFF) { (G.player === 1 ? trayHiW : trayHiB).setAttribute('opacity', 1); continue; }
+      if (d.to === OFF) { const t = G.player === 1 ? trayHiW : trayHiB; t.setAttribute('opacity', 1); t.setAttribute('class', 'pulse'); continue; }
       const pos = nextPos(d.to, G.player, s);
       el('circle', { cx: pos.x, cy: pos.y, r: R - 2, fill: THEME.hi, opacity: d.composite ? .28 : .48, class: 'pulse' }, gHi);
       el('circle', { cx: pos.x, cy: pos.y, r: R + 2, fill: 'none', stroke: THEME.hiRing, 'stroke-width': 2, opacity: .9 }, gHi);
@@ -992,7 +1008,9 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
     setDieTransform(g, cx, cy, tilt || 0, 1);
     const w = p === 1, D = w ? THEME.diceL : THEME.diceD;
     const k = DS / 46, rx = 10 * k;
-    el('rect', { x: -DS / 2, y: -DS / 2, width: DS, height: DS, rx, fill: w ? 'url(#diceW)' : 'url(#diceB)', filter: 'url(#chkShadow)' }, g);
+    el('rect', { x: -DS / 2 - 1, y: -DS / 2 + 2, width: DS + 2, height: DS + 3, rx: rx + 2, fill: THEME.shadow, 'fill-opacity': .16 }, g);
+    el('rect', { x: -DS / 2 + .5, y: -DS / 2 + 3, width: DS, height: DS, rx, fill: THEME.shadow, 'fill-opacity': .3 }, g);
+    el('rect', { x: -DS / 2, y: -DS / 2, width: DS, height: DS, rx, fill: w ? 'url(#diceW)' : 'url(#diceB)' }, g);
     if (D.glass) el('rect', { x: -DS / 2, y: -DS / 2, width: DS, height: DS, rx, fill: 'url(#diceBglass)' }, g);
     el('rect', { x: -DS / 2 + .8, y: -DS / 2 + .8, width: DS - 1.6, height: DS - 1.6, rx: rx - .6, fill: 'none', stroke: D.inner, 'stroke-opacity': D.innerA, 'stroke-width': 1.2 }, g);
     el('rect', { x: -DS / 2, y: -DS / 2, width: DS, height: DS, rx, fill: 'none', stroke: D.edge, 'stroke-opacity': .9, 'stroke-width': 1 }, g);
@@ -1141,7 +1159,7 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
     const s = G.state;
     const a = topPos(step.from, p, s), b = nextPos(step.to, p, s);
     G.lift = step.from; render();
-    const ghost = drawChecker(a.x, a.y, p, 1, gDrag); ghost.setAttribute('filter', 'url(#dragShadow)');
+    const ghost = drawChecker(a.x, a.y, p, 1, gDrag, true);
     const dist = Math.hypot(b.x - a.x, b.y - a.y);
     const off = step.to === OFF;
     const stacked = !off && s.pts[step.to] * p > 0;
@@ -1197,8 +1215,23 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
   }
 
   /* ===== Interaction : toucher ou glisser ===== */
+  // Ex. : 4 pions sur la case 1, 1 pion sur la case 3, dés 5 et 2. Le 2 ne peut sortir un pion de la case 1 qu'une fois
+  // le pion de la case 3 sorti avec le 5. Toucher la case 1 puis le casier joue donc les deux sorties dans le bon ordre.
+  function viaBearOff(src) {
+    if (src == null || src === BAR || G.required < 2 || G.phase !== 'move' || !isHuman(G.player)) return [];
+    if (G.steps.some(st => st.from === src)) return [];
+    for (const st of G.steps) {
+      if (st.to !== OFF || st.from === src) continue;
+      const s2 = applyStep(G.state, G.player, st); const rem = G.rem.slice(); rem.splice(rem.indexOf(st.die), 1);
+      const st2 = allowedSteps(s2, G.player, rem, G.required - 1).find(x => x.from === src && x.to === OFF);
+      if (st2) return [{ to: OFF, steps: [st, st2], via: true }];
+    }
+    return [];
+  }
+  const canStart = loc => G.steps.some(st => st.from === loc) || viaBearOff(loc).length > 0;
   function destinationsFor(src) {
     if (src == null || G.phase !== 'move' || !isHuman(G.player)) return [];
+    if (!G.steps.some(st => st.from === src)) return viaBearOff(src);
     const out = [], seen = new Set();
     for (const st of G.steps) {
       if (st.from !== src) continue;
@@ -1218,7 +1251,7 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
     if (G.busy || G.phase !== 'move' || !isHuman(G.player)) return;
     const pt = toBoard(ev); const z = zoneAt(pt); if (pt == null) return;
     press = { id: ev.pointerId, zone: z, x: pt.x, y: pt.y, moved: false, ghost: null };
-    const canDrag = z != null && z !== OFF && G.steps.some(st => st.from === z) && (z !== BAR || G.state.bar[kOf(G.player)] > 0);
+    const canDrag = z != null && z !== OFF && canStart(z) && (z !== BAR || G.state.bar[kOf(G.player)] > 0);
     if (canDrag) { press.dragFrom = z; try { svg.setPointerCapture(ev.pointerId); } catch (e) { } }
     ev.preventDefault();
   });
@@ -1229,11 +1262,12 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
     if (press.dragFrom == null) return;
     if (!press.moved) {
       press.moved = true; G.drag = { from: press.dragFrom }; G.selected = null; render(); SFX.lift();
-      press.ghost = drawChecker(pt.x, pt.y, G.player, 1, gDrag); press.ghost.setAttribute('filter', 'url(#dragShadow)');
+      press.ghost = drawChecker(pt.x, pt.y, G.player, 1, gDrag, true);
       press.hover = el('circle', { r: R + 6, fill: 'none', stroke: THEME.hiRing, 'stroke-width': 3, opacity: 0 }, gHi);
     }
     press.ghost.setAttribute('transform', `translate(${pt.x} ${pt.y - 14}) scale(1.1)`);
-    const z = zoneAt(pt); const d = destinationsFor(press.dragFrom).find(x => x.to === z);
+    if (!press.dests) press.dests = destinationsFor(press.dragFrom);
+    const z = zoneAt(pt); const d = press.dests.find(x => x.to === z);
     if (d && d.to !== OFF) { const np = nextPos(d.to, G.player, G.state); press.hover.setAttribute('cx', np.x); press.hover.setAttribute('cy', np.y); press.hover.setAttribute('opacity', .95); }
     else press.hover.setAttribute('opacity', 0);
     (G.player === 1 ? trayHiW : trayHiB).setAttribute('stroke-width', d && d.to === OFF ? 6 : 3);
@@ -1245,12 +1279,13 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
     try { svg.releasePointerCapture(ev.pointerId); } catch (e) { }
     if (!p.moved) { if (!cancel) onTap(p.zone); return; }
     const pt = toBoard(ev); const z = cancel ? null : zoneAt(pt);
-    const d = destinationsFor(p.dragFrom).find(x => x.to === z);
+    const d = (p.dests || destinationsFor(p.dragFrom)).find(x => x.to === z);
     const cur = pt ? { x: pt.x, y: pt.y - 14 } : { x: p.x, y: p.y };
     if (d) {
       const target = nextPos(d.to, G.player, G.state);
       const hit = d.steps.some(s => s.hit), stacked = d.to !== OFF && G.state.pts[d.to] * G.player > 0;
       G.busy = true;
+      if (d.via) { p.ghost.remove(); G.drag = null; G.busy = false; render(); playSteps(d.steps, true); return; }
       settle(p.ghost, cur, target, () => { if (hit) SFX.hit(); else if (d.to === OFF) SFX.tray(); else SFX.place(stacked); G.busy = false; G.drag = null; playSteps(d.steps, false); }, d.to === OFF);
     } else {
       const back = topPos(p.dragFrom, G.player, G.state);
@@ -1267,7 +1302,7 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
       if (d) { playSteps(d.steps, true); return; }
       if (where === G.selected) { G.selected = null; render(); return; }
     }
-    if (where != null && G.steps.some(st => st.from === where)) { G.selected = where; render(); return; }
+    if (where != null && canStart(where)) { G.selected = where; render(); return; }
     G.selected = null; render();
   }
   // joue une suite de coups ; animated = fait glisser le pion (toucher), sinon dépôt direct (glisser)
@@ -1907,6 +1942,7 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(boot, boot); else boot();
   setTimeout(updateOrientation, 50);
   if (window.ResizeObserver) new ResizeObserver(() => updateOrientation()).observe($('app'));
+  if (window.ResizeObserver) new ResizeObserver(() => syncBg()).observe($('boardwrap'));
 })();
 </script>
 </body></html>
