@@ -1,7 +1,7 @@
 {
   "name": "Backgammon",
   "short_name": "Backgammon",
-  "description": "Backgammon nacre et marbre : contre l'ordinateur ou en ligne avec un ami.",
+  "description": "Backgammon : contre l'ordinateur, à deux, ou en ligne avec un ami.",
   "start_url": "./",
   "scope": "./",
   "display": "fullscreen",

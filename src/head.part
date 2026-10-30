@@ -151,8 +151,8 @@ input.code { -webkit-user-select: text; user-select: text; font-size: 22px; widt
 
 <div id="app">
   <aside class="side left">
-    <div class="who" id="whoB"><div class="pawn b"></div><div class="wtxt"><div class="name" id="nameB">Marbre</div><div class="lvl" id="lvlB"></div><div class="sub" id="subB"></div></div></div>
-    <div class="who active" id="whoW"><div class="pawn w"></div><div class="wtxt"><div class="name" id="nameW">Nacre</div><div class="lvl" id="lvlW"></div><div class="sub" id="subW"></div></div></div>
+    <div class="who" id="whoB"><div class="pawn b"></div><div class="wtxt"><div class="name" id="nameB">Ébène</div><div class="lvl" id="lvlB"></div><div class="sub" id="subB"></div></div></div>
+    <div class="who active" id="whoW"><div class="pawn w"></div><div class="wtxt"><div class="name" id="nameW">Ivoire</div><div class="lvl" id="lvlW"></div><div class="sub" id="subW"></div></div></div>
   </aside>
   <div id="boardwrap"><svg id="boardBg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"></svg><svg id="board" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Plateau de backgammon"></svg></div>
   <aside class="side right">
@@ -196,7 +196,7 @@ input.code { -webkit-user-select: text; user-select: text; font-size: 22px; widt
         <button class="level" data-level="3">Expert<small>Anticipe vos réponses</small></button>
       </div>
     </div>
-    <div class="cta"><button class="btn primary" id="startBtn">Jouer</button></div>
+    <div class="cta"><button class="btn primary" id="startBtn">Jouer</button><button class="btn primary" id="resumeLocal" hidden>Reprendre la partie</button></div>
   </div>
 </div>
 
@@ -205,7 +205,7 @@ input.code { -webkit-user-select: text; user-select: text; font-size: 22px; widt
     <div class="lead" id="endLead">Partie terminée</div>
     <div class="big" id="endTitle"></div>
     <div class="pts" id="endPts"></div>
-    <div class="tally"><div><div class="n" id="tW">0</div><div class="l">Nacre</div></div><div><div class="n" id="tB">0</div><div class="l">Marbre</div></div></div>
+    <div class="tally"><div><div class="n" id="tW">0</div><div class="l">Ivoire</div></div><div><div class="n" id="tB">0</div><div class="l">Ébène</div></div></div>
     <div class="cta"><button class="btn ghost" id="endMenu">Menu</button><button class="btn primary" id="endAgain">Rejouer</button></div>
   </div>
 </div>

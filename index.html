@@ -3,7 +3,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Backgammon</title>
-<meta name="description" content="Backgammon nacre et marbre : contre l'ordinateur ou en ligne avec un ami.">
+<meta name="description" content="Backgammon : contre l'ordinateur, à deux, ou en ligne avec un ami.">
 <meta name="theme-color" content="#0a142c">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -12,6 +12,11 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="preload" href="fonts/cormorant-garamond-500.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/cormorant-garamond-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/manrope.woff2" as="font" type="font/woff2" crossorigin>
+<style>@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/cormorant-garamond-500.woff2) format('woff2')}@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/cormorant-garamond-600.woff2) format('woff2')}@font-face{font-family:'Manrope';font-style:normal;font-weight:200 800;font-display:swap;src:url(fonts/manrope.woff2) format('woff2-variations'),url(fonts/manrope.woff2) format('woff2')}</style>
+<script>if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));</script>
 <style>html{box-sizing:border-box;color-scheme:light}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,"Segoe UI",sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <script>
 "use strict";var mqtt=(()=>{var fs=Object.defineProperty;var Dg=Object.getOwnPropertyDescriptor;var jg=Object.getOwnPropertyNames;var Fg=Object.prototype.hasOwnProperty;var Ae=(t,e)=>()=>(t&&(e=t(t=0)),e);var O=(t,e)=>()=>(e||t((e={exports:{}}).exports,e),e.exports),Ar=(t,e)=>{for(var r in e)fs(t,r,{get:e[r],enumerable:!0})},Wg=(t,e,r,i)=>{if(e&&typeof e=="object"||typeof e=="function")for(let n of jg(e))!Fg.call(t,n)&&n!==r&&fs(t,n,{get:()=>e[n],enumerable:!(i=Dg(e,n))||i.enumerable});return t};var Q=t=>Wg(fs({},"__esModule",{value:!0}),t);var _=Ae(()=>{});var R={};Ar(R,{_debugEnd:()=>lu,_debugProcess:()=>au,_events:()=>Au,_eventsCount:()=>Iu,_exiting:()=>Wl,_fatalExceptions:()=>iu,_getActiveHandles:()=>zl,_getActiveRequests:()=>Vl,_kill:()=>Gl,_linkedBinding:()=>jl,_maxListeners:()=>Su,_preload_modules:()=>mu,_rawDebug:()=>Nl,_startProfilerIdleNotifier:()=>uu,_stopProfilerIdleNotifier:()=>cu,_tickCallback:()=>ou,abort:()=>pu,addListener:()=>Tu,allowedNodeEnvironmentFlags:()=>eu,arch:()=>Il,argv:()=>Cl,argv0:()=>_u,assert:()=>tu,binding:()=>Ol,chdir:()=>ql,config:()=>$l,cpuUsage:()=>Di,cwd:()=>Ll,debugPort:()=>wu,default:()=>Lu,dlopen:()=>Hl,domain:()=>Fl,emit:()=>Bu,emitWarning:()=>xl,env:()=>Rl,execArgv:()=>Pl,execPath:()=>yu,exit:()=>Xl,features:()=>ru,hasUncaughtExceptionCaptureCallback:()=>su,hrtime:()=>Ni,kill:()=>Jl,listeners:()=>Mu,memoryUsage:()=>Yl,moduleLoadList:()=>Dl,nextTick:()=>El,off:()=>Cu,on:()=>gt,once:()=>Ru,openStdin:()=>Zl,pid:()=>gu,platform:()=>Tl,ppid:()=>bu,prependListener:()=>xu,prependOnceListener:()=>Ou,reallyExit:()=>Kl,release:()=>Ul,removeAllListeners:()=>ku,removeListener:()=>Pu,resourceUsage:()=>Ql,setSourceMapsEnabled:()=>vu,setUncaughtExceptionCaptureCallback:()=>nu,stderr:()=>hu,stdin:()=>du,stdout:()=>fu,title:()=>Al,umask:()=>Ml,uptime:()=>Eu,version:()=>kl,versions:()=>Bl});function ps(t){throw new Error("Node.js process "+t+" is not supported by JSPM core outside of Node.js")}function $g(){!Ir||!Gt||(Ir=!1,Gt.length?pt=Gt.concat(pt):Ui=-1,pt.length&&vl())}function vl(){if(!Ir){var t=setTimeout($g,0);Ir=!0;for(var e=pt.length;e;){for(Gt=pt,pt=[];++Ui<e;)Gt&&Gt[Ui].run();Ui=-1,e=pt.length}Gt=null,Ir=!1,clearTimeout(t)}}function El(t){var e=new Array(arguments.length-1);if(arguments.length>1)for(var r=1;r<arguments.length;r++)e[r-1]=arguments[r];pt.push(new Sl(t,e)),pt.length===1&&!Ir&&setTimeout(vl,0)}function Sl(t,e){this.fun=t,this.array=e}function _e(){}function jl(t){ps("_linkedBinding")}function Hl(t){ps("dlopen")}function Vl(){return[]}function zl(){return[]}function tu(t,e){if(!t)throw new Error(e||"assertion error")}function su(){return!1}function Eu(){return kt.now()/1e3}function Ni(t){var e=Math.floor((Date.now()-kt.now())*.001),r=kt.now()*.001,i=Math.floor(r)+e,n=Math.floor(r%1*1e9);return t&&(i=i-t[0],n=n-t[1],n<0&&(i--,n+=ds)),[i,n]}function gt(){return Lu}function Mu(t){return[]}var pt,Ir,Gt,Ui,Al,Il,Tl,Rl,Cl,Pl,kl,Bl,xl,Ol,Ml,Ll,ql,Ul,Nl,Dl,Fl,Wl,$l,Kl,Gl,Di,Ql,Yl,Jl,Xl,Zl,eu,ru,iu,nu,ou,au,lu,uu,cu,fu,hu,du,pu,gu,bu,yu,wu,_u,mu,vu,kt,hs,ds,Su,Au,Iu,Tu,Ru,Cu,Pu,ku,Bu,xu,Ou,Lu,qu=Ae(()=>{_();v();m();pt=[],Ir=!1,Ui=-1;Sl.prototype.run=function(){this.fun.apply(null,this.array)};Al="browser",Il="x64",Tl="browser",Rl={PATH:"/usr/bin",LANG:navigator.language+".UTF-8",PWD:"/",HOME:"/home",TMP:"/tmp"},Cl=["/usr/bin/node"],Pl=[],kl="v16.8.0",Bl={},xl=function(t,e){console.warn((e?e+": ":"")+t)},Ol=function(t){ps("binding")},Ml=function(t){return 0},Ll=function(){return"/"},ql=function(t){},Ul={name:"node",sourceUrl:"",headersUrl:"",libUrl:""};Nl=_e,Dl=[];Fl={},Wl=!1,$l={};Kl=_e,Gl=_e,Di=function(){return{}},Ql=Di,Yl=Di,Jl=_e,Xl=_e,Zl=_e,eu={};ru={inspector:!1,debug:!1,uv:!1,ipv6:!1,tls_alpn:!1,tls_sni:!1,tls_ocsp:!1,tls:!1,cached_builtins:!0},iu=_e,nu=_e;ou=_e,au=_e,lu=_e,uu=_e,cu=_e,fu=void 0,hu=void 0,du=void 0,pu=_e,gu=2,bu=1,yu="/bin/usr/node",wu=9229,_u="node",mu=[],vu=_e,kt={now:typeof performance<"u"?performance.now.bind(performance):void 0,timing:typeof performance<"u"?performance.timing:void 0};kt.now===void 0&&(hs=Date.now(),kt.timing&&kt.timing.navigationStart&&(hs=kt.timing.navigationStart),kt.now=()=>Date.now()-hs);ds=1e9;Ni.bigint=function(t){var e=Ni(t);return typeof BigInt>"u"?e[0]*ds+e[1]:BigInt(e[0]*ds)+BigInt(e[1])};Su=10,Au={},Iu=0;Tu=gt,Ru=gt,Cu=gt,Pu=gt,ku=gt,Bu=_e,xu=gt,Ou=gt;Lu={version:kl,versions:Bl,arch:Il,platform:Tl,release:Ul,_rawDebug:Nl,moduleLoadList:Dl,binding:Ol,_linkedBinding:jl,_events:Au,_eventsCount:Iu,_maxListeners:Su,on:gt,addListener:Tu,once:Ru,off:Cu,removeListener:Pu,removeAllListeners:ku,emit:Bu,prependListener:xu,prependOnceListener:Ou,listeners:Mu,domain:Fl,_exiting:Wl,config:$l,dlopen:Hl,uptime:Eu,_getActiveRequests:Vl,_getActiveHandles:zl,reallyExit:Kl,_kill:Gl,cpuUsage:Di,resourceUsage:Ql,memoryUsage:Yl,kill:Jl,exit:Xl,openStdin:Zl,allowedNodeEnvironmentFlags:eu,assert:tu,features:ru,_fatalExceptions:iu,setUncaughtExceptionCaptureCallback:nu,hasUncaughtExceptionCaptureCallback:su,emitWarning:xl,nextTick:El,_tickCallback:ou,_debugProcess:au,_debugEnd:lu,_startProfilerIdleNotifier:uu,_stopProfilerIdleNotifier:cu,stdout:fu,stdin:du,stderr:hu,abort:pu,umask:Ml,chdir:ql,cwd:Ll,env:Rl,title:Al,argv:Cl,execArgv:Pl,pid:gu,ppid:bu,execPath:yu,debugPort:wu,hrtime:Ni,argv0:_u,_preload_modules:mu,setSourceMapsEnabled:vu}});var m=Ae(()=>{qu()});var ye={};Ar(ye,{Buffer:()=>x,INSPECT_MAX_BYTES:()=>Kg,default:()=>Bt,kMaxLength:()=>Gg});function Hg(){if(Uu)return si;Uu=!0,si.byteLength=a,si.toByteArray=f,si.fromByteArray=g;for(var t=[],e=[],r=typeof Uint8Array<"u"?Uint8Array:Array,i="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",n=0,o=i.length;n<o;++n)t[n]=i[n],e[i.charCodeAt(n)]=n;e[45]=62,e[95]=63;function s(b){var E=b.length;if(E%4>0)throw new Error("Invalid string. Length must be a multiple of 4");var w=b.indexOf("=");w===-1&&(w=E);var S=w===E?0:4-w%4;return[w,S]}function a(b){var E=s(b),w=E[0],S=E[1];return(w+S)*3/4-S}function u(b,E,w){return(E+w)*3/4-w}function f(b){var E,w=s(b),S=w[0],I=w[1],C=new r(u(b,S,I)),k=0,M=I>0?S-4:S,q;for(q=0;q<M;q+=4)E=e[b.charCodeAt(q)]<<18|e[b.charCodeAt(q+1)]<<12|e[b.charCodeAt(q+2)]<<6|e[b.charCodeAt(q+3)],C[k++]=E>>16&255,C[k++]=E>>8&255,C[k++]=E&255;return I===2&&(E=e[b.charCodeAt(q)]<<2|e[b.charCodeAt(q+1)]>>4,C[k++]=E&255),I===1&&(E=e[b.charCodeAt(q)]<<10|e[b.charCodeAt(q+1)]<<4|e[b.charCodeAt(q+2)]>>2,C[k++]=E>>8&255,C[k++]=E&255),C}function d(b){return t[b>>18&63]+t[b>>12&63]+t[b>>6&63]+t[b&63]}function h(b,E,w){for(var S,I=[],C=E;C<w;C+=3)S=(b[C]<<16&16711680)+(b[C+1]<<8&65280)+(b[C+2]&255),I.push(d(S));return I.join("")}function g(b){for(var E,w=b.length,S=w%3,I=[],C=16383,k=0,M=w-S;k<M;k+=C)I.push(h(b,k,k+C>M?M:k+C));return S===1?(E=b[w-1],I.push(t[E>>2]+t[E<<4&63]+"==")):S===2&&(E=(b[w-2]<<8)+b[w-1],I.push(t[E>>10]+t[E>>4&63]+t[E<<2&63]+"=")),I.join("")}return si}function Vg(){if(Nu)return ji;Nu=!0;return ji.read=function(t,e,r,i,n){var o,s,a=n*8-i-1,u=(1<<a)-1,f=u>>1,d=-7,h=r?n-1:0,g=r?-1:1,b=t[e+h];for(h+=g,o=b&(1<<-d)-1,b>>=-d,d+=a;d>0;o=o*256+t[e+h],h+=g,d-=8);for(s=o&(1<<-d)-1,o>>=-d,d+=i;d>0;s=s*256+t[e+h],h+=g,d-=8);if(o===0)o=1-f;else{if(o===u)return s?NaN:(b?-1:1)*(1/0);s=s+Math.pow(2,i),o=o-f}return(b?-1:1)*s*Math.pow(2,o-i)},ji.write=function(t,e,r,i,n,o){var s,a,u,f=o*8-n-1,d=(1<<f)-1,h=d>>1,g=n===23?Math.pow(2,-24)-Math.pow(2,-77):0,b=i?0:o-1,E=i?1:-1,w=e<0||e===0&&1/e<0?1:0;for(e=Math.abs(e),isNaN(e)||e===1/0?(a=isNaN(e)?1:0,s=d):(s=Math.floor(Math.log(e)/Math.LN2),e*(u=Math.pow(2,-s))<1&&(s--,u*=2),s+h>=1?e+=g/u:e+=g*Math.pow(2,1-h),e*u>=2&&(s++,u/=2),s+h>=d?(a=0,s=d):s+h>=1?(a=(e*u-1)*Math.pow(2,n),s=s+h):(a=e*Math.pow(2,h-1)*Math.pow(2,n),s=0));n>=8;t[r+b]=a&255,b+=E,a/=256,n-=8);for(s=s<<n|a,f+=n;f>0;t[r+b]=s&255,b+=E,s/=256,f-=8);t[r+b-E]|=w*128},ji}function zg(){if(Du)return Qt;Du=!0;let t=Hg(),e=Vg(),r=typeof Symbol=="function"&&typeof Symbol.for=="function"?Symbol.for("nodejs.util.inspect.custom"):null;Qt.Buffer=s,Qt.SlowBuffer=I,Qt.INSPECT_MAX_BYTES=50;let i=2147483647;Qt.kMaxLength=i,s.TYPED_ARRAY_SUPPORT=n(),!s.TYPED_ARRAY_SUPPORT&&typeof console<"u"&&typeof console.error=="function"&&console.error("This browser lacks typed array (Uint8Array) support which is required by `buffer` v5.x. Use `buffer` v4.x if you require old browser support.");function n(){try{let p=new Uint8Array(1),l={foo:function(){return 42}};return Object.setPrototypeOf(l,Uint8Array.prototype),Object.setPrototypeOf(p,l),p.foo()===42}catch{return!1}}Object.defineProperty(s.prototype,"parent",{enumerable:!0,get:function(){if(s.isBuffer(this))return this.buffer}}),Object.defineProperty(s.prototype,"offset",{enumerable:!0,get:function(){if(s.isBuffer(this))return this.byteOffset}});function o(p){if(p>i)throw new RangeError('The value "'+p+'" is invalid for option "size"');let l=new Uint8Array(p);return Object.setPrototypeOf(l,s.prototype),l}function s(p,l,c){if(typeof p=="number"){if(typeof l=="string")throw new TypeError('The "string" argument must be of type string. Received type number');return d(p)}return a(p,l,c)}s.poolSize=8192;function a(p,l,c){if(typeof p=="string")return h(p,l);if(ArrayBuffer.isView(p))return b(p);if(p==null)throw new TypeError("The first argument must be one of type string, Buffer, ArrayBuffer, Array, or Array-like Object. Received type "+typeof p);if(Ge(p,ArrayBuffer)||p&&Ge(p.buffer,ArrayBuffer)||typeof SharedArrayBuffer<"u"&&(Ge(p,SharedArrayBuffer)||p&&Ge(p.buffer,SharedArrayBuffer)))return E(p,l,c);if(typeof p=="number")throw new TypeError('The "value" argument must not be of type number. Received type number');let y=p.valueOf&&p.valueOf();if(y!=null&&y!==p)return s.from(y,l,c);let A=w(p);if(A)return A;if(typeof Symbol<"u"&&Symbol.toPrimitive!=null&&typeof p[Symbol.toPrimitive]=="function")return s.from(p[Symbol.toPrimitive]("string"),l,c);throw new TypeError("The first argument must be one of type string, Buffer, ArrayBuffer, Array, or Array-like Object. Received type "+typeof p)}s.from=function(p,l,c){return a(p,l,c)},Object.setPrototypeOf(s.prototype,Uint8Array.prototype),Object.setPrototypeOf(s,Uint8Array);function u(p){if(typeof p!="number")throw new TypeError('"size" argument must be of type number');if(p<0)throw new RangeError('The value "'+p+'" is invalid for option "size"')}function f(p,l,c){return u(p),p<=0?o(p):l!==void 0?typeof c=="string"?o(p).fill(l,c):o(p).fill(l):o(p)}s.alloc=function(p,l,c){return f(p,l,c)};function d(p){return u(p),o(p<0?0:S(p)|0)}s.allocUnsafe=function(p){return d(p)},s.allocUnsafeSlow=function(p){return d(p)};function h(p,l){if((typeof l!="string"||l==="")&&(l="utf8"),!s.isEncoding(l))throw new TypeError("Unknown encoding: "+l);let c=C(p,l)|0,y=o(c),A=y.write(p,l);return A!==c&&(y=y.slice(0,A)),y}function g(p){let l=p.length<0?0:S(p.length)|0,c=o(l);for(let y=0;y<l;y+=1)c[y]=p[y]&255;return c}function b(p){if(Ge(p,Uint8Array)){let l=new Uint8Array(p);return E(l.buffer,l.byteOffset,l.byteLength)}return g(p)}function E(p,l,c){if(l<0||p.byteLength<l)throw new RangeError('"offset" is outside of buffer bounds');if(p.byteLength<l+(c||0))throw new RangeError('"length" is outside of buffer bounds');let y;return l===void 0&&c===void 0?y=new Uint8Array(p):c===void 0?y=new Uint8Array(p,l):y=new Uint8Array(p,l,c),Object.setPrototypeOf(y,s.prototype),y}function w(p){if(s.isBuffer(p)){let l=S(p.length)|0,c=o(l);return c.length===0||p.copy(c,0,0,l),c}if(p.length!==void 0)return typeof p.length!="number"||cs(p.length)?o(0):g(p);if(p.type==="Buffer"&&Array.isArray(p.data))return g(p.data)}function S(p){if(p>=i)throw new RangeError("Attempt to allocate Buffer larger than maximum size: 0x"+i.toString(16)+" bytes");return p|0}function I(p){return+p!=p&&(p=0),s.alloc(+p)}s.isBuffer=function(l){return l!=null&&l._isBuffer===!0&&l!==s.prototype},s.compare=function(l,c){if(Ge(l,Uint8Array)&&(l=s.from(l,l.offset,l.byteLength)),Ge(c,Uint8Array)&&(c=s.from(c,c.offset,c.byteLength)),!s.isBuffer(l)||!s.isBuffer(c))throw new TypeError('The "buf1", "buf2" arguments must be one of type Buffer or Uint8Array');if(l===c)return 0;let y=l.length,A=c.length;for(let T=0,P=Math.min(y,A);T<P;++T)if(l[T]!==c[T]){y=l[T],A=c[T];break}return y<A?-1:A<y?1:0},s.isEncoding=function(l){switch(String(l).toLowerCase()){case"hex":case"utf8":case"utf-8":case"ascii":case"latin1":case"binary":case"base64":case"ucs2":case"ucs-2":case"utf16le":case"utf-16le":return!0;default:return!1}},s.concat=function(l,c){if(!Array.isArray(l))throw new TypeError('"list" argument must be an Array of Buffers');if(l.length===0)return s.alloc(0);let y;if(c===void 0)for(c=0,y=0;y<l.length;++y)c+=l[y].length;let A=s.allocUnsafe(c),T=0;for(y=0;y<l.length;++y){let P=l[y];if(Ge(P,Uint8Array))T+P.length>A.length?(s.isBuffer(P)||(P=s.from(P)),P.copy(A,T)):Uint8Array.prototype.set.call(A,P,T);else if(s.isBuffer(P))P.copy(A,T);else throw new TypeError('"list" argument must be an Array of Buffers');T+=P.length}return A};function C(p,l){if(s.isBuffer(p))return p.length;if(ArrayBuffer.isView(p)||Ge(p,ArrayBuffer))return p.byteLength;if(typeof p!="string")throw new TypeError('The "string" argument must be one of type string, Buffer, or ArrayBuffer. Received type '+typeof p);let c=p.length,y=arguments.length>2&&arguments[2]===!0;if(!y&&c===0)return 0;let A=!1;for(;;)switch(l){case"ascii":case"latin1":case"binary":return c;case"utf8":case"utf-8":return us(p).length;case"ucs2":case"ucs-2":case"utf16le":case"utf-16le":return c*2;case"hex":return c>>>1;case"base64":return ml(p).length;default:if(A)return y?-1:us(p).length;l=(""+l).toLowerCase(),A=!0}}s.byteLength=C;function k(p,l,c){let y=!1;if((l===void 0||l<0)&&(l=0),l>this.length||((c===void 0||c>this.length)&&(c=this.length),c<=0)||(c>>>=0,l>>>=0,c<=l))return"";for(p||(p="utf8");;)switch(p){case"hex":return kg(this,l,c);case"utf8":case"utf-8":return Se(this,l,c);case"ascii":return as(this,l,c);case"latin1":case"binary":return Pg(this,l,c);case"base64":return Fe(this,l,c);case"ucs2":case"ucs-2":case"utf16le":case"utf-16le":return Bg(this,l,c);default:if(y)throw new TypeError("Unknown encoding: "+p);p=(p+"").toLowerCase(),y=!0}}s.prototype._isBuffer=!0;function M(p,l,c){let y=p[l];p[l]=p[c],p[c]=y}s.prototype.swap16=function(){let l=this.length;if(l%2!==0)throw new RangeError("Buffer size must be a multiple of 16-bits");for(let c=0;c<l;c+=2)M(this,c,c+1);return this},s.prototype.swap32=function(){let l=this.length;if(l%4!==0)throw new RangeError("Buffer size must be a multiple of 32-bits");for(let c=0;c<l;c+=4)M(this,c,c+3),M(this,c+1,c+2);return this},s.prototype.swap64=function(){let l=this.length;if(l%8!==0)throw new RangeError("Buffer size must be a multiple of 64-bits");for(let c=0;c<l;c+=8)M(this,c,c+7),M(this,c+1,c+6),M(this,c+2,c+5),M(this,c+3,c+4);return this},s.prototype.toString=function(){let l=this.length;return l===0?"":arguments.length===0?Se(this,0,l):k.apply(this,arguments)},s.prototype.toLocaleString=s.prototype.toString,s.prototype.equals=function(l){if(!s.isBuffer(l))throw new TypeError("Argument must be a Buffer");return this===l?!0:s.compare(this,l)===0},s.prototype.inspect=function(){let l="",c=Qt.INSPECT_MAX_BYTES;return l=this.toString("hex",0,c).replace(/(.{2})/g,"$1 ").trim(),this.length>c&&(l+=" ... "),"<Buffer "+l+">"},r&&(s.prototype[r]=s.prototype.inspect),s.prototype.compare=function(l,c,y,A,T){if(Ge(l,Uint8Array)&&(l=s.from(l,l.offset,l.byteLength)),!s.isBuffer(l))throw new TypeError('The "target" argument must be one of type Buffer or Uint8Array. Received type '+typeof l);if(c===void 0&&(c=0),y===void 0&&(y=l?l.length:0),A===void 0&&(A=0),T===void 0&&(T=this.length),c<0||y>l.length||A<0||T>this.length)throw new RangeError("out of range index");if(A>=T&&c>=y)return 0;if(A>=T)return-1;if(c>=y)return 1;if(c>>>=0,y>>>=0,A>>>=0,T>>>=0,this===l)return 0;let P=T-A,W=y-c,ae=Math.min(P,W),re=this.slice(A,T),le=l.slice(c,y);for(let J=0;J<ae;++J)if(re[J]!==le[J]){P=re[J],W=le[J];break}return P<W?-1:W<P?1:0};function q(p,l,c,y,A){if(p.length===0)return-1;if(typeof c=="string"?(y=c,c=0):c>2147483647?c=2147483647:c<-2147483648&&(c=-2147483648),c=+c,cs(c)&&(c=A?0:p.length-1),c<0&&(c=p.length+c),c>=p.length){if(A)return-1;c=p.length-1}else if(c<0)if(A)c=0;else return-1;if(typeof l=="string"&&(l=s.from(l,y)),s.isBuffer(l))return l.length===0?-1:G(p,l,c,y,A);if(typeof l=="number")return l=l&255,typeof Uint8Array.prototype.indexOf=="function"?A?Uint8Array.prototype.indexOf.call(p,l,c):Uint8Array.prototype.lastIndexOf.call(p,l,c):G(p,[l],c,y,A);throw new TypeError("val must be string, number or Buffer")}function G(p,l,c,y,A){let T=1,P=p.length,W=l.length;if(y!==void 0&&(y=String(y).toLowerCase(),y==="ucs2"||y==="ucs-2"||y==="utf16le"||y==="utf-16le")){if(p.length<2||l.length<2)return-1;T=2,P/=2,W/=2,c/=2}function ae(le,J){return T===1?le[J]:le.readUInt16BE(J*T)}let re;if(A){let le=-1;for(re=c;re<P;re++)if(ae(p,re)===ae(l,le===-1?0:re-le)){if(le===-1&&(le=re),re-le+1===W)return le*T}else le!==-1&&(re-=re-le),le=-1}else for(c+W>P&&(c=P-W),re=c;re>=0;re--){let le=!0;for(let J=0;J<W;J++)if(ae(p,re+J)!==ae(l,J)){le=!1;break}if(le)return re}return-1}s.prototype.includes=function(l,c,y){return this.indexOf(l,c,y)!==-1},s.prototype.indexOf=function(l,c,y){return q(this,l,c,y,!0)},s.prototype.lastIndexOf=function(l,c,y){return q(this,l,c,y,!1)};function F(p,l,c,y){c=Number(c)||0;let A=p.length-c;y?(y=Number(y),y>A&&(y=A)):y=A;let T=l.length;y>T/2&&(y=T/2);let P;for(P=0;P<y;++P){let W=parseInt(l.substr(P*2,2),16);if(cs(W))return P;p[c+P]=W}return P}function K(p,l,c,y){return qi(us(l,p.length-c),p,c,y)}function $(p,l,c,y){return qi(Lg(l),p,c,y)}function te(p,l,c,y){return qi(ml(l),p,c,y)}function dt(p,l,c,y){return qi(qg(l,p.length-c),p,c,y)}s.prototype.write=function(l,c,y,A){if(c===void 0)A="utf8",y=this.length,c=0;else if(y===void 0&&typeof c=="string")A=c,y=this.length,c=0;else if(isFinite(c))c=c>>>0,isFinite(y)?(y=y>>>0,A===void 0&&(A="utf8")):(A=y,y=void 0);else throw new Error("Buffer.write(string, encoding, offset[, length]) is no longer supported");let T=this.length-c;if((y===void 0||y>T)&&(y=T),l.length>0&&(y<0||c<0)||c>this.length)throw new RangeError("Attempt to write outside buffer bounds");A||(A="utf8");let P=!1;for(;;)switch(A){case"hex":return F(this,l,c,y);case"utf8":case"utf-8":return K(this,l,c,y);case"ascii":case"latin1":case"binary":return $(this,l,c,y);case"base64":return te(this,l,c,y);case"ucs2":case"ucs-2":case"utf16le":case"utf-16le":return dt(this,l,c,y);default:if(P)throw new TypeError("Unknown encoding: "+A);A=(""+A).toLowerCase(),P=!0}},s.prototype.toJSON=function(){return{type:"Buffer",data:Array.prototype.slice.call(this._arr||this,0)}};function Fe(p,l,c){return l===0&&c===p.length?t.fromByteArray(p):t.fromByteArray(p.slice(l,c))}function Se(p,l,c){c=Math.min(p.length,c);let y=[],A=l;for(;A<c;){let T=p[A],P=null,W=T>239?4:T>223?3:T>191?2:1;if(A+W<=c){let ae,re,le,J;switch(W){case 1:T<128&&(P=T);break;case 2:ae=p[A+1],(ae&192)===128&&(J=(T&31)<<6|ae&63,J>127&&(P=J));break;case 3:ae=p[A+1],re=p[A+2],(ae&192)===128&&(re&192)===128&&(J=(T&15)<<12|(ae&63)<<6|re&63,J>2047&&(J<55296||J>57343)&&(P=J));break;case 4:ae=p[A+1],re=p[A+2],le=p[A+3],(ae&192)===128&&(re&192)===128&&(le&192)===128&&(J=(T&15)<<18|(ae&63)<<12|(re&63)<<6|le&63,J>65535&&J<1114112&&(P=J))}}P===null?(P=65533,W=1):P>65535&&(P-=65536,y.push(P>>>10&1023|55296),P=56320|P&1023),y.push(P),A+=W}return vr(y)}let mr=4096;function vr(p){let l=p.length;if(l<=mr)return String.fromCharCode.apply(String,p);let c="",y=0;for(;y<l;)c+=String.fromCharCode.apply(String,p.slice(y,y+=mr));return c}function as(p,l,c){let y="";c=Math.min(p.length,c);for(let A=l;A<c;++A)y+=String.fromCharCode(p[A]&127);return y}function Pg(p,l,c){let y="";c=Math.min(p.length,c);for(let A=l;A<c;++A)y+=String.fromCharCode(p[A]);return y}function kg(p,l,c){let y=p.length;(!l||l<0)&&(l=0),(!c||c<0||c>y)&&(c=y);let A="";for(let T=l;T<c;++T)A+=Ug[p[T]];return A}function Bg(p,l,c){let y=p.slice(l,c),A="";for(let T=0;T<y.length-1;T+=2)A+=String.fromCharCode(y[T]+y[T+1]*256);return A}s.prototype.slice=function(l,c){let y=this.length;l=~~l,c=c===void 0?y:~~c,l<0?(l+=y,l<0&&(l=0)):l>y&&(l=y),c<0?(c+=y,c<0&&(c=0)):c>y&&(c=y),c<l&&(c=l);let A=this.subarray(l,c);return Object.setPrototypeOf(A,s.prototype),A};function be(p,l,c){if(p%1!==0||p<0)throw new RangeError("offset is not uint");if(p+l>c)throw new RangeError("Trying to access beyond buffer length")}s.prototype.readUintLE=s.prototype.readUIntLE=function(l,c,y){l=l>>>0,c=c>>>0,y||be(l,c,this.length);let A=this[l],T=1,P=0;for(;++P<c&&(T*=256);)A+=this[l+P]*T;return A},s.prototype.readUintBE=s.prototype.readUIntBE=function(l,c,y){l=l>>>0,c=c>>>0,y||be(l,c,this.length);let A=this[l+--c],T=1;for(;c>0&&(T*=256);)A+=this[l+--c]*T;return A},s.prototype.readUint8=s.prototype.readUInt8=function(l,c){return l=l>>>0,c||be(l,1,this.length),this[l]},s.prototype.readUint16LE=s.prototype.readUInt16LE=function(l,c){return l=l>>>0,c||be(l,2,this.length),this[l]|this[l+1]<<8},s.prototype.readUint16BE=s.prototype.readUInt16BE=function(l,c){return l=l>>>0,c||be(l,2,this.length),this[l]<<8|this[l+1]},s.prototype.readUint32LE=s.prototype.readUInt32LE=function(l,c){return l=l>>>0,c||be(l,4,this.length),(this[l]|this[l+1]<<8|this[l+2]<<16)+this[l+3]*16777216},s.prototype.readUint32BE=s.prototype.readUInt32BE=function(l,c){return l=l>>>0,c||be(l,4,this.length),this[l]*16777216+(this[l+1]<<16|this[l+2]<<8|this[l+3])},s.prototype.readBigUInt64LE=Pt(function(l){l=l>>>0,Sr(l,"offset");let c=this[l],y=this[l+7];(c===void 0||y===void 0)&&ni(l,this.length-8);let A=c+this[++l]*2**8+this[++l]*2**16+this[++l]*2**24,T=this[++l]+this[++l]*2**8+this[++l]*2**16+y*2**24;return BigInt(A)+(BigInt(T)<<BigInt(32))}),s.prototype.readBigUInt64BE=Pt(function(l){l=l>>>0,Sr(l,"offset");let c=this[l],y=this[l+7];(c===void 0||y===void 0)&&ni(l,this.length-8);let A=c*2**24+this[++l]*2**16+this[++l]*2**8+this[++l],T=this[++l]*2**24+this[++l]*2**16+this[++l]*2**8+y;return(BigInt(A)<<BigInt(32))+BigInt(T)}),s.prototype.readIntLE=function(l,c,y){l=l>>>0,c=c>>>0,y||be(l,c,this.length);let A=this[l],T=1,P=0;for(;++P<c&&(T*=256);)A+=this[l+P]*T;return T*=128,A>=T&&(A-=Math.pow(2,8*c)),A},s.prototype.readIntBE=function(l,c,y){l=l>>>0,c=c>>>0,y||be(l,c,this.length);let A=c,T=1,P=this[l+--A];for(;A>0&&(T*=256);)P+=this[l+--A]*T;return T*=128,P>=T&&(P-=Math.pow(2,8*c)),P},s.prototype.readInt8=function(l,c){return l=l>>>0,c||be(l,1,this.length),this[l]&128?(255-this[l]+1)*-1:this[l]},s.prototype.readInt16LE=function(l,c){l=l>>>0,c||be(l,2,this.length);let y=this[l]|this[l+1]<<8;return y&32768?y|4294901760:y},s.prototype.readInt16BE=function(l,c){l=l>>>0,c||be(l,2,this.length);let y=this[l+1]|this[l]<<8;return y&32768?y|4294901760:y},s.prototype.readInt32LE=function(l,c){return l=l>>>0,c||be(l,4,this.length),this[l]|this[l+1]<<8|this[l+2]<<16|this[l+3]<<24},s.prototype.readInt32BE=function(l,c){return l=l>>>0,c||be(l,4,this.length),this[l]<<24|this[l+1]<<16|this[l+2]<<8|this[l+3]},s.prototype.readBigInt64LE=Pt(function(l){l=l>>>0,Sr(l,"offset");let c=this[l],y=this[l+7];(c===void 0||y===void 0)&&ni(l,this.length-8);let A=this[l+4]+this[l+5]*2**8+this[l+6]*2**16+(y<<24);return(BigInt(A)<<BigInt(32))+BigInt(c+this[++l]*2**8+this[++l]*2**16+this[++l]*2**24)}),s.prototype.readBigInt64BE=Pt(function(l){l=l>>>0,Sr(l,"offset");let c=this[l],y=this[l+7];(c===void 0||y===void 0)&&ni(l,this.length-8);let A=(c<<24)+this[++l]*2**16+this[++l]*2**8+this[++l];return(BigInt(A)<<BigInt(32))+BigInt(this[++l]*2**24+this[++l]*2**16+this[++l]*2**8+y)}),s.prototype.readFloatLE=function(l,c){return l=l>>>0,c||be(l,4,this.length),e.read(this,l,!0,23,4)},s.prototype.readFloatBE=function(l,c){return l=l>>>0,c||be(l,4,this.length),e.read(this,l,!1,23,4)},s.prototype.readDoubleLE=function(l,c){return l=l>>>0,c||be(l,8,this.length),e.read(this,l,!0,52,8)},s.prototype.readDoubleBE=function(l,c){return l=l>>>0,c||be(l,8,this.length),e.read(this,l,!1,52,8)};function Ce(p,l,c,y,A,T){if(!s.isBuffer(p))throw new TypeError('"buffer" argument must be a Buffer instance');if(l>A||l<T)throw new RangeError('"value" argument is out of bounds');if(c+y>p.length)throw new RangeError("Index out of range")}s.prototype.writeUintLE=s.prototype.writeUIntLE=function(l,c,y,A){if(l=+l,c=c>>>0,y=y>>>0,!A){let W=Math.pow(2,8*y)-1;Ce(this,l,c,y,W,0)}let T=1,P=0;for(this[c]=l&255;++P<y&&(T*=256);)this[c+P]=l/T&255;return c+y},s.prototype.writeUintBE=s.prototype.writeUIntBE=function(l,c,y,A){if(l=+l,c=c>>>0,y=y>>>0,!A){let W=Math.pow(2,8*y)-1;Ce(this,l,c,y,W,0)}let T=y-1,P=1;for(this[c+T]=l&255;--T>=0&&(P*=256);)this[c+T]=l/P&255;return c+y},s.prototype.writeUint8=s.prototype.writeUInt8=function(l,c,y){return l=+l,c=c>>>0,y||Ce(this,l,c,1,255,0),this[c]=l&255,c+1},s.prototype.writeUint16LE=s.prototype.writeUInt16LE=function(l,c,y){return l=+l,c=c>>>0,y||Ce(this,l,c,2,65535,0),this[c]=l&255,this[c+1]=l>>>8,c+2},s.prototype.writeUint16BE=s.prototype.writeUInt16BE=function(l,c,y){return l=+l,c=c>>>0,y||Ce(this,l,c,2,65535,0),this[c]=l>>>8,this[c+1]=l&255,c+2},s.prototype.writeUint32LE=s.prototype.writeUInt32LE=function(l,c,y){return l=+l,c=c>>>0,y||Ce(this,l,c,4,4294967295,0),this[c+3]=l>>>24,this[c+2]=l>>>16,this[c+1]=l>>>8,this[c]=l&255,c+4},s.prototype.writeUint32BE=s.prototype.writeUInt32BE=function(l,c,y){return l=+l,c=c>>>0,y||Ce(this,l,c,4,4294967295,0),this[c]=l>>>24,this[c+1]=l>>>16,this[c+2]=l>>>8,this[c+3]=l&255,c+4};function dl(p,l,c,y,A){_l(l,y,A,p,c,7);let T=Number(l&BigInt(4294967295));p[c++]=T,T=T>>8,p[c++]=T,T=T>>8,p[c++]=T,T=T>>8,p[c++]=T;let P=Number(l>>BigInt(32)&BigInt(4294967295));return p[c++]=P,P=P>>8,p[c++]=P,P=P>>8,p[c++]=P,P=P>>8,p[c++]=P,c}function pl(p,l,c,y,A){_l(l,y,A,p,c,7);let T=Number(l&BigInt(4294967295));p[c+7]=T,T=T>>8,p[c+6]=T,T=T>>8,p[c+5]=T,T=T>>8,p[c+4]=T;let P=Number(l>>BigInt(32)&BigInt(4294967295));return p[c+3]=P,P=P>>8,p[c+2]=P,P=P>>8,p[c+1]=P,P=P>>8,p[c]=P,c+8}s.prototype.writeBigUInt64LE=Pt(function(l,c=0){return dl(this,l,c,BigInt(0),BigInt("0xffffffffffffffff"))}),s.prototype.writeBigUInt64BE=Pt(function(l,c=0){return pl(this,l,c,BigInt(0),BigInt("0xffffffffffffffff"))}),s.prototype.writeIntLE=function(l,c,y,A){if(l=+l,c=c>>>0,!A){let ae=Math.pow(2,8*y-1);Ce(this,l,c,y,ae-1,-ae)}let T=0,P=1,W=0;for(this[c]=l&255;++T<y&&(P*=256);)l<0&&W===0&&this[c+T-1]!==0&&(W=1),this[c+T]=(l/P>>0)-W&255;return c+y},s.prototype.writeIntBE=function(l,c,y,A){if(l=+l,c=c>>>0,!A){let ae=Math.pow(2,8*y-1);Ce(this,l,c,y,ae-1,-ae)}let T=y-1,P=1,W=0;for(this[c+T]=l&255;--T>=0&&(P*=256);)l<0&&W===0&&this[c+T+1]!==0&&(W=1),this[c+T]=(l/P>>0)-W&255;return c+y},s.prototype.writeInt8=function(l,c,y){return l=+l,c=c>>>0,y||Ce(this,l,c,1,127,-128),l<0&&(l=255+l+1),this[c]=l&255,c+1},s.prototype.writeInt16LE=function(l,c,y){return l=+l,c=c>>>0,y||Ce(this,l,c,2,32767,-32768),this[c]=l&255,this[c+1]=l>>>8,c+2},s.prototype.writeInt16BE=function(l,c,y){return l=+l,c=c>>>0,y||Ce(this,l,c,2,32767,-32768),this[c]=l>>>8,this[c+1]=l&255,c+2},s.prototype.writeInt32LE=function(l,c,y){return l=+l,c=c>>>0,y||Ce(this,l,c,4,2147483647,-2147483648),this[c]=l&255,this[c+1]=l>>>8,this[c+2]=l>>>16,this[c+3]=l>>>24,c+4},s.prototype.writeInt32BE=function(l,c,y){return l=+l,c=c>>>0,y||Ce(this,l,c,4,2147483647,-2147483648),l<0&&(l=4294967295+l+1),this[c]=l>>>24,this[c+1]=l>>>16,this[c+2]=l>>>8,this[c+3]=l&255,c+4},s.prototype.writeBigInt64LE=Pt(function(l,c=0){return dl(this,l,c,-BigInt("0x8000000000000000"),BigInt("0x7fffffffffffffff"))}),s.prototype.writeBigInt64BE=Pt(function(l,c=0){return pl(this,l,c,-BigInt("0x8000000000000000"),BigInt("0x7fffffffffffffff"))});function gl(p,l,c,y,A,T){if(c+y>p.length)throw new RangeError("Index out of range");if(c<0)throw new RangeError("Index out of range")}function bl(p,l,c,y,A){return l=+l,c=c>>>0,A||gl(p,l,c,4),e.write(p,l,c,y,23,4),c+4}s.prototype.writeFloatLE=function(l,c,y){return bl(this,l,c,!0,y)},s.prototype.writeFloatBE=function(l,c,y){return bl(this,l,c,!1,y)};function yl(p,l,c,y,A){return l=+l,c=c>>>0,A||gl(p,l,c,8),e.write(p,l,c,y,52,8),c+8}s.prototype.writeDoubleLE=function(l,c,y){return yl(this,l,c,!0,y)},s.prototype.writeDoubleBE=function(l,c,y){return yl(this,l,c,!1,y)},s.prototype.copy=function(l,c,y,A){if(!s.isBuffer(l))throw new TypeError("argument should be a Buffer");if(y||(y=0),!A&&A!==0&&(A=this.length),c>=l.length&&(c=l.length),c||(c=0),A>0&&A<y&&(A=y),A===y||l.length===0||this.length===0)return 0;if(c<0)throw new RangeError("targetStart out of bounds");if(y<0||y>=this.length)throw new RangeError("Index out of range");if(A<0)throw new RangeError("sourceEnd out of bounds");A>this.length&&(A=this.length),l.length-c<A-y&&(A=l.length-c+y);let T=A-y;return this===l&&typeof Uint8Array.prototype.copyWithin=="function"?this.copyWithin(c,y,A):Uint8Array.prototype.set.call(l,this.subarray(y,A),c),T},s.prototype.fill=function(l,c,y,A){if(typeof l=="string"){if(typeof c=="string"?(A=c,c=0,y=this.length):typeof y=="string"&&(A=y,y=this.length),A!==void 0&&typeof A!="string")throw new TypeError("encoding must be a string");if(typeof A=="string"&&!s.isEncoding(A))throw new TypeError("Unknown encoding: "+A);if(l.length===1){let P=l.charCodeAt(0);(A==="utf8"&&P<128||A==="latin1")&&(l=P)}}else typeof l=="number"?l=l&255:typeof l=="boolean"&&(l=Number(l));if(c<0||this.length<c||this.length<y)throw new RangeError("Out of range index");if(y<=c)return this;c=c>>>0,y=y===void 0?this.length:y>>>0,l||(l=0);let T;if(typeof l=="number")for(T=c;T<y;++T)this[T]=l;else{let P=s.isBuffer(l)?l:s.from(l,A),W=P.length;if(W===0)throw new TypeError('The value "'+l+'" is invalid for argument "value"');for(T=0;T<y-c;++T)this[T+c]=P[T%W]}return this};let Er={};function ls(p,l,c){Er[p]=class extends c{constructor(){super(),Object.defineProperty(this,"message",{value:l.apply(this,arguments),writable:!0,configurable:!0}),this.name=`${this.name} [${p}]`,this.stack,delete this.name}get code(){return p}set code(A){Object.defineProperty(this,"code",{configurable:!0,enumerable:!0,value:A,writable:!0})}toString(){return`${this.name} [${p}]: ${this.message}`}}}ls("ERR_BUFFER_OUT_OF_BOUNDS",function(p){return p?`${p} is outside of buffer bounds`:"Attempt to access memory outside buffer bounds"},RangeError),ls("ERR_INVALID_ARG_TYPE",function(p,l){return`The "${p}" argument must be of type number. Received type ${typeof l}`},TypeError),ls("ERR_OUT_OF_RANGE",function(p,l,c){let y=`The value of "${p}" is out of range.`,A=c;return Number.isInteger(c)&&Math.abs(c)>2**32?A=wl(String(c)):typeof c=="bigint"&&(A=String(c),(c>BigInt(2)**BigInt(32)||c<-(BigInt(2)**BigInt(32)))&&(A=wl(A)),A+="n"),y+=` It must be ${l}. Received ${A}`,y},RangeError);function wl(p){let l="",c=p.length,y=p[0]==="-"?1:0;for(;c>=y+4;c-=3)l=`_${p.slice(c-3,c)}${l}`;return`${p.slice(0,c)}${l}`}function xg(p,l,c){Sr(l,"offset"),(p[l]===void 0||p[l+c]===void 0)&&ni(l,p.length-(c+1))}function _l(p,l,c,y,A,T){if(p>c||p<l){let P=typeof l=="bigint"?"n":"",W;throw T>3?l===0||l===BigInt(0)?W=`>= 0${P} and < 2${P} ** ${(T+1)*8}${P}`:W=`>= -(2${P} ** ${(T+1)*8-1}${P}) and < 2 ** ${(T+1)*8-1}${P}`:W=`>= ${l}${P} and <= ${c}${P}`,new Er.ERR_OUT_OF_RANGE("value",W,p)}xg(y,A,T)}function Sr(p,l){if(typeof p!="number")throw new Er.ERR_INVALID_ARG_TYPE(l,"number",p)}function ni(p,l,c){throw Math.floor(p)!==p?(Sr(p,c),new Er.ERR_OUT_OF_RANGE(c||"offset","an integer",p)):l<0?new Er.ERR_BUFFER_OUT_OF_BOUNDS:new Er.ERR_OUT_OF_RANGE(c||"offset",`>= ${c?1:0} and <= ${l}`,p)}let Og=/[^+/0-9A-Za-z-_]/g;function Mg(p){if(p=p.split("=")[0],p=p.trim().replace(Og,""),p.length<2)return"";for(;p.length%4!==0;)p=p+"=";return p}function us(p,l){l=l||1/0;let c,y=p.length,A=null,T=[];for(let P=0;P<y;++P){if(c=p.charCodeAt(P),c>55295&&c<57344){if(!A){if(c>56319){(l-=3)>-1&&T.push(239,191,189);continue}else if(P+1===y){(l-=3)>-1&&T.push(239,191,189);continue}A=c;continue}if(c<56320){(l-=3)>-1&&T.push(239,191,189),A=c;continue}c=(A-55296<<10|c-56320)+65536}else A&&(l-=3)>-1&&T.push(239,191,189);if(A=null,c<128){if((l-=1)<0)break;T.push(c)}else if(c<2048){if((l-=2)<0)break;T.push(c>>6|192,c&63|128)}else if(c<65536){if((l-=3)<0)break;T.push(c>>12|224,c>>6&63|128,c&63|128)}else if(c<1114112){if((l-=4)<0)break;T.push(c>>18|240,c>>12&63|128,c>>6&63|128,c&63|128)}else throw new Error("Invalid code point")}return T}function Lg(p){let l=[];for(let c=0;c<p.length;++c)l.push(p.charCodeAt(c)&255);return l}function qg(p,l){let c,y,A,T=[];for(let P=0;P<p.length&&!((l-=2)<0);++P)c=p.charCodeAt(P),y=c>>8,A=c%256,T.push(A),T.push(y);return T}function ml(p){return t.toByteArray(Mg(p))}function qi(p,l,c,y){let A;for(A=0;A<y&&!(A+c>=l.length||A>=p.length);++A)l[A+c]=p[A];return A}function Ge(p,l){return p instanceof l||p!=null&&p.constructor!=null&&p.constructor.name!=null&&p.constructor.name===l.name}function cs(p){return p!==p}let Ug=function(){let p="0123456789abcdef",l=new Array(256);for(let c=0;c<16;++c){let y=c*16;for(let A=0;A<16;++A)l[y+A]=p[c]+p[A]}return l}();function Pt(p){return typeof BigInt>"u"?Ng:p}function Ng(){throw new Error("BigInt not supported")}return Qt}var si,Uu,ji,Nu,Qt,Du,Bt,x,Kg,Gg,he=Ae(()=>{_();v();m();si={},Uu=!1;ji={},Nu=!1;Qt={},Du=!1;Bt=zg();Bt.Buffer;Bt.SlowBuffer;Bt.INSPECT_MAX_BYTES;Bt.kMaxLength;x=Bt.Buffer,Kg=Bt.INSPECT_MAX_BYTES,Gg=Bt.kMaxLength});var v=Ae(()=>{he()});var ju=O(bs=>{"use strict";_();v();m();Object.defineProperty(bs,"__esModule",{value:!0});var gs=class{constructor(e){this.aliasToTopic={},this.max=e}put(e,r){return r===0||r>this.max?!1:(this.aliasToTopic[r]=e,this.length=Object.keys(this.aliasToTopic).length,!0)}getTopicByAlias(e){return this.aliasToTopic[e]}clear(){this.aliasToTopic={}}};bs.default=gs});var ie=O((kA,Fu)=>{"use strict";_();v();m();var ys=class extends Error{constructor(e){if(!Array.isArray(e))throw new TypeError(`Expected input to be an Array, got ${typeof e}`);let r="";for(let i=0;i<e.length;i++)r+=`    ${e[i].stack}
@@ -35,7 +40,6 @@ safe-buffer/index.js:
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Backgammon">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700&display=swap">
 <style>
 /* Plan : plein écran vertical — bandeau adversaire / plateau SVG qui prend toute la place / bandeau joueur + actions.
    Le plateau est un objet unique (bleu profond, cadre et barre en nacre) qui ne change pas de thème ; seul l'habillage autour suit le thème. */
@@ -183,8 +187,8 @@ input.code { -webkit-user-select: text; user-select: text; font-size: 22px; widt
 
 <div id="app">
   <aside class="side left">
-    <div class="who" id="whoB"><div class="pawn b"></div><div class="wtxt"><div class="name" id="nameB">Marbre</div><div class="lvl" id="lvlB"></div><div class="sub" id="subB"></div></div></div>
-    <div class="who active" id="whoW"><div class="pawn w"></div><div class="wtxt"><div class="name" id="nameW">Nacre</div><div class="lvl" id="lvlW"></div><div class="sub" id="subW"></div></div></div>
+    <div class="who" id="whoB"><div class="pawn b"></div><div class="wtxt"><div class="name" id="nameB">Ébène</div><div class="lvl" id="lvlB"></div><div class="sub" id="subB"></div></div></div>
+    <div class="who active" id="whoW"><div class="pawn w"></div><div class="wtxt"><div class="name" id="nameW">Ivoire</div><div class="lvl" id="lvlW"></div><div class="sub" id="subW"></div></div></div>
   </aside>
   <div id="boardwrap"><svg id="boardBg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"></svg><svg id="board" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Plateau de backgammon"></svg></div>
   <aside class="side right">
@@ -228,7 +232,7 @@ input.code { -webkit-user-select: text; user-select: text; font-size: 22px; widt
         <button class="level" data-level="3">Expert<small>Anticipe vos réponses</small></button>
       </div>
     </div>
-    <div class="cta"><button class="btn primary" id="startBtn">Jouer</button></div>
+    <div class="cta"><button class="btn primary" id="startBtn">Jouer</button><button class="btn primary" id="resumeLocal" hidden>Reprendre la partie</button></div>
   </div>
 </div>
 
@@ -237,7 +241,7 @@ input.code { -webkit-user-select: text; user-select: text; font-size: 22px; widt
     <div class="lead" id="endLead">Partie terminée</div>
     <div class="big" id="endTitle"></div>
     <div class="pts" id="endPts"></div>
-    <div class="tally"><div><div class="n" id="tW">0</div><div class="l">Nacre</div></div><div><div class="n" id="tB">0</div><div class="l">Marbre</div></div></div>
+    <div class="tally"><div><div class="n" id="tW">0</div><div class="l">Ivoire</div></div><div><div class="n" id="tB">0</div><div class="l">Ébène</div></div></div>
     <div class="cta"><button class="btn ghost" id="endMenu">Menu</button><button class="btn primary" id="endAgain">Rejouer</button></div>
   </div>
 </div>
@@ -887,7 +891,8 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
   buildDefs(); applyThemeUI(); buildStatic();
 
   /* ===== État de la partie ===== */
-  const G = { mode: 'ai', level: 2, state: null, player: 1, phase: 'idle', dice: null, rem: [], required: 0, steps: [], selected: null, history: [], scores: loadScores(), busy: false, lastDicePlayer: 1, tilt: [0, 0, 0, 0], lift: null, drag: null, online: null, turnSteps: [], gen: 0 };
+  // pending : dés déjà tirés dont l'animation n'est pas finie (sauvegardés pour qu'une réouverture ne les relance pas)
+  const G = { mode: 'ai', level: 2, state: null, player: 1, phase: 'idle', dice: null, pending: null, rem: [], required: 0, steps: [], selected: null, history: [], scores: loadScores(), busy: false, lastDicePlayer: 1, tilt: [0, 0, 0, 0], lift: null, drag: null, online: null, turnSteps: [], gen: 0 };
   let RULE5 = true; // règle maison toujours active (le réglage a été retiré du menu)
   // règle maison : celui qui gagne le lancer d'ouverture peut relancer ses deux dés une fois
   let RULE_REROLL = true; // règle maison toujours active (le réglage a été retiré du menu)
@@ -1036,7 +1041,7 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
     $('rerollBtn').hidden = !(G.phase === 'choice' && isHuman(G.player) && !G.busy && !G.rolling);
     let title = '', hint = '', label = '';
     const you = G.mode === '2p' ? nameOf(G.player) : 'vous';
-    const opp = G.mode === 'online' ? nameOf(-(G.online ? G.online.color : 1)) : 'Marbre';
+    const opp = G.mode === 'online' ? nameOf(-(G.online ? G.online.color : 1)) : sideName(-1);
     switch (G.phase) {
       case 'waiting': title = 'En attente de votre ami'; hint = `Code de la partie : ${G.online ? G.online.code : ''}`; break;
       case 'opening': title = 'Qui commence ?'; hint = 'Chacun lance un dé, le plus fort joue les deux.'; break;
@@ -1305,6 +1310,7 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
   // joue une suite de coups ; animated = fait glisser le pion (toucher), sinon dépôt direct (glisser)
   function playSteps(steps, animated) {
     G.selected = null;
+    const gen = G.gen;
     let i = 0;
     const applyOne = st => {
       G.history.push({ state: G.state, rem: G.rem.slice(), required: G.required });
@@ -1321,10 +1327,11 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
     };
     if (!animated) { for (const st of steps) applyOne(st); return finish(); }
     const next = () => {
+      if (G.gen !== gen) return;
       if (i >= steps.length) return finish();
       const st = steps[i++];
       G.busy = true;
-      slide(st, G.player, () => { applyOne(st); render(); next(); });
+      slide(st, G.player, () => { if (G.gen !== gen) return; applyOne(st); render(); next(); });
     };
     next();
   }
@@ -1336,25 +1343,27 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
     G.steps = allowedSteps(G.state, G.player, G.rem, G.required);
     if (G.history.length === 0) { const t = startTurn(G.state, G.player, G.dice); G.steps = t.steps; }
     if (G.state.bar[kOf(G.player)] > 0) G.selected = BAR;
-    render();
+    render(); snapshot();
   }
   function beginTurnWithDice(dice) {
-    G.dice = dice; G.history = []; G.selected = null; G.turnSteps = [];
+    const gen = G.gen;
+    G.dice = dice; G.pending = null; G.history = []; G.selected = null; G.turnSteps = [];
     const t = startTurn(G.state, G.player, dice);
     G.rem = t.rem; G.required = t.required; G.steps = t.steps;
-    if (G.required === 0) { G.phase = 'nomove'; render(); setTimeout(endTurn, 1600); return; }
+    if (G.required === 0) { G.phase = 'nomove'; render(); snapshot(); setTimeout(() => { if (G.gen === gen && G.phase === 'nomove') endTurn(); }, 1600); return; }
     G.phase = 'move';
     if (isHuman(G.player)) { if (G.state.bar[kOf(G.player)] > 0) G.selected = BAR; render(); snapshot(); }
-    else { render(); if (G.mode === 'ai') setTimeout(aiPlay, 450); }
+    else { render(); snapshot(); if (G.mode === 'ai') setTimeout(() => { if (G.gen === gen) aiPlay(); }, 450); }
   }
   function rollFor(p) {
+    const gen = G.gen;
     G.player = p; G.phase = 'roll'; G.rem = []; G.lastDicePlayer = p;
-    const dice = [rnd(), rnd()]; G.dice = dice;
+    const dice = [rnd(), rnd()]; G.dice = dice; G.pending = dice;
     if (G.mode === 'online' && isMe(p)) { const t = startTurn(G.state, p, dice); netWrite({ dice, rem: t.rem, required: t.required, phase: t.required ? 'move' : 'nomove', player: p, lastDicePlayer: p }, { type: 'roll', dice, player: p }); }
     const cx = diceX(p);
     const list = diceList(dice); const n = list.length, span = n === 4 ? 56 : 64;
-    G.rolling = true; render();
-    rollDice(list.map((v, i) => ({ cx: cx + (i - (n - 1) / 2) * span, cy: H / 2, v, p })), () => beginTurnWithDice(dice));
+    G.rolling = true; render(); snapshot();
+    rollDice(list.map((v, i) => ({ cx: cx + (i - (n - 1) / 2) * span, cy: H / 2, v, p })), () => { if (G.gen === gen) beginTurnWithDice(dice); });
   }
   // lance les dés tout seul au début d'un tour (pour soi, ou pour l'ordinateur)
   function scheduleAutoRoll(ms) {
@@ -1378,15 +1387,20 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
     if (G.mode !== 'online') scheduleAutoRoll(650);
   }
   function aiPlay() {
+    const gen = G.gen;
+    if (G.phase !== 'move' || isHuman(G.player)) return;
     G.busy = true; render();
     setTimeout(() => {
+      if (G.gen !== gen) return;
       const mv = chooseMove(G.state, G.player, G.dice, G.level);
       const steps = mv ? mv.steps : [];
       let i = 0;
       const next = () => {
-        if (i >= steps.length) { G.busy = false; render(); if (winner(G.state)) return gameOver(); return setTimeout(endTurn, 650); }
+        if (G.gen !== gen) return;
+        if (i >= steps.length) { G.busy = false; render(); if (winner(G.state)) return gameOver(); return setTimeout(() => { if (G.gen === gen) endTurn(); }, 650); }
         const st = steps[i++];
         slide(st, G.player, () => {
+          if (G.gen !== gen) return;
           G.state = applyStep(G.state, G.player, st); G.rem.splice(G.rem.indexOf(st.die), 1); render();
           if (winner(G.state)) { G.busy = false; return gameOver(); }
           setTimeout(next, 180);
@@ -1397,12 +1411,15 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
   }
   // animation du lancer d'ouverture : les deux dés, le verdict, puis les dés rejoignent le côté du gagnant
   function animateOpening(w, b, done) {
+    const gen = G.gen; // partie abandonnée entre-temps : on saute la suite de l'animation (l'appelant vérifie aussi)
     G.phase = 'opening-roll'; G.msg = 'On lance…'; G.hint = ''; G.dice = [w, b]; G.rolling = true; render();
     rollDice([{ cx: diceX(1), cy: H / 2, v: w, p: 1 }, { cx: diceX(-1), cy: H / 2, v: b, p: -1 }], () => {
+      if (G.gen !== gen) return done(w === b, w > b ? 1 : -1);
       if (w === b) { G.msg = `Égalité ${w} à ${b}`; G.hint = 'On relance.'; renderUI(); setTimeout(() => done(true), 1200); return; }
       const p = w > b ? 1 : -1;
       G.msg = `${nameOf(p)} commence`; G.hint = `avec ${Math.max(w, b)} et ${Math.min(w, b)}`; renderUI();
       setTimeout(() => {
+        if (G.gen !== gen) return done(false, p);
         G.lastDicePlayer = p;
         const cx = diceX(p);
         const from = [{ x: diceX(1), y: H / 2 }, { x: diceX(-1), y: H / 2 }];
@@ -1428,7 +1445,8 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
       animateOpening(w, b, (tie) => { if (tie) { setTimeout(openingRoll, 300); return; } hardSync(G.online.doc); });
       return;
     }
-    animateOpening(w, b, (tie, p) => { if (tie) { openingRoll(); return; } afterOpening(p, p === 1 ? [w, b] : [b, w]); });
+    const gen = G.gen;
+    animateOpening(w, b, (tie, p) => { if (G.gen !== gen) return; if (tie) { openingRoll(); return; } afterOpening(p, p === 1 ? [w, b] : [b, w]); });
   }
   function afterOpening(p, d) {
     G.player = p; G.lastDicePlayer = p;
@@ -1466,7 +1484,7 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
     }
     if (G.mode === 'online') G.mode = 'ai';
     setMaxStack(RULE5 ? 5 : 0);
-    G.state = initState(); G.player = 1; G.phase = 'opening'; G.dice = null; G.rem = []; G.required = 0; G.steps = []; G.selected = null; G.history = []; G.busy = false; G.drag = null; G.lift = null; G.turnSteps = [];
+    G.state = initState(); G.player = 1; G.phase = 'opening'; G.dice = null; G.pending = null; G.rem = []; G.required = 0; G.steps = []; G.selected = null; G.history = []; G.busy = false; G.drag = null; G.lift = null; G.turnSteps = [];
     const gen = ++G.gen;
     $('home').hidden = true; $('endOv').hidden = true; $('pauseOv').hidden = true;
     updateOrientation(); render(); snapshot();
@@ -1489,6 +1507,7 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
     $('endTitle').textContent = personal ? (youWin ? 'Bien joué' : `${nameOf(w)} l\'emporte`) : `${nameOf(w)} gagne`;
     $('endPts').textContent = `${pts} point${pts > 1 ? 's' : ''} · ${label}`;
     $('tW').textContent = G.scores.w; $('tB').textContent = G.scores.b;
+    const tl = document.querySelectorAll('#endOv .tally .l'); if (tl.length === 2) { tl[0].textContent = nameOf(1); tl[1].textContent = nameOf(-1); }
     render(); setTimeout(() => { $('endOv').hidden = false; }, 900); snapshot();
   }
 
@@ -1641,6 +1660,11 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
     $('levelBox').hidden = G.mode !== 'ai';
     $('onlineBox').hidden = G.mode !== 'online';
     $('startBtn').parentElement.hidden = G.mode === 'online';
+    // une partie locale gardée en mémoire (contre l'ordinateur ou à deux) : on propose de la reprendre
+    const sv = G.mode !== 'online' ? loadLocal() : null, canResume = !!sv && sv.mode === G.mode;
+    $('resumeLocal').hidden = !canResume;
+    $('startBtn').textContent = canResume ? 'Nouvelle partie' : 'Jouer';
+    $('startBtn').classList.toggle('primary', !canResume); $('startBtn').classList.toggle('ghost', canResume);
     const last = loadOnline();
     $('resumeBtn2').hidden = !(G.mode === 'online' && last && last.code);
     if (last && last.code) $('resumeBtn2').textContent = `Reprendre la partie ${last.code}`;
@@ -1650,9 +1674,14 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
       if (!IN_CLAUDE) rules.textContent = 'Créez la partie, puis envoyez le lien de cette page et le code à votre ami : il n\'a besoin d\'aucun compte. Le créateur joue les pions clairs.';
       else if (PUBLIC_URL) { rules.textContent = 'Pour jouer avec un ami qui n\'a que le lien, utilisez la version publique du jeu : '; const a = document.createElement('a'); a.href = PUBLIC_URL; a.target = '_blank'; a.rel = 'noopener'; a.textContent = PUBLIC_URL.replace(/^https?:\/\//, ''); rules.appendChild(a); }
     }
-    if (G.mode === 'online') checkOnlineAccess();
+    if (G.mode === 'online') { if (isOffline()) onlineMsg(OFFLINE_MSG, true); else checkOnlineAccess(); }
   }
   function onlineMsg(t, isErr) { const m = $('onlineMsg'); m.textContent = t; m.classList.toggle('err', !!isErr); }
+  // sans réseau, tout marche sauf le jeu en ligne : on le dit tout de suite au lieu d'attendre les serveurs
+  const OFFLINE_MSG = 'Pas de connexion internet. Le jeu en ligne revient dès que le réseau est là.';
+  const isOffline = () => navigator.onLine === false;
+  window.addEventListener('offline', () => { if (G.mode === 'online' && !$('home').hidden) onlineMsg(OFFLINE_MSG, true); });
+  window.addEventListener('online', () => { if ($('onlineMsg').textContent === OFFLINE_MSG) onlineMsg(''); if (G.mode === 'online' && !$('home').hidden) checkOnlineAccess(); });
   function describeNetError(e) {
     const code = e && e.code;
     if (code === 'invalid_argument') return 'Ce compte peut voir la page mais pas jouer en ligne. Le créateur doit couper le lien public dans le menu Partager et inviter ce compte par e-mail en tant qu\'Éditeur, puis la page doit être rouverte.';
@@ -1665,6 +1694,7 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
     return { v: 1, code, seq: 1, status: 'waiting', host: NET.myId, guest: null, createdAt: Date.now(), state: initState(), player: 1, phase: 'opening', dice: null, rem: [], required: 0, lastDicePlayer: 1, scores: { w: 0, b: 0 }, winner: 0, pts: 0, max5: RULE5, reroll: RULE_REROLL, names: { '1': myName() }, event: { type: 'create', by: NET.myId, at: Date.now() } };
   }
   async function onlineCreate() {
+    if (isOffline()) { onlineMsg(OFFLINE_MSG, true); return; }
     onlineMsg('Création de la partie…');
     await netInit();
     if (!NET.db) { onlineMsg(NET.kind === 'relay' ? 'Le jeu en ligne n\'a pas pu démarrer sur cet appareil.' : 'Le jeu en ligne demande d\'être connecté à Claude dans cette page.', true); return; }
@@ -1679,9 +1709,10 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
   async function onlineJoin(codeIn, silent) {
     const code = String(codeIn || '').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4);
     if (code.length < 4) { onlineMsg('Entrez le code à 4 lettres.', true); return; }
+    if (isOffline()) { if (silent) { $('home').hidden = false; G.mode = 'online'; syncHomeChoice(); refreshHome(); } onlineMsg(OFFLINE_MSG, true); return; }
     onlineMsg('Connexion à la partie ' + code + '…');
     await netInit();
-    if (!NET.db) { onlineMsg('Le jeu en ligne demande d\'être connecté à Claude dans cette page.', true); if (silent) { $('home').hidden = false; G.mode = 'online'; refreshHome(); onlineMsg('Impossible de reprendre la partie ' + code + ' ici.', true); } return; }
+    if (!NET.db) { onlineMsg('Le jeu en ligne demande d\'être connecté à Claude dans cette page.', true); if (silent) { $('home').hidden = false; G.mode = 'online'; syncHomeChoice(); refreshHome(); onlineMsg('Impossible de reprendre la partie ' + code + ' ici.', true); } return; }
     try {
       const ref = NET.db.doc('games/' + code);
       const snap = await ref.get();
@@ -1689,7 +1720,7 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
       // version publique : si le serveur a perdu la partie ou en a une version plus ancienne, on republie notre copie locale
       const loc = NET.kind === 'relay' ? loadDocLocal(code) : null;
       if (loc && (loc.host === NET.myId || loc.guest === NET.myId) && docCmp(loc, d) > 0) { await ref.set(loc); d = loc; }
-      if (!d) { onlineMsg(`Aucune partie avec le code ${code}.`, true); if (silent) { saveOnline(null); $('home').hidden = false; G.mode = 'online'; refreshHome(); } return; }
+      if (!d) { if (silent) { saveOnline(null); $('home').hidden = false; G.mode = 'online'; syncHomeChoice(); refreshHome(); } onlineMsg(`Aucune partie avec le code ${code}.`, true); return; }
       if (d.host === NET.myId) return enterOnline(code, 1, d, ref);
       if (d.guest === NET.myId) return enterOnline(code, -1, d, ref);
       if (d.guest) { onlineMsg('Cette partie a déjà deux joueurs.', true); return; }
@@ -1707,7 +1738,7 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
     G.mode = 'online';
     G.online = { code, color, ref, doc, appliedDoc: doc, queue: [], pumping: false, names: {}, oppOnline: null, unsub: null, roomRef: null, unsubPeers: null, openingTimer: null };
     flip = color === -1; buildStatic();
-    saveOnline({ code, color });
+    saveOnline({ code, color, at: Date.now() });
     $('home').hidden = true; $('endOv').hidden = true; $('pauseOv').hidden = true;
     $('lobbyCode').textContent = code;
     updateOrientation();
@@ -1896,32 +1927,91 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
   $('rerollBtn').addEventListener('click', rerollOpening);
   $('menuBtn').addEventListener('click', () => { if (G.phase === 'idle' || G.phase === 'over') { $('home').hidden = false; return; } $('pauseOv').hidden = false; });
   $('resumeBtn').addEventListener('click', () => { $('pauseOv').hidden = true; });
-  const toMenu = () => { G.gen++; $('pauseOv').hidden = true; $('endOv').hidden = true; $('lobbyOv').hidden = true; leaveOnline(); G.phase = 'idle'; G.state = initState(); G.dice = null; G.busy = false; G.drag = null; G.lift = null; render(); $('home').hidden = false; updateOrientation(); refreshHome(); };
+  // revenir au menu en abandonnant : la partie locale abandonnée n'est plus proposée à la reprise
+  // après une partie en ligne, le menu reste sur l'onglet En ligne (bouton « Reprendre la partie CODE »)
+  const toMenu = () => { const local = G.mode !== 'online'; G.gen++; $('pauseOv').hidden = true; $('endOv').hidden = true; $('lobbyOv').hidden = true; leaveOnline(); if (local) clearLocal(); else G.mode = 'online'; G.phase = 'idle'; G.state = initState(); G.dice = null; G.pending = null; G.busy = false; G.drag = null; G.lift = null; render(); $('home').hidden = false; updateOrientation(); syncHomeChoice(); refreshHome(); };
   $('abandonBtn').addEventListener('click', toMenu);
   $('endAgain').addEventListener('click', newGame);
   $('endMenu').addEventListener('click', toMenu);
   document.querySelectorAll('.mode').forEach(b => b.addEventListener('click', () => { document.querySelectorAll('.mode').forEach(x => x.classList.remove('on')); b.classList.add('on'); G.mode = b.dataset.mode; refreshHome(); }));
   document.querySelectorAll('.level').forEach(b => b.addEventListener('click', () => { document.querySelectorAll('.level').forEach(x => x.classList.remove('on')); b.classList.add('on'); G.level = +b.dataset.level; }));
   $('startBtn').addEventListener('click', () => { if (G.mode === 'online') return; newGame(); });
+  $('resumeLocal').addEventListener('click', () => { const sv = loadLocal(); if (sv) restoreLocal(sv); else refreshHome(); });
+  function syncHomeChoice() {
+    document.querySelectorAll('.mode').forEach(x => x.classList.toggle('on', x.dataset.mode === G.mode));
+    document.querySelectorAll('.level').forEach(x => x.classList.toggle('on', +x.dataset.level === G.level));
+  }
   window.addEventListener('resize', updateOrientation);
   window.addEventListener('orientationchange', () => setTimeout(updateOrientation, 80));
 
-  /* ===== Reprise à chaud ===== */
-  function snapshot() { try { window.claude?.hot?.snapshot?.(() => ({ mode: G.mode, level: G.level, state: G.state, player: G.player, phase: G.phase, dice: G.dice, rem: G.rem, required: G.required, lastDicePlayer: G.lastDicePlayer, scores: G.scores, max5: RULE5, online: G.online ? { code: G.online.code } : null })); } catch (e) { } }
+  /* ===== Partie locale gardée en mémoire : fermer l'appli ne la perd pas =====
+     Sauvegarde à chaque étape stable (dés tirés, pion joué, annulation, fin de tour) ; l'ordinateur est sauvegardé au début
+     de son tour et le rejoue en entier à la reprise. Partie terminée ou abandonnée : la sauvegarde est effacée. */
+  const SAVE_KEY = 'nacre.partie';
+  let lastSaveJson = null;
+  const SAVE_PHASES = ['opening', 'choice', 'roll', 'move', 'nomove'];
+  function saveLocal() {
+    if (G.mode === 'online') return;
+    if (!G.state || !SAVE_PHASES.includes(G.phase === 'opening-roll' ? 'opening' : G.phase)) { if (G.phase === 'idle' || G.phase === 'over') clearLocal(); return; }
+    const phase = G.phase === 'opening-roll' ? 'opening' : G.phase;
+    lastSaveJson = JSON.stringify({ v: 1, at: Date.now(), mode: G.mode, level: G.level, max5: RULE5, phase, state: G.state, player: G.player, dice: G.dice, pending: G.pending, rem: G.rem, required: G.required, lastDicePlayer: G.lastDicePlayer, history: G.history, turnSteps: G.turnSteps, tilt: G.tilt });
+    try { localStorage.setItem(SAVE_KEY, lastSaveJson); } catch (e) { }
+  }
+  function clearLocal() { lastSaveJson = null; try { localStorage.removeItem(SAVE_KEY); } catch (e) { } }
+  const okState = s => !!s && Array.isArray(s.pts) && s.pts.length === 24 && Array.isArray(s.bar) && Array.isArray(s.off);
+  const validSave = d => !!d && d.v === 1 && (d.mode === 'ai' || d.mode === '2p') && okState(d.state) && (d.player === 1 || d.player === -1) && SAVE_PHASES.includes(d.phase);
+  function loadLocal() { try { const d = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); if (validSave(d)) return d; } catch (e) { } return null; }
+  function restoreLocal(d) {
+    leaveOnline();
+    G.mode = d.mode; G.level = [1, 2, 3].includes(d.level) ? d.level : 2; syncHomeChoice();
+    setMaxStack(d.max5 === false ? 0 : 5);
+    Object.assign(G, { state: cloneState(d.state), player: d.player, dice: Array.isArray(d.dice) ? d.dice : null, pending: null, rem: Array.isArray(d.rem) ? d.rem.slice() : [], required: d.required || 0, lastDicePlayer: d.lastDicePlayer || d.player, history: Array.isArray(d.history) ? d.history.filter(h => h && okState(h.state)) : [], turnSteps: Array.isArray(d.turnSteps) ? d.turnSteps : [], selected: null, steps: [], busy: false, rolling: false, drag: null, lift: null });
+    if (Array.isArray(d.tilt)) G.tilt = d.tilt.slice();
+    const gen = ++G.gen, later = (ms, fn) => setTimeout(() => { if (G.gen === gen) fn(); }, ms);
+    $('home').hidden = true; $('endOv').hidden = true; $('pauseOv').hidden = true; $('lobbyOv').hidden = true;
+    updateOrientation();
+    switch (d.phase) {
+      case 'opening': G.phase = 'opening'; G.dice = null; render(); snapshot(); later(800, () => { if (G.phase === 'opening' && !G.rolling) openingRoll(); }); break;
+      case 'choice': if (G.dice) afterOpening(G.player, G.dice); else { G.phase = 'opening'; G.dice = null; render(); later(800, openingRoll); } break;
+      case 'roll': // dés déjà tirés au moment de la fermeture : ce sont les mêmes
+        if (Array.isArray(d.pending)) { G.lastDicePlayer = G.player; beginTurnWithDice(d.pending); }
+        else { G.phase = 'roll'; render(); snapshot(); scheduleAutoRoll(700); }
+        break;
+      case 'nomove': G.phase = 'nomove'; render(); snapshot(); later(1600, () => { if (G.phase === 'nomove') endTurn(); }); break;
+      case 'move':
+        G.phase = 'move';
+        if (isHuman(G.player)) {
+          // aucun pion encore joué : on refait le début de tour (règle du plus gros dé), comme undo()
+          if (G.history.length === 0 && G.dice) { const t = startTurn(G.state, G.player, G.dice); G.rem = t.rem; G.required = t.required; G.steps = t.steps; G.turnSteps = []; }
+          else G.steps = allowedSteps(G.state, G.player, G.rem, G.required);
+          if (G.steps.length === 0) G.required = 0;
+          if (G.state.bar[kOf(G.player)] > 0 && G.required > 0) G.selected = BAR;
+          render(); snapshot();
+        } else { render(); snapshot(); later(700, aiPlay); }
+        break;
+    }
+  }
+
+  /* ===== Reprise à chaud (Claude) et au démarrage ===== */
+  function snapshot() {
+    saveLocal();
+    try { window.claude?.hot?.snapshot?.(() => G.mode === 'online' ? { online: G.online ? { code: G.online.code } : null } : (lastSaveJson ? JSON.parse(lastSaveJson) : {})); } catch (e) { }
+  }
   function start(data) {
     updateOrientation(); refreshHome();
     const hashCode = !IN_CLAUDE && /^#[A-Za-z]{4}$/.test(location.hash) ? location.hash.slice(1).toUpperCase() : '';
-    if (hashCode && !(data && data.online)) {
-      const last = loadOnline();
+    const last = loadOnline();
+    if (hashCode && !(data && data.online)) { // lien d'invitation : on ouvre le jeu en ligne
+      G.mode = 'online'; syncHomeChoice(); refreshHome();
       if (!(last && last.code === hashCode)) {
-        G.mode = 'online'; document.querySelectorAll('.mode').forEach(x => x.classList.toggle('on', x.dataset.mode === 'online'));
-        refreshHome(); $('joinCode').value = hashCode;
-        onlineMsg(`Invitation reçue : partie ${hashCode}. Entrez votre prénom puis touchez Rejoindre.`);
-        netInit();
+        $('joinCode').value = hashCode;
+        if (isOffline()) onlineMsg(OFFLINE_MSG, true);
+        else { onlineMsg(`Invitation reçue : partie ${hashCode}. Entrez votre prénom puis touchez Rejoindre.`); netInit(); }
       }
     }
     if (data && data.online && data.online.code) { G.state = initState(); render(); onlineJoin(data.online.code, true); return; }
-    if (data && data.state && data.phase && data.phase !== 'idle' && data.mode !== 'online') {
+    if (validSave(data)) { restoreLocal(data); return; }
+    if (data && !data.v && data.state && data.phase && data.phase !== 'idle' && data.mode !== 'online') {
       Object.assign(G, { mode: data.mode, level: data.level, state: data.state, player: data.player, dice: data.dice, rem: data.rem || [], required: data.required || 0, lastDicePlayer: data.lastDicePlayer || 1 });
       if (data.scores) G.scores = data.scores;
       setMaxStack(data.max5 == null ? (RULE5 ? 5 : 0) : (data.max5 ? 5 : 0));
@@ -1932,7 +2022,14 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
       if (G.phase === 'roll') scheduleAutoRoll(600);
       if (G.phase === 'opening') setTimeout(() => { if (G.phase === 'opening' && !G.rolling) openingRoll(); }, 800);
       if (G.phase === 'choice' && G.dice) afterOpening(G.player, G.dice);
-    } else { G.state = initState(); render(); }
+    } else {
+      G.state = initState(); render();
+      if (hashCode) return; // invitation : la partie locale reste proposée dans son onglet
+      // on revient directement dans la partie locale, sauf si une partie en ligne a été jouée depuis
+      const sv = loadLocal(), onlineAt = last && last.code ? (last.at || 0) : 0;
+      if (sv && onlineAt <= (sv.at || 0)) { restoreLocal(sv); return; }
+      if (sv) { G.mode = 'online'; syncHomeChoice(); refreshHome(); }
+    }
   }
   window.__nacre = { G, topPos, nextPos, beginTurnWithDice, afterOpening, NET, onlineCreate, onlineJoin };
   const boot = () => { window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {}); };

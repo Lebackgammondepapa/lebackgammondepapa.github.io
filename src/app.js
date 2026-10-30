@@ -307,7 +307,8 @@
   buildDefs(); applyThemeUI(); buildStatic();
 
   /* ===== État de la partie ===== */
-  const G = { mode: 'ai', level: 2, state: null, player: 1, phase: 'idle', dice: null, rem: [], required: 0, steps: [], selected: null, history: [], scores: loadScores(), busy: false, lastDicePlayer: 1, tilt: [0, 0, 0, 0], lift: null, drag: null, online: null, turnSteps: [], gen: 0 };
+  // pending : dés déjà tirés dont l'animation n'est pas finie (sauvegardés pour qu'une réouverture ne les relance pas)
+  const G = { mode: 'ai', level: 2, state: null, player: 1, phase: 'idle', dice: null, pending: null, rem: [], required: 0, steps: [], selected: null, history: [], scores: loadScores(), busy: false, lastDicePlayer: 1, tilt: [0, 0, 0, 0], lift: null, drag: null, online: null, turnSteps: [], gen: 0 };
   let RULE5 = true; // règle maison toujours active (le réglage a été retiré du menu)
   // règle maison : celui qui gagne le lancer d'ouverture peut relancer ses deux dés une fois
   let RULE_REROLL = true; // règle maison toujours active (le réglage a été retiré du menu)
@@ -456,7 +457,7 @@
     $('rerollBtn').hidden = !(G.phase === 'choice' && isHuman(G.player) && !G.busy && !G.rolling);
     let title = '', hint = '', label = '';
     const you = G.mode === '2p' ? nameOf(G.player) : 'vous';
-    const opp = G.mode === 'online' ? nameOf(-(G.online ? G.online.color : 1)) : 'Marbre';
+    const opp = G.mode === 'online' ? nameOf(-(G.online ? G.online.color : 1)) : sideName(-1);
     switch (G.phase) {
       case 'waiting': title = 'En attente de votre ami'; hint = `Code de la partie : ${G.online ? G.online.code : ''}`; break;
       case 'opening': title = 'Qui commence ?'; hint = 'Chacun lance un dé, le plus fort joue les deux.'; break;
@@ -725,6 +726,7 @@
   // joue une suite de coups ; animated = fait glisser le pion (toucher), sinon dépôt direct (glisser)
   function playSteps(steps, animated) {
     G.selected = null;
+    const gen = G.gen;
     let i = 0;
     const applyOne = st => {
       G.history.push({ state: G.state, rem: G.rem.slice(), required: G.required });
@@ -741,10 +743,11 @@
     };
     if (!animated) { for (const st of steps) applyOne(st); return finish(); }
     const next = () => {
+      if (G.gen !== gen) return;
       if (i >= steps.length) return finish();
       const st = steps[i++];
       G.busy = true;
-      slide(st, G.player, () => { applyOne(st); render(); next(); });
+      slide(st, G.player, () => { if (G.gen !== gen) return; applyOne(st); render(); next(); });
     };
     next();
   }
@@ -756,25 +759,27 @@
     G.steps = allowedSteps(G.state, G.player, G.rem, G.required);
     if (G.history.length === 0) { const t = startTurn(G.state, G.player, G.dice); G.steps = t.steps; }
     if (G.state.bar[kOf(G.player)] > 0) G.selected = BAR;
-    render();
+    render(); snapshot();
   }
   function beginTurnWithDice(dice) {
-    G.dice = dice; G.history = []; G.selected = null; G.turnSteps = [];
+    const gen = G.gen;
+    G.dice = dice; G.pending = null; G.history = []; G.selected = null; G.turnSteps = [];
     const t = startTurn(G.state, G.player, dice);
     G.rem = t.rem; G.required = t.required; G.steps = t.steps;
-    if (G.required === 0) { G.phase = 'nomove'; render(); setTimeout(endTurn, 1600); return; }
+    if (G.required === 0) { G.phase = 'nomove'; render(); snapshot(); setTimeout(() => { if (G.gen === gen && G.phase === 'nomove') endTurn(); }, 1600); return; }
     G.phase = 'move';
     if (isHuman(G.player)) { if (G.state.bar[kOf(G.player)] > 0) G.selected = BAR; render(); snapshot(); }
-    else { render(); if (G.mode === 'ai') setTimeout(aiPlay, 450); }
+    else { render(); snapshot(); if (G.mode === 'ai') setTimeout(() => { if (G.gen === gen) aiPlay(); }, 450); }
   }
   function rollFor(p) {
+    const gen = G.gen;
     G.player = p; G.phase = 'roll'; G.rem = []; G.lastDicePlayer = p;
-    const dice = [rnd(), rnd()]; G.dice = dice;
+    const dice = [rnd(), rnd()]; G.dice = dice; G.pending = dice;
     if (G.mode === 'online' && isMe(p)) { const t = startTurn(G.state, p, dice); netWrite({ dice, rem: t.rem, required: t.required, phase: t.required ? 'move' : 'nomove', player: p, lastDicePlayer: p }, { type: 'roll', dice, player: p }); }
     const cx = diceX(p);
     const list = diceList(dice); const n = list.length, span = n === 4 ? 56 : 64;
-    G.rolling = true; render();
-    rollDice(list.map((v, i) => ({ cx: cx + (i - (n - 1) / 2) * span, cy: H / 2, v, p })), () => beginTurnWithDice(dice));
+    G.rolling = true; render(); snapshot();
+    rollDice(list.map((v, i) => ({ cx: cx + (i - (n - 1) / 2) * span, cy: H / 2, v, p })), () => { if (G.gen === gen) beginTurnWithDice(dice); });
   }
   // lance les dés tout seul au début d'un tour (pour soi, ou pour l'ordinateur)
   function scheduleAutoRoll(ms) {
@@ -798,15 +803,20 @@
     if (G.mode !== 'online') scheduleAutoRoll(650);
   }
   function aiPlay() {
+    const gen = G.gen;
+    if (G.phase !== 'move' || isHuman(G.player)) return;
     G.busy = true; render();
     setTimeout(() => {
+      if (G.gen !== gen) return;
       const mv = chooseMove(G.state, G.player, G.dice, G.level);
       const steps = mv ? mv.steps : [];
       let i = 0;
       const next = () => {
-        if (i >= steps.length) { G.busy = false; render(); if (winner(G.state)) return gameOver(); return setTimeout(endTurn, 650); }
+        if (G.gen !== gen) return;
+        if (i >= steps.length) { G.busy = false; render(); if (winner(G.state)) return gameOver(); return setTimeout(() => { if (G.gen === gen) endTurn(); }, 650); }
         const st = steps[i++];
         slide(st, G.player, () => {
+          if (G.gen !== gen) return;
           G.state = applyStep(G.state, G.player, st); G.rem.splice(G.rem.indexOf(st.die), 1); render();
           if (winner(G.state)) { G.busy = false; return gameOver(); }
           setTimeout(next, 180);
@@ -817,12 +827,15 @@
   }
   // animation du lancer d'ouverture : les deux dés, le verdict, puis les dés rejoignent le côté du gagnant
   function animateOpening(w, b, done) {
+    const gen = G.gen; // partie abandonnée entre-temps : on saute la suite de l'animation (l'appelant vérifie aussi)
     G.phase = 'opening-roll'; G.msg = 'On lance…'; G.hint = ''; G.dice = [w, b]; G.rolling = true; render();
     rollDice([{ cx: diceX(1), cy: H / 2, v: w, p: 1 }, { cx: diceX(-1), cy: H / 2, v: b, p: -1 }], () => {
+      if (G.gen !== gen) return done(w === b, w > b ? 1 : -1);
       if (w === b) { G.msg = `Égalité ${w} à ${b}`; G.hint = 'On relance.'; renderUI(); setTimeout(() => done(true), 1200); return; }
       const p = w > b ? 1 : -1;
       G.msg = `${nameOf(p)} commence`; G.hint = `avec ${Math.max(w, b)} et ${Math.min(w, b)}`; renderUI();
       setTimeout(() => {
+        if (G.gen !== gen) return done(false, p);
         G.lastDicePlayer = p;
         const cx = diceX(p);
         const from = [{ x: diceX(1), y: H / 2 }, { x: diceX(-1), y: H / 2 }];
@@ -848,7 +861,8 @@
       animateOpening(w, b, (tie) => { if (tie) { setTimeout(openingRoll, 300); return; } hardSync(G.online.doc); });
       return;
     }
-    animateOpening(w, b, (tie, p) => { if (tie) { openingRoll(); return; } afterOpening(p, p === 1 ? [w, b] : [b, w]); });
+    const gen = G.gen;
+    animateOpening(w, b, (tie, p) => { if (G.gen !== gen) return; if (tie) { openingRoll(); return; } afterOpening(p, p === 1 ? [w, b] : [b, w]); });
   }
   function afterOpening(p, d) {
     G.player = p; G.lastDicePlayer = p;
@@ -886,7 +900,7 @@
     }
     if (G.mode === 'online') G.mode = 'ai';
     setMaxStack(RULE5 ? 5 : 0);
-    G.state = initState(); G.player = 1; G.phase = 'opening'; G.dice = null; G.rem = []; G.required = 0; G.steps = []; G.selected = null; G.history = []; G.busy = false; G.drag = null; G.lift = null; G.turnSteps = [];
+    G.state = initState(); G.player = 1; G.phase = 'opening'; G.dice = null; G.pending = null; G.rem = []; G.required = 0; G.steps = []; G.selected = null; G.history = []; G.busy = false; G.drag = null; G.lift = null; G.turnSteps = [];
     const gen = ++G.gen;
     $('home').hidden = true; $('endOv').hidden = true; $('pauseOv').hidden = true;
     updateOrientation(); render(); snapshot();
@@ -909,6 +923,7 @@
     $('endTitle').textContent = personal ? (youWin ? 'Bien joué' : `${nameOf(w)} l\'emporte`) : `${nameOf(w)} gagne`;
     $('endPts').textContent = `${pts} point${pts > 1 ? 's' : ''} · ${label}`;
     $('tW').textContent = G.scores.w; $('tB').textContent = G.scores.b;
+    const tl = document.querySelectorAll('#endOv .tally .l'); if (tl.length === 2) { tl[0].textContent = nameOf(1); tl[1].textContent = nameOf(-1); }
     render(); setTimeout(() => { $('endOv').hidden = false; }, 900); snapshot();
   }
 
@@ -1061,6 +1076,11 @@
     $('levelBox').hidden = G.mode !== 'ai';
     $('onlineBox').hidden = G.mode !== 'online';
     $('startBtn').parentElement.hidden = G.mode === 'online';
+    // une partie locale gardée en mémoire (contre l'ordinateur ou à deux) : on propose de la reprendre
+    const sv = G.mode !== 'online' ? loadLocal() : null, canResume = !!sv && sv.mode === G.mode;
+    $('resumeLocal').hidden = !canResume;
+    $('startBtn').textContent = canResume ? 'Nouvelle partie' : 'Jouer';
+    $('startBtn').classList.toggle('primary', !canResume); $('startBtn').classList.toggle('ghost', canResume);
     const last = loadOnline();
     $('resumeBtn2').hidden = !(G.mode === 'online' && last && last.code);
     if (last && last.code) $('resumeBtn2').textContent = `Reprendre la partie ${last.code}`;
@@ -1070,9 +1090,14 @@
       if (!IN_CLAUDE) rules.textContent = 'Créez la partie, puis envoyez le lien de cette page et le code à votre ami : il n\'a besoin d\'aucun compte. Le créateur joue les pions clairs.';
       else if (PUBLIC_URL) { rules.textContent = 'Pour jouer avec un ami qui n\'a que le lien, utilisez la version publique du jeu : '; const a = document.createElement('a'); a.href = PUBLIC_URL; a.target = '_blank'; a.rel = 'noopener'; a.textContent = PUBLIC_URL.replace(/^https?:\/\//, ''); rules.appendChild(a); }
     }
-    if (G.mode === 'online') checkOnlineAccess();
+    if (G.mode === 'online') { if (isOffline()) onlineMsg(OFFLINE_MSG, true); else checkOnlineAccess(); }
   }
   function onlineMsg(t, isErr) { const m = $('onlineMsg'); m.textContent = t; m.classList.toggle('err', !!isErr); }
+  // sans réseau, tout marche sauf le jeu en ligne : on le dit tout de suite au lieu d'attendre les serveurs
+  const OFFLINE_MSG = 'Pas de connexion internet. Le jeu en ligne revient dès que le réseau est là.';
+  const isOffline = () => navigator.onLine === false;
+  window.addEventListener('offline', () => { if (G.mode === 'online' && !$('home').hidden) onlineMsg(OFFLINE_MSG, true); });
+  window.addEventListener('online', () => { if ($('onlineMsg').textContent === OFFLINE_MSG) onlineMsg(''); if (G.mode === 'online' && !$('home').hidden) checkOnlineAccess(); });
   function describeNetError(e) {
     const code = e && e.code;
     if (code === 'invalid_argument') return 'Ce compte peut voir la page mais pas jouer en ligne. Le créateur doit couper le lien public dans le menu Partager et inviter ce compte par e-mail en tant qu\'Éditeur, puis la page doit être rouverte.';
@@ -1085,6 +1110,7 @@
     return { v: 1, code, seq: 1, status: 'waiting', host: NET.myId, guest: null, createdAt: Date.now(), state: initState(), player: 1, phase: 'opening', dice: null, rem: [], required: 0, lastDicePlayer: 1, scores: { w: 0, b: 0 }, winner: 0, pts: 0, max5: RULE5, reroll: RULE_REROLL, names: { '1': myName() }, event: { type: 'create', by: NET.myId, at: Date.now() } };
   }
   async function onlineCreate() {
+    if (isOffline()) { onlineMsg(OFFLINE_MSG, true); return; }
     onlineMsg('Création de la partie…');
     await netInit();
     if (!NET.db) { onlineMsg(NET.kind === 'relay' ? 'Le jeu en ligne n\'a pas pu démarrer sur cet appareil.' : 'Le jeu en ligne demande d\'être connecté à Claude dans cette page.', true); return; }
@@ -1099,9 +1125,10 @@
   async function onlineJoin(codeIn, silent) {
     const code = String(codeIn || '').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4);
     if (code.length < 4) { onlineMsg('Entrez le code à 4 lettres.', true); return; }
+    if (isOffline()) { if (silent) { $('home').hidden = false; G.mode = 'online'; syncHomeChoice(); refreshHome(); } onlineMsg(OFFLINE_MSG, true); return; }
     onlineMsg('Connexion à la partie ' + code + '…');
     await netInit();
-    if (!NET.db) { onlineMsg('Le jeu en ligne demande d\'être connecté à Claude dans cette page.', true); if (silent) { $('home').hidden = false; G.mode = 'online'; refreshHome(); onlineMsg('Impossible de reprendre la partie ' + code + ' ici.', true); } return; }
+    if (!NET.db) { onlineMsg('Le jeu en ligne demande d\'être connecté à Claude dans cette page.', true); if (silent) { $('home').hidden = false; G.mode = 'online'; syncHomeChoice(); refreshHome(); onlineMsg('Impossible de reprendre la partie ' + code + ' ici.', true); } return; }
     try {
       const ref = NET.db.doc('games/' + code);
       const snap = await ref.get();
@@ -1109,7 +1136,7 @@
       // version publique : si le serveur a perdu la partie ou en a une version plus ancienne, on republie notre copie locale
       const loc = NET.kind === 'relay' ? loadDocLocal(code) : null;
       if (loc && (loc.host === NET.myId || loc.guest === NET.myId) && docCmp(loc, d) > 0) { await ref.set(loc); d = loc; }
-      if (!d) { onlineMsg(`Aucune partie avec le code ${code}.`, true); if (silent) { saveOnline(null); $('home').hidden = false; G.mode = 'online'; refreshHome(); } return; }
+      if (!d) { if (silent) { saveOnline(null); $('home').hidden = false; G.mode = 'online'; syncHomeChoice(); refreshHome(); } onlineMsg(`Aucune partie avec le code ${code}.`, true); return; }
       if (d.host === NET.myId) return enterOnline(code, 1, d, ref);
       if (d.guest === NET.myId) return enterOnline(code, -1, d, ref);
       if (d.guest) { onlineMsg('Cette partie a déjà deux joueurs.', true); return; }
@@ -1127,7 +1154,7 @@
     G.mode = 'online';
     G.online = { code, color, ref, doc, appliedDoc: doc, queue: [], pumping: false, names: {}, oppOnline: null, unsub: null, roomRef: null, unsubPeers: null, openingTimer: null };
     flip = color === -1; buildStatic();
-    saveOnline({ code, color });
+    saveOnline({ code, color, at: Date.now() });
     $('home').hidden = true; $('endOv').hidden = true; $('pauseOv').hidden = true;
     $('lobbyCode').textContent = code;
     updateOrientation();
@@ -1316,32 +1343,91 @@
   $('rerollBtn').addEventListener('click', rerollOpening);
   $('menuBtn').addEventListener('click', () => { if (G.phase === 'idle' || G.phase === 'over') { $('home').hidden = false; return; } $('pauseOv').hidden = false; });
   $('resumeBtn').addEventListener('click', () => { $('pauseOv').hidden = true; });
-  const toMenu = () => { G.gen++; $('pauseOv').hidden = true; $('endOv').hidden = true; $('lobbyOv').hidden = true; leaveOnline(); G.phase = 'idle'; G.state = initState(); G.dice = null; G.busy = false; G.drag = null; G.lift = null; render(); $('home').hidden = false; updateOrientation(); refreshHome(); };
+  // revenir au menu en abandonnant : la partie locale abandonnée n'est plus proposée à la reprise
+  // après une partie en ligne, le menu reste sur l'onglet En ligne (bouton « Reprendre la partie CODE »)
+  const toMenu = () => { const local = G.mode !== 'online'; G.gen++; $('pauseOv').hidden = true; $('endOv').hidden = true; $('lobbyOv').hidden = true; leaveOnline(); if (local) clearLocal(); else G.mode = 'online'; G.phase = 'idle'; G.state = initState(); G.dice = null; G.pending = null; G.busy = false; G.drag = null; G.lift = null; render(); $('home').hidden = false; updateOrientation(); syncHomeChoice(); refreshHome(); };
   $('abandonBtn').addEventListener('click', toMenu);
   $('endAgain').addEventListener('click', newGame);
   $('endMenu').addEventListener('click', toMenu);
   document.querySelectorAll('.mode').forEach(b => b.addEventListener('click', () => { document.querySelectorAll('.mode').forEach(x => x.classList.remove('on')); b.classList.add('on'); G.mode = b.dataset.mode; refreshHome(); }));
   document.querySelectorAll('.level').forEach(b => b.addEventListener('click', () => { document.querySelectorAll('.level').forEach(x => x.classList.remove('on')); b.classList.add('on'); G.level = +b.dataset.level; }));
   $('startBtn').addEventListener('click', () => { if (G.mode === 'online') return; newGame(); });
+  $('resumeLocal').addEventListener('click', () => { const sv = loadLocal(); if (sv) restoreLocal(sv); else refreshHome(); });
+  function syncHomeChoice() {
+    document.querySelectorAll('.mode').forEach(x => x.classList.toggle('on', x.dataset.mode === G.mode));
+    document.querySelectorAll('.level').forEach(x => x.classList.toggle('on', +x.dataset.level === G.level));
+  }
   window.addEventListener('resize', updateOrientation);
   window.addEventListener('orientationchange', () => setTimeout(updateOrientation, 80));
 
-  /* ===== Reprise à chaud ===== */
-  function snapshot() { try { window.claude?.hot?.snapshot?.(() => ({ mode: G.mode, level: G.level, state: G.state, player: G.player, phase: G.phase, dice: G.dice, rem: G.rem, required: G.required, lastDicePlayer: G.lastDicePlayer, scores: G.scores, max5: RULE5, online: G.online ? { code: G.online.code } : null })); } catch (e) { } }
+  /* ===== Partie locale gardée en mémoire : fermer l'appli ne la perd pas =====
+     Sauvegarde à chaque étape stable (dés tirés, pion joué, annulation, fin de tour) ; l'ordinateur est sauvegardé au début
+     de son tour et le rejoue en entier à la reprise. Partie terminée ou abandonnée : la sauvegarde est effacée. */
+  const SAVE_KEY = 'nacre.partie';
+  let lastSaveJson = null;
+  const SAVE_PHASES = ['opening', 'choice', 'roll', 'move', 'nomove'];
+  function saveLocal() {
+    if (G.mode === 'online') return;
+    if (!G.state || !SAVE_PHASES.includes(G.phase === 'opening-roll' ? 'opening' : G.phase)) { if (G.phase === 'idle' || G.phase === 'over') clearLocal(); return; }
+    const phase = G.phase === 'opening-roll' ? 'opening' : G.phase;
+    lastSaveJson = JSON.stringify({ v: 1, at: Date.now(), mode: G.mode, level: G.level, max5: RULE5, phase, state: G.state, player: G.player, dice: G.dice, pending: G.pending, rem: G.rem, required: G.required, lastDicePlayer: G.lastDicePlayer, history: G.history, turnSteps: G.turnSteps, tilt: G.tilt });
+    try { localStorage.setItem(SAVE_KEY, lastSaveJson); } catch (e) { }
+  }
+  function clearLocal() { lastSaveJson = null; try { localStorage.removeItem(SAVE_KEY); } catch (e) { } }
+  const okState = s => !!s && Array.isArray(s.pts) && s.pts.length === 24 && Array.isArray(s.bar) && Array.isArray(s.off);
+  const validSave = d => !!d && d.v === 1 && (d.mode === 'ai' || d.mode === '2p') && okState(d.state) && (d.player === 1 || d.player === -1) && SAVE_PHASES.includes(d.phase);
+  function loadLocal() { try { const d = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); if (validSave(d)) return d; } catch (e) { } return null; }
+  function restoreLocal(d) {
+    leaveOnline();
+    G.mode = d.mode; G.level = [1, 2, 3].includes(d.level) ? d.level : 2; syncHomeChoice();
+    setMaxStack(d.max5 === false ? 0 : 5);
+    Object.assign(G, { state: cloneState(d.state), player: d.player, dice: Array.isArray(d.dice) ? d.dice : null, pending: null, rem: Array.isArray(d.rem) ? d.rem.slice() : [], required: d.required || 0, lastDicePlayer: d.lastDicePlayer || d.player, history: Array.isArray(d.history) ? d.history.filter(h => h && okState(h.state)) : [], turnSteps: Array.isArray(d.turnSteps) ? d.turnSteps : [], selected: null, steps: [], busy: false, rolling: false, drag: null, lift: null });
+    if (Array.isArray(d.tilt)) G.tilt = d.tilt.slice();
+    const gen = ++G.gen, later = (ms, fn) => setTimeout(() => { if (G.gen === gen) fn(); }, ms);
+    $('home').hidden = true; $('endOv').hidden = true; $('pauseOv').hidden = true; $('lobbyOv').hidden = true;
+    updateOrientation();
+    switch (d.phase) {
+      case 'opening': G.phase = 'opening'; G.dice = null; render(); snapshot(); later(800, () => { if (G.phase === 'opening' && !G.rolling) openingRoll(); }); break;
+      case 'choice': if (G.dice) afterOpening(G.player, G.dice); else { G.phase = 'opening'; G.dice = null; render(); later(800, openingRoll); } break;
+      case 'roll': // dés déjà tirés au moment de la fermeture : ce sont les mêmes
+        if (Array.isArray(d.pending)) { G.lastDicePlayer = G.player; beginTurnWithDice(d.pending); }
+        else { G.phase = 'roll'; render(); snapshot(); scheduleAutoRoll(700); }
+        break;
+      case 'nomove': G.phase = 'nomove'; render(); snapshot(); later(1600, () => { if (G.phase === 'nomove') endTurn(); }); break;
+      case 'move':
+        G.phase = 'move';
+        if (isHuman(G.player)) {
+          // aucun pion encore joué : on refait le début de tour (règle du plus gros dé), comme undo()
+          if (G.history.length === 0 && G.dice) { const t = startTurn(G.state, G.player, G.dice); G.rem = t.rem; G.required = t.required; G.steps = t.steps; G.turnSteps = []; }
+          else G.steps = allowedSteps(G.state, G.player, G.rem, G.required);
+          if (G.steps.length === 0) G.required = 0;
+          if (G.state.bar[kOf(G.player)] > 0 && G.required > 0) G.selected = BAR;
+          render(); snapshot();
+        } else { render(); snapshot(); later(700, aiPlay); }
+        break;
+    }
+  }
+
+  /* ===== Reprise à chaud (Claude) et au démarrage ===== */
+  function snapshot() {
+    saveLocal();
+    try { window.claude?.hot?.snapshot?.(() => G.mode === 'online' ? { online: G.online ? { code: G.online.code } : null } : (lastSaveJson ? JSON.parse(lastSaveJson) : {})); } catch (e) { }
+  }
   function start(data) {
     updateOrientation(); refreshHome();
     const hashCode = !IN_CLAUDE && /^#[A-Za-z]{4}$/.test(location.hash) ? location.hash.slice(1).toUpperCase() : '';
-    if (hashCode && !(data && data.online)) {
-      const last = loadOnline();
+    const last = loadOnline();
+    if (hashCode && !(data && data.online)) { // lien d'invitation : on ouvre le jeu en ligne
+      G.mode = 'online'; syncHomeChoice(); refreshHome();
       if (!(last && last.code === hashCode)) {
-        G.mode = 'online'; document.querySelectorAll('.mode').forEach(x => x.classList.toggle('on', x.dataset.mode === 'online'));
-        refreshHome(); $('joinCode').value = hashCode;
-        onlineMsg(`Invitation reçue : partie ${hashCode}. Entrez votre prénom puis touchez Rejoindre.`);
-        netInit();
+        $('joinCode').value = hashCode;
+        if (isOffline()) onlineMsg(OFFLINE_MSG, true);
+        else { onlineMsg(`Invitation reçue : partie ${hashCode}. Entrez votre prénom puis touchez Rejoindre.`); netInit(); }
       }
     }
     if (data && data.online && data.online.code) { G.state = initState(); render(); onlineJoin(data.online.code, true); return; }
-    if (data && data.state && data.phase && data.phase !== 'idle' && data.mode !== 'online') {
+    if (validSave(data)) { restoreLocal(data); return; }
+    if (data && !data.v && data.state && data.phase && data.phase !== 'idle' && data.mode !== 'online') {
       Object.assign(G, { mode: data.mode, level: data.level, state: data.state, player: data.player, dice: data.dice, rem: data.rem || [], required: data.required || 0, lastDicePlayer: data.lastDicePlayer || 1 });
       if (data.scores) G.scores = data.scores;
       setMaxStack(data.max5 == null ? (RULE5 ? 5 : 0) : (data.max5 ? 5 : 0));
@@ -1352,7 +1438,14 @@
       if (G.phase === 'roll') scheduleAutoRoll(600);
       if (G.phase === 'opening') setTimeout(() => { if (G.phase === 'opening' && !G.rolling) openingRoll(); }, 800);
       if (G.phase === 'choice' && G.dice) afterOpening(G.player, G.dice);
-    } else { G.state = initState(); render(); }
+    } else {
+      G.state = initState(); render();
+      if (hashCode) return; // invitation : la partie locale reste proposée dans son onglet
+      // on revient directement dans la partie locale, sauf si une partie en ligne a été jouée depuis
+      const sv = loadLocal(), onlineAt = last && last.code ? (last.at || 0) : 0;
+      if (sv && onlineAt <= (sv.at || 0)) { restoreLocal(sv); return; }
+      if (sv) { G.mode = 'online'; syncHomeChoice(); refreshHome(); }
+    }
   }
   window.__nacre = { G, topPos, nextPos, beginTurnWithDice, afterOpening, NET, onlineCreate, onlineJoin };
   const boot = () => { window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {}); };
