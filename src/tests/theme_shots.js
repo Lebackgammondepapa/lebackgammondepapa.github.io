@@ -5,7 +5,7 @@ fs.writeFileSync('/tmp/bgthemes.html', page_html);
 (async () => {
   const b = await chromium.launch();
   const shots = [];
-  for (const key of ['club', 'noyer', 'marine', 'nacre']) {
+  for (const key of ['marine']) {
     const ctx = await b.newContext({ viewport: { width: 1100, height: 560 }, deviceScaleFactor: 1.5 });
     await ctx.addInitScript(k => { try { localStorage.setItem('nacre.theme', k); localStorage.setItem('nacre.sound', 'off'); } catch (e) { } }, key);
     const p = await ctx.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
@@ -23,6 +23,7 @@ fs.writeFileSync('/tmp/bgthemes.html', page_html);
     if (errs.length) console.log(key, 'erreurs', errs);
     await ctx.close();
   }
+  if (shots.length < 2) { await b.close(); console.log('ok'); return; }
   // planche
   const ctx = await b.newContext({ viewport: { width: 1650 * 2 / 1.5, height: 840 * 2 / 1.5 + 80 } }); const p = await ctx.newPage();
   const imgs = shots.map(([k, f]) => [k, 'data:image/png;base64,' + fs.readFileSync(f).toString('base64')]);

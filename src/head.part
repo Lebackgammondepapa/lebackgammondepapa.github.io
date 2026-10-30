@@ -126,14 +126,9 @@ body.layout-stack #whoW { flex-direction: row-reverse; text-align: right; }
 .pawn.pair { width: 26px; height: 26px; border-radius: 50%; background: var(--pawn-pair, linear-gradient(90deg, #f1f0ea 50%, #2a4f9a 50%)); box-shadow: 0 2px 6px rgba(0,0,0,.25), inset 0 2px 4px rgba(255,255,255,.5); }
 .btn.wide { width: 100%; box-sizing: border-box; display: block; }
 .opts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
-.themes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-.themeBtn { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 4px 7px; border-radius: 14px; border: 1.5px solid var(--panel-line); background: transparent; color: var(--fg); font: 600 12px var(--font-ui); cursor: pointer; }
-.themeBtn.on { border-color: var(--accent-2); background: var(--chip); }
-.themeBtn .sw { width: 100%; max-width: 64px; height: 30px; border-radius: 7px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.35), 0 2px 6px rgba(0,0,0,.25); }
-.themeBtn:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
-#pauseOv .themes { margin: 4px 0 2px; }
+
 .opts .btn { font-size: 12.5px; padding: 11px 8px; }
-@media (max-width: 380px) { .opts { grid-template-columns: 1fr; } .themes { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 380px) { .opts { grid-template-columns: 1fr; } }
 #onlineBox { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
 .joinrow { display: flex; gap: 8px; }
 .joinrow .btn { flex: none; }
@@ -200,8 +195,6 @@ input.code { -webkit-user-select: text; user-select: text; font-size: 22px; widt
       </div>
     </div>
     <div class="cta"><button class="btn primary" id="startBtn">Jouer</button></div>
-    <h2>Plateau</h2>
-    <div class="themes themeRow"></div>
     <div class="opts"><button class="btn ghost ruleToggle" type="button">5 pions max : oui</button><button class="btn ghost rerollToggle" type="button">Relance au départ : oui</button><button class="btn ghost soundToggle" type="button">Son activé</button></div>
     <div class="rules">Deux règles maison, absentes des règles officielles : au plus 5 pions par case, et le droit pour celui qui commence de relancer ses dés une fois. En ligne, ce sont les réglages du créateur de la partie qui s'appliquent.</div>
     <div class="rules">Vous jouez les pions clairs et sortez par le coin en bas à droite. Touchez un pion, puis sa destination. Gammon ×2, backgammon ×3.</div>
@@ -233,7 +226,6 @@ input.code { -webkit-user-select: text; user-select: text; font-size: 22px; widt
     <div class="lead" id="pauseMsg">La partie est en attente</div>
     <div class="cta" style="flex-direction:column">
       <button class="btn primary" id="resumeBtn">Reprendre</button>
-      <div class="themes themeRow"></div>
       <button class="btn ghost soundToggle" type="button">Son activé</button>
       <button class="btn ghost" id="abandonBtn">Abandonner et revenir au menu</button>
     </div>

@@ -87,50 +87,23 @@
   }
 
   /* ===== Thèmes du plateau ===== */
-  const WALNUT = { tex: 'wood', base: '#3a2314', dark: '#1f1209', light: '#6e482b', edge: '#120a04', hl: 'rgba(255,214,165,.22)', lip: 'rgba(0,0,0,.45)' };
+  // noyer moyen : un peu plus clair qu'un noyer foncé, sans aller jusqu'au chêne
+  const WALNUT = { tex: 'wood', base: '#5e3d25', dark: '#3a2414', light: '#8f6443', edge: '#22150a', hl: 'rgba(255,222,180,.26)', lip: 'rgba(0,0,0,.42)' };
   const IVORY = { tex: 'ivory', base: '#f2e8d3', vary: '#e3d3b2', rim: '#9a845d', grooves: [.78, .5], grooveDark: 'rgba(105,80,40,.32)', grooveLight: 'rgba(255,255,255,.7)', shade: '#6b5636', gloss: '#ffffff', glossA: .8, text: '#5a4426' };
   const EBONY = { tex: 'ebony', base: '#1c1b1e', vary: '#34323a', rim: '#000000', grooves: [.78, .5], grooveDark: 'rgba(0,0,0,.6)', grooveLight: 'rgba(255,255,255,.14)', shade: '#000000', gloss: '#eceef6', glossA: .5, text: '#efe5cf' };
   const DICE_IVORY = { face: ['#fffbf2', '#f1e9d8', '#d6c9ae'], pip: ['#141212', '#2c2724'], inner: '#ffffff', innerA: .9, edge: '#ad9d80', hl: .5, pipHl: .25 };
   const DICE_EBONY = { face: ['#4a484f', '#26252a', '#0f0f11'], pip: ['#f7f0e1', '#d6ccb6'], inner: '#ffffff', innerA: .14, edge: '#030303', hl: .2, pipHl: .7 };
   const THEMES = {
-    club: {
-      name: 'Club', sides: ['Ivoire', 'Ébène'], ui: { bg: '#0c1210', bg2: '#16211b', fg: '#f0e9da', muted: '#a9b4a6', panel: 'rgba(22,33,27,.86)', line: 'rgba(240,233,218,.13)', accent: '#a9853f', accent2: '#d8b66c', ink: '#1a1306', chip: 'rgba(216,182,108,.16)' },
-      frame: WALNUT, field: { tex: 'felt', base: '#1f4b38', vary: ['#28604a', '#163a2b'], vig: '#020c07', vigA: .55 },
-      ptA: ['#f2e8cf', '#d9c7a0'], ptB: ['#93303b', '#681e27'], ptStroke: 'rgba(30,10,5,.3)', ptShine: 'rgba(255,255,255,.14)',
-      tray: { base: '#143326', edge: '#0a1d15' }, light: IVORY, dark: EBONY, diceL: DICE_IVORY, diceD: DICE_EBONY,
-      hi: '#f2cd72', hiRing: '#fff3d1', hinge: true, shadow: '#070402'
-    },
-    noyer: {
-      name: 'Noyer', sides: ['Ivoire', 'Ébène'], ui: { bg: '#120d0a', bg2: '#1f1611', fg: '#f2e8da', muted: '#b5a796', panel: 'rgba(31,22,17,.86)', line: 'rgba(242,232,218,.13)', accent: '#a7743f', accent2: '#d29a5a', ink: '#1b1007', chip: 'rgba(210,154,90,.16)' },
-      frame: { tex: 'wood', base: '#2c1a10', dark: '#160c06', light: '#55361f', edge: '#0c0603', hl: 'rgba(255,208,155,.2)', lip: 'rgba(0,0,0,.5)' },
-      field: { tex: 'wood', base: '#c99e68', dark: '#9b6f40', light: '#e3c08e', vig: '#3a1e08', vigA: .4 },
-      ptA: ['#5b3923', '#3f2614'], ptB: ['#f3e6c8', '#dcc79e'], ptStroke: 'rgba(40,20,5,.45)', ptShine: 'rgba(255,255,255,.18)',
-      tray: { base: '#26170d', edge: '#120a05' }, light: IVORY, dark: EBONY, diceL: DICE_IVORY, diceD: DICE_EBONY,
-      hi: '#fff0b8', hiRing: '#fffbe9', hinge: true, shadow: '#1a0d03'
-    },
     marine: {
       name: 'Marine', sides: ['Ivoire', 'Ébène'], ui: { bg: '#0a1020', bg2: '#121c33', fg: '#eef0f6', muted: '#a3adc4', panel: 'rgba(18,28,51,.86)', line: 'rgba(238,240,246,.13)', accent: '#b08d4a', accent2: '#d9b870', ink: '#14100a', chip: 'rgba(217,184,112,.16)' },
       frame: WALNUT, field: { tex: 'felt', base: '#1b2d4f', vary: ['#22395f', '#142340'], vig: '#020610', vigA: .55 },
       ptA: ['#f0e7d1', '#d8c8a4'], ptB: ['#7e9ccb', '#5a78a8'], ptStroke: 'rgba(5,10,30,.3)', ptShine: 'rgba(255,255,255,.16)',
       tray: { base: '#13223d', edge: '#0a1428' }, light: IVORY, dark: EBONY, diceL: DICE_IVORY, diceD: DICE_EBONY,
       hi: '#f2cd72', hiRing: '#fff3d1', hinge: true, shadow: '#03050c'
-    },
-    nacre: {
-      name: 'Nacre', sides: ['Nacre', 'Marbre'], ui: { bg: '#0a142c', bg2: '#101f42', fg: '#e9eef8', muted: '#94a3c4', panel: 'rgba(16,31,66,.78)', line: 'rgba(233,238,248,.10)', accent: '#6f9ae6', accent2: '#93b6f2', ink: '#ffffff', chip: 'rgba(147,182,242,.14)' },
-      frame: { tex: 'ivoireMarbre', base: '#c3cddd', edge: '#7f94b8', hl: 'rgba(255,255,255,.35)', lip: null },
-      field: { tex: 'gradient', base: '#1e3f7a', stops: [[0, '#2b5597'], [.6, '#1e3f7a'], [1, '#132c5a']], vig: '#000000', vigA: 0 },
-      ptA: ['#d7dee9', '#b4c0d3'], ptB: ['#7fa1d4', '#5579b7'], ptStroke: 'rgba(0,0,0,0)', ptShine: 'rgba(255,255,255,.25)',
-      tray: { base: '#102a58', edge: '#0b1f44' },
-      light: { tex: 'nacre', base: '#f7f6f1', rim: '#aab6c8', ring: '#ffffff', shade: '#5b6a84', gloss: '#ffffff', glossA: .85, text: '#2c4575' },
-      dark: { tex: 'marbre', base: '#2a5cae', rim: '#0b2250', ring: '#9cbbf0', shade: '#040f27', gloss: '#dbe8ff', glossA: .7, text: '#eaf1ff' },
-      diceL: { face: ['#ffffff', '#f4f4f1', '#d9dbd6'], pip: ['#0f244d', '#3b5588'], inner: '#ffffff', innerA: .95, edge: '#b9bdc4', hl: .5, pipHl: .55 },
-      diceD: { face: ['#5d8fd6', '#2f66b8', '#1b4690'], pip: ['#ffffff', '#c6dcf5'], inner: '#cfe9ff', innerA: .6, edge: '#0f2f66', hl: .32, pipHl: .9, glass: true },
-      hi: '#9ad0ff', hiRing: '#e6f4ff', hinge: false, shadow: '#06132e'
     }
   };
-  let THEME_KEY = 'club';
-  try { const t = localStorage.getItem('nacre.theme'); if (t && THEMES[t]) THEME_KEY = t; } catch (e) { }
-  let THEME = THEMES[THEME_KEY];
+  const THEME_KEY = 'marine';
+  const THEME = THEMES[THEME_KEY];
 
   /* ===== Textures générées sur canvas ===== */
   function makeTexture(kind) {
@@ -319,10 +292,6 @@
     set('--pawn-pair', `linear-gradient(90deg, ${lb} 50%, ${db} 50%)`);
     st.colorScheme = 'dark';
     const meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', u.bg);
-  }
-  function themeSwatch(T) {
-    const fr = T.frame.base, fi = T.field.base;
-    return `radial-gradient(circle at 34% 50%, ${T.light.base} 0 19%, rgba(0,0,0,.35) 20%, transparent 23%), radial-gradient(circle at 66% 50%, ${T.dark.base} 0 19%, rgba(255,255,255,.25) 20%, transparent 23%), linear-gradient(90deg, ${fr} 0 13%, ${fi} 13% 87%, ${fr} 87%)`;
   }
   buildDefs(); applyThemeUI(); buildStatic();
 
@@ -576,23 +545,6 @@
   document.querySelectorAll('.soundToggle').forEach(b => b.addEventListener('click', () => { SFX.set(!SFX.on); syncSoundButtons(); if (SFX.on) setTimeout(() => SFX.place(false), 30); }));
   syncSoundButtons();
   document.querySelectorAll('.rerollToggle').forEach(b => b.addEventListener('click', () => { RULE_REROLL = !RULE_REROLL; try { localStorage.setItem('nacre.reroll', RULE_REROLL ? 'on' : 'off'); } catch (e) { } syncRuleButtons(); }));
-  // choix du plateau
-  function setTheme(key) {
-    if (!THEMES[key]) return;
-    THEME_KEY = key; THEME = THEMES[key];
-    try { localStorage.setItem('nacre.theme', key); } catch (e) { }
-    buildDefs(); applyThemeUI(); buildStatic(); render(); syncThemeButtons();
-  }
-  function syncThemeButtons() { document.querySelectorAll('.themeBtn').forEach(b => { const on = b.dataset.theme === THEME_KEY; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); }); }
-  document.querySelectorAll('.themeRow').forEach(row => {
-    for (const [key, T] of Object.entries(THEMES)) {
-      const b = document.createElement('button'); b.type = 'button'; b.className = 'themeBtn'; b.dataset.theme = key;
-      const sw = document.createElement('span'); sw.className = 'sw'; sw.style.background = themeSwatch(T);
-      const nm = document.createElement('span'); nm.textContent = T.name;
-      b.append(sw, nm); b.addEventListener('click', () => setTheme(key)); row.appendChild(b);
-    }
-  });
-  syncThemeButtons();
   document.querySelectorAll('.ruleToggle').forEach(b => b.addEventListener('click', () => { RULE5 = !RULE5; try { localStorage.setItem('nacre.rule5', RULE5 ? 'on' : 'off'); } catch (e) { } syncRuleButtons(); }));
   syncRuleButtons();
 
@@ -1369,7 +1321,7 @@
       if (G.phase === 'choice' && G.dice) afterOpening(G.player, G.dice);
     } else { G.state = initState(); render(); }
   }
-  window.__nacre = { G, topPos, nextPos, beginTurnWithDice, afterOpening, setTheme, NET, onlineCreate, onlineJoin };
+  window.__nacre = { G, topPos, nextPos, beginTurnWithDice, afterOpening, NET, onlineCreate, onlineJoin };
   const boot = () => { window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {}); };
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(boot, boot); else boot();
   setTimeout(updateOrientation, 50);
