@@ -59,6 +59,14 @@ function stepTarget(s, p, from, d) {
   return { to: OFF, hit: false };
 }
 
+/* Pion sur la barre sans aucune entrée possible, quel que soit le dé (les 6 cases d'arrivée bloquées par l'adversaire,
+   ou par ses propres piles de 5 avec la règle maison) : inutile de lancer, la main passe directement */
+function closedOut(s, p) {
+  if (s.bar[bi(p)] <= 0) return false;
+  for (let d = 1; d <= 6; d++) if (stepTarget(s, p, BAR, d)) return false;
+  return true;
+}
+
 function applyStep(s, p, step) {
   const n = cloneState(s);
   const k = bi(p), ko = bi(-p);
@@ -310,4 +318,4 @@ function chooseMove(s, p, dice, level) {
 }
 function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { const v = f(x); if (v > bv) { bv = v; b = x; } } return b; }
 
-if (typeof module !== 'undefined') module.exports = { setMaxStack, BAR, OFF, initState, cloneState, stateKey, stepTarget, applyStep, startTurn, allowedSteps, maxPlayable, genTurns, pipCount, winner, winPoints, evaluate, chooseMove, canBearOff, isRace };
+if (typeof module !== 'undefined') module.exports = { setMaxStack, BAR, OFF, initState, cloneState, stateKey, stepTarget, closedOut, applyStep, startTurn, allowedSteps, maxPlayable, genTurns, pipCount, winner, winPoints, evaluate, chooseMove, canBearOff, isRace };

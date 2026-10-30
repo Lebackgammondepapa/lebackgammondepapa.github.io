@@ -308,12 +308,13 @@
 
   /* ===== État de la partie ===== */
   // pending : dés déjà tirés dont l'animation n'est pas finie (sauvegardés pour qu'une réouverture ne les relance pas)
-  const G = { mode: 'ai', level: 2, gameId: null, state: null, player: 1, phase: 'idle', dice: null, pending: null, rem: [], required: 0, steps: [], selected: null, history: [], scores: loadScores(), busy: false, lastDicePlayer: 1, tilt: [0, 0, 0, 0], lift: null, drag: null, online: null, turnSteps: [], gen: 0 };
-  let RULE5 = true; // règle maison toujours active (le réglage a été retiré du menu)
+  // autoEnd : passage de main automatique en attente ; notice : message « plateau fermé » pour le joueur qui rejoue
+  const G = { mode: 'ai', level: 2, gameId: null, autoEnd: null, notice: null, state: null, player: 1, phase: 'idle', dice: null, pending: null, rem: [], required: 0, steps: [], selected: null, history: [], scores: loadScores(), busy: false, lastDicePlayer: 1, tilt: [0, 0, 0, 0], lift: null, drag: null, online: null, turnSteps: [], gen: 0 };
+  let RULE5 = (() => { try { return localStorage.getItem('nacre.max5') !== 'off'; } catch (e) { return true; } })(); // 5 pions max par case, réglable dans le menu (oui par défaut)
   // règle maison : celui qui gagne le lancer d'ouverture peut relancer ses deux dés une fois
   let RULE_REROLL = true; // règle maison toujours active (le réglage a été retiré du menu)
   function syncRuleButtons() {
-    document.querySelectorAll('.ruleToggle').forEach(b => { b.textContent = RULE5 ? '5 pions max : oui' : '5 pions max : non'; b.setAttribute('aria-pressed', RULE5 ? 'true' : 'false'); });
+    document.querySelectorAll('.ruleToggle').forEach(b => { b.classList.toggle('on', RULE5); b.setAttribute('aria-pressed', RULE5 ? 'true' : 'false'); });
     document.querySelectorAll('.rerollToggle').forEach(b => { b.textContent = RULE_REROLL ? 'Relance au départ : oui' : 'Relance au départ : non'; b.setAttribute('aria-pressed', RULE_REROLL ? 'true' : 'false'); });
   }
   function loadScores() { try { const s = JSON.parse(localStorage.getItem('nacre.scores') || 'null'); if (s && typeof s.w === 'number') return s; } catch (e) { } return { w: 0, b: 0 }; }
@@ -471,7 +472,7 @@
       case 'roll': if (isHuman(G.player)) { title = `À ${you} de jouer`; hint = 'Lancer des dés…'; } else { title = `${opp} lance les dés…`; if (G.mode === 'online') hint = G.online && G.online.oppOnline === false ? 'Votre ami n\'a pas la page ouverte.' : ''; } break;
       case 'move':
         if (isHuman(G.player)) {
-          if (G.required === 0) { title = 'Tour terminé'; hint = 'Validez pour passer la main.'; label = 'Fin du tour'; }
+          if (G.required === 0) { title = 'Tour terminé'; hint = 'La main passe…'; }
           else if (G.selected != null) { title = 'Déposez le pion'; hint = 'Touchez une case éclairée, ou le pion pour annuler.'; }
           else { title = `${G.required} coup${G.required > 1 ? 's' : ''} à jouer`; hint = 'Glissez un pion cerclé vers sa case.'; }
         } else { title = `${opp} joue…`; }
@@ -479,6 +480,7 @@
       case 'nomove': title = 'Aucun coup possible'; hint = 'Les dés ne passent pas, la main change.'; break;
       case 'over': title = 'Partie terminée'; label = G.mode === 'online' ? 'Rejouer' : 'Nouvelle partie'; break;
     }
+    if (G.notice && G.notice.player === G.player && (G.phase === 'roll' || (G.phase === 'move' && !isHuman(G.player)))) hint = G.notice.text;
     if (G.mode === 'online' && NET.kind === 'relay' && NET.relay && !NET.relay.connected()) hint = 'Connexion perdue, reconnexion en cours…';
     st.innerHTML = title ? `<b>${esc(title)}</b>${hint ? `<span class="hint">${esc(hint)}</span>` : ''}` : '';
     main.hidden = !label;
@@ -562,7 +564,7 @@
   document.querySelectorAll('.soundToggle').forEach(b => b.addEventListener('click', () => { SFX.set(!SFX.on); syncSoundButtons(); if (SFX.on) setTimeout(() => SFX.place(false), 30); }));
   syncSoundButtons();
   document.querySelectorAll('.rerollToggle').forEach(b => b.addEventListener('click', () => { RULE_REROLL = !RULE_REROLL; try { localStorage.setItem('nacre.reroll', RULE_REROLL ? 'on' : 'off'); } catch (e) { } syncRuleButtons(); }));
-  document.querySelectorAll('.ruleToggle').forEach(b => b.addEventListener('click', () => { RULE5 = !RULE5; try { localStorage.setItem('nacre.rule5', RULE5 ? 'on' : 'off'); } catch (e) { } syncRuleButtons(); }));
+  document.querySelectorAll('.ruleToggle').forEach(b => b.addEventListener('click', () => { RULE5 = !RULE5; try { localStorage.setItem('nacre.max5', RULE5 ? 'on' : 'off'); } catch (e) { } syncRuleButtons(); }));
   syncRuleButtons();
 
   /* ===== Animations ===== */
@@ -740,6 +742,7 @@
       if (G.steps.length === 0) G.required = 0;
       if (G.state.bar[kOf(G.player)] > 0 && G.required > 0) G.selected = BAR;
       render(); snapshot();
+      if (G.required === 0) scheduleAutoEnd();
     };
     if (!animated) { for (const st of steps) applyOne(st); return finish(); }
     const next = () => {
@@ -754,6 +757,7 @@
   function undo() {
     if (G.busy) return;
     const h = G.history.pop(); if (!h) return;
+    G.autoEnd = null; // la main ne passe plus : on rejoue
     G.turnSteps.pop();
     G.state = h.state; G.rem = h.rem; G.required = h.required; G.selected = null;
     G.steps = allowedSteps(G.state, G.player, G.rem, G.required);
@@ -781,6 +785,34 @@
     G.rolling = true; render(); snapshot();
     rollDice(list.map((v, i) => ({ cx: cx + (i - (n - 1) / 2) * span, cy: H / 2, v, p })), () => { if (G.gen === gen) beginTurnWithDice(dice); });
   }
+  // tous les dés joués : la main passe toute seule après un court instant, le temps d'annuler si besoin
+  function scheduleAutoEnd(ms = 1500) {
+    const token = G.autoEnd = {}, p = G.player;
+    const tryEnd = () => {
+      if (G.autoEnd !== token || G.phase !== 'move' || G.player !== p || G.required !== 0 || !isHuman(p)) return;
+      if (G.busy || G.rolling || G.drag) { setTimeout(tryEnd, 250); return; }
+      G.autoEnd = null; endTurn();
+    };
+    setTimeout(tryEnd, ms);
+  }
+  // pion sur la barre et plateau adverse fermé : on ne lance pas, la main passe directement à l'autre joueur
+  function rollOrSkip(p) {
+    if (closedOut(G.state, p) && !closedOut(G.state, -p)) return skipBlocked(p);
+    rollFor(p);
+  }
+  function blockedText(p) {
+    const me = G.mode === 'ai' ? p === 1 : G.mode === 'online' && isMe(p);
+    return me ? 'Plateau fermé : vous ne pouvez pas rentrer votre pion.' : `Plateau fermé : ${nameOf(p)} ne peut pas rentrer son pion.`;
+  }
+  function skipBlocked(p) {
+    if (G.mode === 'online') {
+      if (!isMe(p)) return;
+      netWrite({ player: -p, phase: 'roll', dice: null, rem: [], required: 0 }, { type: 'blocked', player: p });
+    }
+    G.notice = { player: -p, text: blockedText(p) };
+    G.player = -p; G.phase = 'roll'; G.rem = []; G.required = 0; G.selected = null; G.history = []; G.turnSteps = []; render(); snapshot();
+    if (G.mode !== 'online') scheduleAutoRoll(650);
+  }
   // lance les dés tout seul au début d'un tour (pour soi, ou pour l'ordinateur)
   function scheduleAutoRoll(ms) {
     const gen = G.gen, p = G.player, seq = G.online ? G.online.doc.seq : null;
@@ -789,12 +821,14 @@
       if (G.online && G.online.doc.seq !== seq) return;
       if (G.mode === 'online' && !isMe(p)) return;
       if (G.busy || G.rolling) { if (n < 40) setTimeout(() => tryRoll(n + 1), 250); return; }
-      rollFor(p);
+      rollOrSkip(p);
     };
     setTimeout(() => tryRoll(0), ms);
   }
   function endTurn() {
     if (G.phase === 'over') return;
+    G.autoEnd = null;
+    if (G.notice && G.notice.player === G.player) G.notice = null;
     if (G.mode === 'online' && isMe(G.player)) {
       const pass = G.phase === 'nomove';
       netWrite({ state: G.state, player: -G.player, phase: 'roll', dice: null, rem: [], required: 0 }, { type: pass ? 'pass' : 'turn', steps: G.turnSteps.slice(), dice: G.dice, player: G.player });
@@ -900,7 +934,7 @@
     }
     if (G.mode === 'online') G.mode = 'ai';
     setMaxStack(RULE5 ? 5 : 0);
-    G.gameId = newGameId();
+    G.gameId = newGameId(); G.notice = null; G.autoEnd = null;
     G.state = initState(); G.player = 1; G.phase = 'opening'; G.dice = null; G.pending = null; G.rem = []; G.required = 0; G.steps = []; G.selected = null; G.history = []; G.busy = false; G.drag = null; G.lift = null; G.turnSteps = [];
     const gen = ++G.gen;
     $('home').hidden = true; $('endOv').hidden = true; $('pauseOv').hidden = true;
@@ -1159,6 +1193,7 @@
     leaveOnline();
     G.mode = 'online';
     G.online = { code, color, ref, doc, appliedDoc: doc, queue: [], pumping: false, names: {}, oppOnline: null, unsub: null, roomRef: null, unsubPeers: null, openingTimer: null };
+    G.notice = null; G.autoEnd = null;
     flip = color === -1; buildStatic();
     saveOnline({ code, color, at: Date.now() });
     $('home').hidden = true; $('endOv').hidden = true; $('pauseOv').hidden = true;
@@ -1264,6 +1299,10 @@
         G.phase = 'nomove'; render(); await wait(1200); if (G.online !== on) return;
         hardSync(d); break;
       }
+      case 'blocked': {
+        G.notice = { player: -ev.player, text: blockedText(ev.player) };
+        hardSync(d); break;
+      }
       default: hardSync(d);
     }
   }
@@ -1281,6 +1320,7 @@
       if (G.steps.length === 0) G.required = 0;
       if (G.required === 0 && d.rem && d.rem.length === diceList(d.dice || [1, 2]).length && G.steps.length === 0) { /* rien à jouer : on passe */ }
       if (G.state.bar[kOf(G.player)] > 0 && G.required > 0) G.selected = BAR;
+      if (G.required === 0) scheduleAutoEnd();
     }
     if (G.phase === 'nomove' && isMe(G.player)) setTimeout(() => { if (G.online === on && G.phase === 'nomove') endTurn(); }, 1600);
     if (G.phase === 'roll' && isMe(G.player)) scheduleAutoRoll(700);
@@ -1334,7 +1374,7 @@
     if (G.busy || G.rolling) return;
     if (G.phase === 'opening') { if (G.mode === 'online') return; return openingRoll(); }
     if (G.phase === 'choice' && isHuman(G.player)) return keepOpening();
-    if (G.phase === 'roll' && isHuman(G.player)) return rollFor(G.player);
+    if (G.phase === 'roll' && isHuman(G.player)) return rollOrSkip(G.player);
     if (G.phase === 'move' && G.required === 0 && isHuman(G.player)) return endTurn();
     if (G.phase === 'over') return newGame();
   }
@@ -1380,7 +1420,7 @@
   function restoreLocal(d) {
     leaveOnline();
     G.mode = d.mode; G.level = [1, 2, 3].includes(d.level) ? d.level : 2; syncHomeChoice();
-    G.gameId = typeof d.id === 'string' ? d.id : newGameId();
+    G.gameId = typeof d.id === 'string' ? d.id : newGameId(); G.notice = null; G.autoEnd = null;
     setMaxStack(d.max5 === false ? 0 : 5);
     Object.assign(G, { state: cloneState(d.state), player: d.player, dice: Array.isArray(d.dice) ? d.dice : null, pending: null, rem: Array.isArray(d.rem) ? d.rem.slice() : [], required: d.required || 0, lastDicePlayer: d.lastDicePlayer || d.player, history: Array.isArray(d.history) ? d.history.filter(h => h && okState(h.state)) : [], turnSteps: Array.isArray(d.turnSteps) ? d.turnSteps : [], selected: null, steps: [], busy: false, rolling: false, drag: null, lift: null });
     if (Array.isArray(d.tilt)) G.tilt = d.tilt.slice();
@@ -1404,6 +1444,7 @@
           if (G.steps.length === 0) G.required = 0;
           if (G.state.bar[kOf(G.player)] > 0 && G.required > 0) G.selected = BAR;
           render(); snapshot();
+          if (G.required === 0) scheduleAutoEnd();
         } else { render(); snapshot(); later(700, aiPlay); }
         break;
     }
@@ -1547,7 +1588,7 @@
       if (sv) { G.mode = 'online'; syncHomeChoice(); refreshHome(); }
     }
   }
-  window.__nacre = { G, topPos, nextPos, beginTurnWithDice, afterOpening, NET, onlineCreate, onlineJoin };
+  window.__nacre = { G, topPos, nextPos, beginTurnWithDice, afterOpening, endTurn, NET, onlineCreate, onlineJoin };
   const boot = () => { window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {}); };
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(boot, boot); else boot();
   setTimeout(updateOrientation, 50);

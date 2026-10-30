@@ -96,9 +96,8 @@ function open(storage, { url = URL0, reduced = true, offline = false } = {}) {
   D.d.getElementById('startBtn').click();
   check(await D.untilMyMove(), 'nouvelle partie, à moi de jouer');
   for (let k = 0; k < 4 && D.G.required > 0 && D.G.steps.length; k++) await D.drag(D.G.steps[0]);
-  check(D.G.required === 0 && D.d.getElementById('mainBtn').textContent === 'Fin du tour', 'tour joué, reste à valider');
-  D.d.getElementById('mainBtn').click();
-  for (let k = 0; k < 40 && !(D.G.player === -1 && D.G.phase === 'move'); k++) await wait(25);
+  check(D.G.required === 0 && /Tour terminé/.test(D.d.getElementById('status').textContent), 'tour joué, la main va passer toute seule');
+  for (let k = 0; k < 160 && !(D.G.player === -1 && D.G.phase === 'move'); k++) await wait(25);
   const sv5 = D.save();
   check(sv5 && sv5.player === -1 && sv5.phase === 'move', 'dés de l\'ordinateur tirés et sauvegardés', sv5 && { p: sv5.player, ph: sv5.phase });
   let E = D.reload();

@@ -142,6 +142,12 @@ input.code { -webkit-user-select: text; user-select: text; font-size: 22px; widt
 .hrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
 .hrow h1 { margin: 0 !important; }
 .btn.small { padding: 9px 14px; font-size: 13px; border-radius: 12px; flex: none; }
+/* interrupteur (règle des 5 pions) */
+.switchrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; box-sizing: border-box; margin-top: 14px; padding: 11px 14px; border-radius: 14px; border: 1.5px solid var(--panel-line); background: transparent; color: var(--fg); font: 600 13px var(--font-ui); cursor: pointer; text-align: left; }
+.switchrow .sw { flex: none; position: relative; width: 38px; height: 22px; border-radius: 11px; background: rgba(238,240,246,.2); transition: background .2s; }
+.switchrow .sw::after { content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: #f4f1e8; box-shadow: 0 1px 3px rgba(0,0,0,.35); transition: transform .2s; }
+.switchrow.on .sw { background: var(--accent); }
+.switchrow.on .sw::after { transform: translateX(16px); }
 .h2h { color: var(--muted); font-size: 13px; line-height: 1.45; margin-top: 10px; text-wrap: balance; }
 .stats-sum { color: var(--muted); font-size: 13px; margin: 0 0 4px; }
 .opp { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 14px; align-items: center; padding: 12px 14px; border: 1px solid var(--panel-line); border-radius: 16px; margin-top: 8px; }
@@ -162,7 +168,7 @@ input.code { -webkit-user-select: text; user-select: text; font-size: 22px; widt
 .onlinemsg.err { color: #d04a5a; }
 .bigcode { font-family: var(--font-display); font-size: 64px; font-weight: 600; letter-spacing: .18em; line-height: 1.1; margin: 4px 0 6px; color: var(--accent); -webkit-user-select: text; user-select: text; }
 .who .online { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #3fbf7f; margin-left: 5px; vertical-align: middle; }
-@media (max-height: 460px) { .hrow { margin-bottom: 8px; } .h2h { margin-top: 6px; } .bigcode { font-size: 44px; } .card { padding: 16px 18px; border-radius: 18px; } .card h1 { font-size: 30px; margin-bottom: 8px; } .card h2 { margin: 10px 0 6px; } .mode { padding: 8px 12px; } .level { padding: 8px 6px; } .card .cta { margin-top: 12px; } .result .big { font-size: 30px; } .tally { margin: 10px 0 0; } .rules { display: none; } }
+@media (max-height: 460px) { .hrow { margin-bottom: 8px; } .switchrow { margin-top: 10px; padding: 8px 12px; } .h2h { margin-top: 6px; } .bigcode { font-size: 44px; } .card { padding: 16px 18px; border-radius: 18px; } .card h1 { font-size: 30px; margin-bottom: 8px; } .card h2 { margin: 10px 0 6px; } .mode { padding: 8px 12px; } .level { padding: 8px 6px; } .card .cta { margin-top: 12px; } .result .big { font-size: 30px; } .tally { margin: 10px 0 0; } .rules { display: none; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 @keyframes pulse { 0% { opacity: .55; } 50% { opacity: 1; } 100% { opacity: .55; } }
 .pulse { animation: pulse 1.2s ease-in-out infinite; }
@@ -215,6 +221,7 @@ input.code { -webkit-user-select: text; user-select: text; font-size: 22px; widt
         <button class="level" data-level="3">Expert<small>Anticipe vos réponses</small></button>
       </div>
     </div>
+    <button class="switchrow ruleToggle on" type="button" aria-pressed="true"><span>5 pions maximum par case</span><span class="sw" aria-hidden="true"></span></button>
     <div class="cta"><button class="btn primary" id="startBtn">Jouer</button><button class="btn primary" id="resumeLocal" hidden>Reprendre la partie</button></div>
   </div>
 </div>

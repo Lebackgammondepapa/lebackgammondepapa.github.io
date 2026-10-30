@@ -22,8 +22,13 @@ Partie contre l'ordinateur ou à deux : sauvegardée dans `localStorage` (`nacre
 `python3 src/build.py` régénère `index.html` et `src/out/backgammon.html`.
 Après une modification : republier l'artifact avec `src/out/backgammon.html` (mêmes capacités : db, user, room) et pousser `index.html`, `sw.js` et `src/` sur `main` (GitHub Pages se met à jour tout seul).
 
+## Déroulé du tour
+- Fin du tour automatique : quand tous les dés sont joués (ou qu'il n'y a plus de coup), la main passe seule après 1,5 s (`scheduleAutoEnd`) ; Annuler pendant ce délai l'empêche.
+- Plateau fermé : un joueur sur la barre qui ne peut rentrer avec aucun dé (`closedOut` dans le moteur, règle des 5 pions comprise) ne lance pas, la main passe directement (`rollOrSkip` / `skipBlocked`, évènement `blocked` en ligne) et un message s'affiche pendant le tour de l'autre.
+- Règle des 5 pions : interrupteur dans le menu (`nacre.max5`, oui par défaut) ; en ligne, c'est le réglage du créateur qui compte.
+
 ## Historique et bilan
 Chaque partie terminée (pas les parties abandonnées) est ajoutée à `nacre.historique` dans `localStorage` : un enregistrement par partie avec un identifiant unique (`id`, `at`, `mode`, `opp.key`/`opp.name`, `level`, `winner`, `won`, `pts`), prêt à être envoyé sur un compte plus tard. Partie locale : identifiant tiré au début de la partie (`G.gameId`, gardé dans la sauvegarde). Partie en ligne : identifiant calculé sur le code, la création et le score de la paire, identique chez les deux joueurs, donc la partie ne compte qu'une fois même si sa fin est revue. Amis reconnus à leur prénom. Écran Bilan (bouton dans le menu) et ligne « Contre … » sur l'écran de fin.
 
 ## Tester
-`cd src && npm install && npm test` (jsdom, serveurs MQTT locaux aedes ; `tests/resume_test.js` couvre la reprise de partie, `tests/history_test.js` l'historique et le bilan). `tests/browser_relay.js`, `tests/offline_test.js` (service worker, mode avion, mise à jour de la page) et `tests/shot.js` utilisent Playwright.
+`cd src && npm install && npm test` (jsdom, serveurs MQTT locaux aedes ; `tests/resume_test.js` couvre la reprise de partie, `tests/history_test.js` l'historique et le bilan, `tests/turnflow_test.js` la fin du tour, le plateau fermé et le réglage des 5 pions). `tests/browser_relay.js`, `tests/offline_test.js` (service worker, mode avion, mise à jour de la page) et `tests/shot.js` utilisent Playwright.

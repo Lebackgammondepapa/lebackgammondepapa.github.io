@@ -78,9 +78,10 @@ const check = (ok, label, extra) => { console.log((ok ? 'ok   ' : 'FAIL ') + lab
   check(await G('G.history.length === 0'), 'sans réseau : Annuler fonctionne');
   for (let k = 0; k < 4 && await G('G.required > 0 && G.steps.length > 0'); k++) await dragFirstStep();
   check(await G('G.required === 0'), 'sans réseau : tour joué');
-  await page.click('#mainBtn');
-  await page.waitForFunction(() => window.__nacre.G.player === 1 && window.__nacre.G.phase === 'move' && !window.__nacre.G.busy, null, { timeout: 30000 }).catch(() => { });
-  check(await G('G.player === 1 && G.phase === "move"'), 'sans réseau : l\'ordinateur joue, la main revient');
+  // la main passe toute seule, l'ordinateur joue, puis c'est de nouveau à moi
+  await page.waitForFunction(() => window.__nacre.G.player === -1, null, { timeout: 8000 }).catch(() => { });
+  await page.waitForFunction(() => { const G = window.__nacre.G; return G.player === 1 && G.phase === 'move' && G.required > 0 && !G.busy; }, null, { timeout: 30000 }).catch(() => { });
+  check(await G('G.player === 1 && G.phase === "move" && G.required > 0'), 'sans réseau : la main passe toute seule, l\'ordinateur joue, la main revient');
 
   /* 4. sans réseau, le jeu en ligne le dit tout de suite */
   await page.click('#menuBtn'); await page.click('#abandonBtn');
