@@ -1296,7 +1296,7 @@ function best(arr, f) { let b = null, bv = -Infinity; for (const x of arr) { con
   /* Version publique (hors de Claude) : la partie transite par plusieurs serveurs de relais MQTT gratuits à la fois.
      Il suffit qu'un seul fonctionne pour les deux joueurs ; les doublons sont écartés grâce au numéro de version. */
   const IN_CLAUDE = !!(window.claude && window.claude.use);
-  const PUBLIC_URL = 'https://tombrullefert-droid.github.io/le-backgammon-de-papa/';
+  const PUBLIC_URL = 'https://lebackgammondepapa.github.io/';
   const RELAY_BROKERS = window.NACRE_BROKERS || ['wss://broker.emqx.io:8084/mqtt', 'wss://broker.hivemq.com:8884/mqtt', 'wss://mqtt.eclipseprojects.io:443/mqtt', 'wss://test.mosquitto.org:8081'];
   const RELAY_NS = 'nacre-bg-7k2q/v1/';
   const evOf = d => (d && d.event) || {};
