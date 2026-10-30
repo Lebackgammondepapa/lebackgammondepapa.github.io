@@ -2,6 +2,6 @@
   "name": "backgammon-dev",
   "private": true,
   "description": "Outils de construction et de test du jeu (non publiés).",
-  "scripts": { "build": "python3 build.py", "test": "node tests/test.js && node tests/rule5_test.js && node tests/smoke2.js && node tests/resume_test.js && node tests/online_test.js && node tests/relay_test.js && node tests/relay_test2.js" },
+  "scripts": { "build": "python3 build.py", "test": "node tests/test.js && node tests/rule5_test.js && node tests/smoke2.js && node tests/resume_test.js && node tests/history_test.js && node tests/online_test.js && node tests/relay_test.js && node tests/relay_test2.js" },
   "devDependencies": { "aedes": "0.51.3", "jsdom": "^26.1.0", "ws": "8.18.0" }
 }

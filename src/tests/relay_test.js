@@ -76,6 +76,10 @@ async function playUntil(pairs, stopFn, maxTicks) {
   const done = await playUntil([[A, NA], [B, NB]], () => NA.G.phase === 'over' && NB.G.phase === 'over', 4000);
   console.log('fin', done >= 0 ? 'atteinte' : 'NON atteinte', '| états égaux', JSON.stringify(NA.G.state) === JSON.stringify(NB.G.state), '| sortis', NA.G.state.off, '| scores', JSON.stringify(NA.G.scores), JSON.stringify(NB.G.scores));
   console.log('écran de fin A:', A.document.getElementById('endTitle').textContent, '| B:', B.document.getElementById('endTitle').textContent, '| présence vue par A:', NA.G.online.oppOnline);
+  const hist = W => JSON.parse(W.localStorage.getItem('nacre.historique') || '[]');
+  const hA = hist(A), hB = hist(B);
+  const histOk = hA.length === 1 && hB.length === 1 && hA[0].id === hB[0].id && hA[0].won !== hB[0].won && hA[0].opp.name === 'Lucas' && hB[0].opp.name === 'Thomas';
+  console.log(histOk ? 'historique OK' : 'FAIL historique', JSON.stringify(hA.map(r => [r.opp.name, r.won, r.pts])), JSON.stringify(hB.map(r => [r.opp.name, r.won, r.pts])), '| fin A:', A.document.getElementById('endH2H').textContent);
   console.log('erreurs:', errors.length ? errors.slice(0, 6) : 'aucune');
-  process.exit(0);
+  process.exit(histOk ? 0 : 1);
 })();

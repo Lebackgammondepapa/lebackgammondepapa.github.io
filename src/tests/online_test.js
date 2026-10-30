@@ -13,7 +13,7 @@ const db = { doc(path) { return {
 }; } };
 const errors = [];
 function client(id, name) {
-  const dom = new JSDOM(html, { runScripts: 'dangerously', pretendToBeVisual: true, beforeParse(w) {
+  const dom = new JSDOM(html, { url: `https://${id}.example/`, runScripts: 'dangerously', pretendToBeVisual: true, beforeParse(w) {
     w.console.error = (...a) => errors.push(id + ': ' + a.join(' '));
     w.HTMLCanvasElement.prototype.getContext = function () { return new Proxy({}, { get: (t, k) => (k === 'createRadialGradient' || k === 'createLinearGradient') ? (() => ({ addColorStop() {} })) : (() => {}), set: () => true }); };
     w.HTMLCanvasElement.prototype.toDataURL = () => 'data:image/png;base64,';
@@ -74,6 +74,13 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
   const sA = JSON.stringify(NA.G.state), sB = JSON.stringify(NB.G.state);
   console.log('A phase', NA.G.phase, 'B phase', NB.G.phase, 'states equal', sA === sB, 'off', NA.G.state.off, NB.G.state.off, 'scores', NA.G.scores, NB.G.scores, 'seq', store.get('games/' + code).seq);
   console.log('end overlay A', !A.document.getElementById('endOv').hidden, A.document.getElementById('endTitle').textContent, '| B', B.document.getElementById('endTitle').textContent);
+  // historique : la partie compte une fois chez chacun, même si on revient sur la partie terminée
+  const hist = W => JSON.parse(W.localStorage.getItem('nacre.historique') || '[]');
+  await NA.onlineJoin(code); await wait(400);
+  const hA = hist(A), hB = hist(B);
+  const histOk = hA.length === 1 && hB.length === 1 && hA[0].id === hB[0].id && hA[0].won !== hB[0].won && hA[0].opp.name === 'Ami' && hB[0].opp.name === 'Thomas' && hA[0].pts === NA.G.online.doc.pts;
+  console.log(histOk ? 'historique OK' : 'FAIL historique', JSON.stringify(hA.map(r => [r.opp.name, r.won, r.pts])), JSON.stringify(hB.map(r => [r.opp.name, r.won, r.pts])));
+  console.log('bilan fin A:', A.document.getElementById('endH2H').textContent, '| B:', B.document.getElementById('endH2H').textContent);
   console.log('errors:', errors.length ? errors.slice(0, 5) : 'none');
-  process.exit(0);
+  process.exit(histOk && !errors.length ? 0 : 1);
 })();

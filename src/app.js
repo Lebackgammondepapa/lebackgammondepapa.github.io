@@ -308,7 +308,7 @@
 
   /* ===== État de la partie ===== */
   // pending : dés déjà tirés dont l'animation n'est pas finie (sauvegardés pour qu'une réouverture ne les relance pas)
-  const G = { mode: 'ai', level: 2, state: null, player: 1, phase: 'idle', dice: null, pending: null, rem: [], required: 0, steps: [], selected: null, history: [], scores: loadScores(), busy: false, lastDicePlayer: 1, tilt: [0, 0, 0, 0], lift: null, drag: null, online: null, turnSteps: [], gen: 0 };
+  const G = { mode: 'ai', level: 2, gameId: null, state: null, player: 1, phase: 'idle', dice: null, pending: null, rem: [], required: 0, steps: [], selected: null, history: [], scores: loadScores(), busy: false, lastDicePlayer: 1, tilt: [0, 0, 0, 0], lift: null, drag: null, online: null, turnSteps: [], gen: 0 };
   let RULE5 = true; // règle maison toujours active (le réglage a été retiré du menu)
   // règle maison : celui qui gagne le lancer d'ouverture peut relancer ses deux dés une fois
   let RULE_REROLL = true; // règle maison toujours active (le réglage a été retiré du menu)
@@ -900,6 +900,7 @@
     }
     if (G.mode === 'online') G.mode = 'ai';
     setMaxStack(RULE5 ? 5 : 0);
+    G.gameId = newGameId();
     G.state = initState(); G.player = 1; G.phase = 'opening'; G.dice = null; G.pending = null; G.rem = []; G.required = 0; G.steps = []; G.selected = null; G.history = []; G.busy = false; G.drag = null; G.lift = null; G.turnSteps = [];
     const gen = ++G.gen;
     $('home').hidden = true; $('endOv').hidden = true; $('pauseOv').hidden = true;
@@ -916,6 +917,11 @@
         G.scores = sc;
       }
     } else { if (w === 1) G.scores.w += pts; else G.scores.b += pts; saveScores(); }
+    fillEnd(w, pts, recordGame(w, pts));
+    render(); setTimeout(() => { $('endOv').hidden = false; }, 900); snapshot();
+  }
+  // écran de fin (partie locale ou en ligne) : résultat, points, cumul et bilan contre cet adversaire
+  function fillEnd(w, pts, rec) {
     const label = pts === 1 ? 'partie simple' : pts === 2 ? 'gammon' : 'backgammon';
     const personal = G.mode === 'ai' || G.mode === 'online';
     const youWin = G.mode === 'ai' ? w === 1 : isMe(w);
@@ -924,7 +930,7 @@
     $('endPts').textContent = `${pts} point${pts > 1 ? 's' : ''} · ${label}`;
     $('tW').textContent = G.scores.w; $('tB').textContent = G.scores.b;
     const tl = document.querySelectorAll('#endOv .tally .l'); if (tl.length === 2) { tl[0].textContent = nameOf(1); tl[1].textContent = nameOf(-1); }
-    render(); setTimeout(() => { $('endOv').hidden = false; }, 900); snapshot();
+    $('endH2H').textContent = rec ? h2hLine(rec) : '';
   }
 
   /* ===== Jeu en ligne : la partie vit dans un document partagé, chaque joueur écrit ses propres coups ===== */
@@ -1283,13 +1289,7 @@
       on.openingTimer = setTimeout(() => { on.openingTimer = null; if (G.online === on && on.doc.phase === 'opening' && on.doc.status === 'playing' && !G.busy && !G.rolling) openingRoll(); }, 900);
     }
     if (G.phase === 'over') {
-      const w = d.winner, pts = d.pts;
-      const label = pts === 1 ? 'partie simple' : pts === 2 ? 'gammon' : 'backgammon';
-      const youWin = isMe(w);
-      $('endLead').textContent = youWin ? 'Victoire' : 'Défaite';
-      $('endTitle').textContent = youWin ? 'Bien joué' : `${nameOf(w)} l'emporte`;
-      $('endPts').textContent = `${pts} point${pts > 1 ? 's' : ''} · ${label}`;
-      $('tW').textContent = G.scores.w; $('tB').textContent = G.scores.b;
+      if (d.winner === 1 || d.winner === -1) fillEnd(d.winner, d.pts || 1, recordGame(d.winner, d.pts || 1, d));
       setTimeout(() => { if (G.online === on && G.phase === 'over') $('endOv').hidden = false; }, 600);
     } else $('endOv').hidden = true;
     render(); snapshot();
@@ -1370,7 +1370,7 @@
     if (G.mode === 'online') return;
     if (!G.state || !SAVE_PHASES.includes(G.phase === 'opening-roll' ? 'opening' : G.phase)) { if (G.phase === 'idle' || G.phase === 'over') clearLocal(); return; }
     const phase = G.phase === 'opening-roll' ? 'opening' : G.phase;
-    lastSaveJson = JSON.stringify({ v: 1, at: Date.now(), mode: G.mode, level: G.level, max5: RULE5, phase, state: G.state, player: G.player, dice: G.dice, pending: G.pending, rem: G.rem, required: G.required, lastDicePlayer: G.lastDicePlayer, history: G.history, turnSteps: G.turnSteps, tilt: G.tilt });
+    lastSaveJson = JSON.stringify({ v: 1, at: Date.now(), id: G.gameId, mode: G.mode, level: G.level, max5: RULE5, phase, state: G.state, player: G.player, dice: G.dice, pending: G.pending, rem: G.rem, required: G.required, lastDicePlayer: G.lastDicePlayer, history: G.history, turnSteps: G.turnSteps, tilt: G.tilt });
     try { localStorage.setItem(SAVE_KEY, lastSaveJson); } catch (e) { }
   }
   function clearLocal() { lastSaveJson = null; try { localStorage.removeItem(SAVE_KEY); } catch (e) { } }
@@ -1380,6 +1380,7 @@
   function restoreLocal(d) {
     leaveOnline();
     G.mode = d.mode; G.level = [1, 2, 3].includes(d.level) ? d.level : 2; syncHomeChoice();
+    G.gameId = typeof d.id === 'string' ? d.id : newGameId();
     setMaxStack(d.max5 === false ? 0 : 5);
     Object.assign(G, { state: cloneState(d.state), player: d.player, dice: Array.isArray(d.dice) ? d.dice : null, pending: null, rem: Array.isArray(d.rem) ? d.rem.slice() : [], required: d.required || 0, lastDicePlayer: d.lastDicePlayer || d.player, history: Array.isArray(d.history) ? d.history.filter(h => h && okState(h.state)) : [], turnSteps: Array.isArray(d.turnSteps) ? d.turnSteps : [], selected: null, steps: [], busy: false, rolling: false, drag: null, lift: null });
     if (Array.isArray(d.tilt)) G.tilt = d.tilt.slice();
@@ -1407,6 +1408,105 @@
         break;
     }
   }
+
+  /* ===== Historique et bilan : chaque partie terminée est gardée sur l'appareil =====
+     Un enregistrement par partie, avec un identifiant unique : prêt à être envoyé sur un compte plus tard.
+     Adversaires : l'ordinateur par niveau, chaque ami en ligne (reconnu à son prénom), les parties à deux. */
+  const HIST_KEY = 'nacre.historique', HIST_MAX = 1000;
+  function newGameId() { return 'g-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7); }
+  // dans l'ordre chronologique (utile si un jour l'historique de plusieurs appareils est fusionné sur un compte)
+  function loadHist() { try { const a = JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); return Array.isArray(a) ? a.filter(r => r && r.id && r.opp && r.opp.key && (r.winner === 1 || r.winner === -1)).sort((x, y) => (x.at || 0) - (y.at || 0)) : []; } catch (e) { return []; } }
+  function saveHist(a) { try { localStorage.setItem(HIST_KEY, JSON.stringify(a.slice(-HIST_MAX))); } catch (e) { } }
+  function recordGame(w, pts, doc) {
+    let rec = null;
+    if (G.mode === 'ai') rec = { id: G.gameId || newGameId(), mode: 'ai', level: G.level, opp: { key: 'ai-' + G.level }, won: w === 1 };
+    else if (G.mode === '2p') rec = { id: G.gameId || newGameId(), mode: '2p', opp: { key: '2p' } };
+    else if (G.mode === 'online' && G.online) {
+      // même identifiant chez les deux joueurs et à chaque nouvel affichage de la fin : la partie ne compte qu'une fois
+      const on = G.online, d = doc || on.doc || {}, sc = d.scores || {}, oc = -on.color;
+      const name = String((on.names && on.names[oc]) || (d.names && d.names[String(oc)]) || '').trim().slice(0, 20);
+      const oid = oc === 1 ? d.host : d.guest;
+      rec = { id: `on-${on.code}-${d.createdAt || 0}-${sc.w || 0}-${sc.b || 0}`, mode: 'online', code: on.code, side: on.color, opp: { key: name ? 'n:' + name.toLowerCase() : 'id:' + (oid || on.code), name }, won: w === on.color };
+    }
+    if (!rec) return null;
+    rec.winner = w; rec.pts = pts === 2 || pts === 3 ? pts : 1;
+    const h = loadHist(), old = h.find(r => r.id === rec.id);
+    if (old) return old;
+    rec.at = Date.now(); h.push(rec); saveHist(h);
+    return rec;
+  }
+  function oppStats(h, key) {
+    const s = { key, games: 0, wins: 0, losses: 0, gW: 0, gL: 0, bgW: 0, bgL: 0, best: 0, cur: 0, side: { 1: 0, '-1': 0 }, sideG: { 1: 0, '-1': 0 }, name: '', mode: '', level: 0, last: 0 };
+    for (const r of h) {
+      if (r.opp.key !== key) continue;
+      s.games++; s.last = r.at || s.last; s.mode = r.mode; if (r.level) s.level = r.level; if (r.opp.name) s.name = r.opp.name;
+      if (r.mode === '2p') { s.side[r.winner]++; if (r.pts >= 2) s.sideG[r.winner]++; continue; }
+      if (r.won) { s.wins++; if (r.pts >= 2) s.gW++; if (r.pts === 3) s.bgW++; s.cur = s.cur > 0 ? s.cur + 1 : 1; }
+      else { s.losses++; if (r.pts >= 2) s.gL++; if (r.pts === 3) s.bgL++; s.cur = s.cur < 0 ? s.cur - 1 : -1; }
+      if (s.cur > s.best) s.best = s.cur;
+    }
+    return s;
+  }
+  const NB = '\u00a0'; // espace insécable : « 6 victoires » et « Expert : » ne se coupent pas en fin de ligne
+  const plural = (n, one, many) => `${n}${NB}${n > 1 ? many : one}`;
+  const oppLabel = s => s.mode === 'ai' ? `Ordinateur · ${LEVELS[s.level] || ''}` : s.mode === '2p' ? 'À deux sur cet appareil' : (s.name || 'Ami sans prénom');
+  const streakText = s => s.cur >= 2 ? `${s.cur}${NB}victoires de suite` : s.cur <= -2 ? `${-s.cur}${NB}défaites de suite` : '';
+  // une ligne sous le résultat : où on en est contre cet adversaire
+  function h2hLine(rec) {
+    const s = oppStats(loadHist(), rec.opp.key);
+    if (s.mode === '2p') return `À deux sur cet appareil${NB}: ${sideName(1)}${NB}${s.side[1]}, ${sideName(-1)}${NB}${s.side[-1]}`;
+    const who = s.mode === 'ai' ? `l'ordinateur ${LEVELS[s.level] || ''}`.trim() : (s.name || 'cet ami');
+    const st = streakText(s);
+    return `Contre ${who}${NB}: ${plural(s.wins, 'victoire', 'victoires')}, ${plural(s.losses, 'défaite', 'défaites')}${st ? ' · ' + st : ''}`;
+  }
+  function fmtDay(t) {
+    const d = new Date(t), now = new Date();
+    const day = d.toLocaleDateString('fr-FR', d.getFullYear() === now.getFullYear() ? { day: 'numeric', month: 'short' } : { day: 'numeric', month: 'short', year: 'numeric' });
+    return `${day} · ${d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
+  }
+  function renderStats() {
+    const h = loadHist(), box = $('statsBody');
+    $('statsClear').hidden = !h.length; armClear(false);
+    if (!h.length) { box.innerHTML = '<p class="empty">Aucune partie terminée pour l\'instant. Le bilan se remplit à chaque fin de partie, contre l\'ordinateur, à deux ou en ligne.</p>'; return; }
+    const mine = h.filter(r => r.mode !== '2p'), won = mine.filter(r => r.won).length;
+    const keys = [...new Set(h.map(r => r.opp.key))];
+    const opps = keys.map(k => oppStats(h, k)).sort((a, b) => b.last - a.last);
+    let html = `<p class="stats-sum">${mine.length ? `${plural(mine.length, 'partie', 'parties')} · ${Math.round(100 * won / mine.length)}${NB}% de victoires` : plural(h.length, 'partie à deux', 'parties à deux')}</p><h2>Par adversaire</h2>`;
+    for (const s of opps) {
+      let rec, det;
+      if (s.mode === '2p') {
+        rec = `${s.side[1]} – ${s.side[-1]}<small>${esc(sideName(1))} – ${esc(sideName(-1))}</small>`;
+        det = [plural(s.games, 'partie', 'parties'), s.sideG[1] + s.sideG[-1] ? `gammons${NB}: ${esc(sideName(1))}${NB}${s.sideG[1]}, ${esc(sideName(-1))}${NB}${s.sideG[-1]}` : ''].filter(Boolean).join(' · ');
+      } else {
+        rec = `${s.wins} – ${s.losses}<small>V – D</small>`;
+        const bg = n => n ? ` (dont ${plural(n, 'backgammon', 'backgammons')})` : '';
+        const g = s.gW + s.gL ? `gammons${NB}: ${s.gW}${NB}gagné${s.gW > 1 ? 's' : ''}${bg(s.bgW)}, ${s.gL}${NB}perdu${s.gL > 1 ? 's' : ''}${bg(s.bgL)}` : '';
+        const st = s.cur >= 1 ? `en cours${NB}: ${plural(s.cur, 'victoire', 'victoires')}` : `en cours${NB}: ${plural(-s.cur, 'défaite', 'défaites')}`;
+        det = [`${Math.round(100 * s.wins / s.games)}${NB}% de victoires`, g, s.best >= 2 ? `meilleure série${NB}: ${s.best}${NB}victoires` : '', st].filter(Boolean).join(' · ');
+      }
+      html += `<div class="opp"><div class="nm">${esc(oppLabel(s))}</div><div class="rec">${rec}</div><div class="det">${det}</div></div>`;
+    }
+    html += '<h2>Dernières parties</h2><ul class="recent">';
+    for (const r of h.slice(-15).reverse()) {
+      const type = r.pts === 3 ? ' · backgammon' : r.pts === 2 ? ' · gammon' : '';
+      const s = { mode: r.mode, level: r.level, name: r.opp.name };
+      const res = r.mode === '2p' ? `${sideName(r.winner)} gagne${type}` : `${r.won ? 'Victoire' : 'Défaite'}${type}`;
+      html += `<li><span class="dt">${esc(r.at ? fmtDay(r.at) : '')}</span><span class="op">${esc(oppLabel(s))}</span><span class="rs ${r.mode === '2p' ? '' : r.won ? 'win' : 'loss'}">${esc(res)}</span></li>`;
+    }
+    box.innerHTML = html + '</ul>';
+  }
+  // effacer demande une confirmation : un second toucher dans les 4 secondes
+  let clearTimer = null;
+  function armClear(on) {
+    clearTimeout(clearTimer); const b = $('statsClear'); b.dataset.armed = on ? '1' : '';
+    b.textContent = on ? 'Toucher encore pour tout effacer' : 'Effacer l\'historique';
+    if (on) clearTimer = setTimeout(() => armClear(false), 4000);
+  }
+  $('statsClear').addEventListener('click', () => { if ($('statsClear').dataset.armed !== '1') return armClear(true); saveHist([]); renderStats(); });
+  $('statsBtn').addEventListener('click', () => { renderStats(); $('statsOv').hidden = false; $('statsBody').parentElement.scrollTop = 0; });
+  const closeStats = () => { armClear(false); $('statsOv').hidden = true; };
+  $('statsClose').addEventListener('click', closeStats);
+  $('statsDone').addEventListener('click', closeStats);
 
   /* ===== Reprise à chaud (Claude) et au démarrage ===== */
   function snapshot() {
