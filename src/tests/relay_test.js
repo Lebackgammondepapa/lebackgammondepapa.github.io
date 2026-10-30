@@ -38,6 +38,7 @@ async function playUntil(pairs, stopFn, maxTicks) {
       const me = G.online.color;
       if (G.player !== me) continue;
       if (G.phase === 'roll') W.document.getElementById('mainBtn').click();
+      else if (G.phase === 'choice') W.document.getElementById(Math.random() < .5 ? 'mainBtn' : 'rerollBtn').click();
       else if (G.phase === 'move' && G.required > 0 && G.steps.length) {
         const st = G.steps[0]; const a = N.topPos(st.from, me, G.state), b = N.nextPos(st.to, me, G.state);
         const svg = W.document.getElementById('board');

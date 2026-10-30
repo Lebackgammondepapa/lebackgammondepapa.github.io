@@ -52,8 +52,8 @@ body {
 .who { display: flex; align-items: center; gap: 9px; min-width: 0; }
 .who .wtxt { min-width: 0; }
 .who .pawn { width: 30px; height: 30px; border-radius: 50%; flex: none; box-shadow: 0 2px 6px rgba(0,0,0,.25), inset 0 -3px 6px rgba(0,0,0,.15), inset 0 2px 4px rgba(255,255,255,.7); }
-.pawn.w { background: radial-gradient(circle at 35% 30%, #fff 0%, #f1f0ea 45%, #d9dde4 100%); }
-.pawn.b { background: radial-gradient(circle at 35% 30%, #6d93d9 0%, #2a4f9a 50%, #15305f 100%); }
+.pawn.w { background: var(--pawn-w, radial-gradient(circle at 35% 30%, #fff 0%, #f1f0ea 45%, #d9dde4 100%)); }
+.pawn.b { background: var(--pawn-b, radial-gradient(circle at 35% 30%, #6d93d9 0%, #2a4f9a 50%, #15305f 100%)); }
 .who .name { font-weight: 700; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.15; }
 .who .lvl { color: var(--accent-2); font-size: 11px; font-weight: 600; letter-spacing: .04em; }
 .who .lvl:empty { display: none; }
@@ -71,7 +71,7 @@ body {
 .btns { display: flex; flex-direction: column; gap: 8px; }
 .btn { font: 600 14px/1.1 var(--font-ui); border: 0; border-radius: 14px; padding: 13px 12px; cursor: pointer; color: var(--fg); background: var(--chip); transition: transform .08s ease, opacity .2s; text-align: center; }
 .btn:active { transform: scale(.97); }
-.btn.primary { background: linear-gradient(180deg, var(--accent-2), var(--accent)); color: #fff; box-shadow: 0 6px 16px rgba(39,85,168,.35); padding: 15px 12px; font-size: 15px; }
+.btn.primary { background: linear-gradient(180deg, var(--accent-2), var(--accent)); color: var(--accent-ink, #fff); box-shadow: 0 6px 16px rgba(39,85,168,.35); padding: 15px 12px; font-size: 15px; }
 .btn.ghost { background: transparent; border: 1px solid var(--panel-line); }
 .btn:disabled { opacity: .45; cursor: default; }
 .btn:focus-visible, .iconbtn:focus-visible, .level:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
@@ -123,11 +123,17 @@ body.layout-stack #whoW { flex-direction: row-reverse; text-align: right; }
 .tally .n { font-family: var(--font-display); font-size: 34px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .tally .l { font-size: 11px; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; font-weight: 600; }
 .rules { color: var(--muted); font-size: 12px; line-height: 1.5; margin-top: 14px; }
-.pawn.pair { width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(90deg, #f1f0ea 50%, #2a4f9a 50%); box-shadow: 0 2px 6px rgba(0,0,0,.25), inset 0 2px 4px rgba(255,255,255,.5); }
+.pawn.pair { width: 26px; height: 26px; border-radius: 50%; background: var(--pawn-pair, linear-gradient(90deg, #f1f0ea 50%, #2a4f9a 50%)); box-shadow: 0 2px 6px rgba(0,0,0,.25), inset 0 2px 4px rgba(255,255,255,.5); }
 .btn.wide { width: 100%; box-sizing: border-box; display: block; }
-.opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.opts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+.themes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.themeBtn { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 4px 7px; border-radius: 14px; border: 1.5px solid var(--panel-line); background: transparent; color: var(--fg); font: 600 12px var(--font-ui); cursor: pointer; }
+.themeBtn.on { border-color: var(--accent-2); background: var(--chip); }
+.themeBtn .sw { width: 100%; max-width: 64px; height: 30px; border-radius: 7px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.35), 0 2px 6px rgba(0,0,0,.25); }
+.themeBtn:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+#pauseOv .themes { margin: 4px 0 2px; }
 .opts .btn { font-size: 12.5px; padding: 11px 8px; }
-@media (max-width: 380px) { .opts { grid-template-columns: 1fr; } }
+@media (max-width: 380px) { .opts { grid-template-columns: 1fr; } .themes { grid-template-columns: repeat(2, 1fr); } }
 #onlineBox { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
 .joinrow { display: flex; gap: 8px; }
 .joinrow .btn { flex: none; }
@@ -155,7 +161,7 @@ input.code { -webkit-user-select: text; user-select: text; font-size: 22px; widt
   <aside class="side right">
     <div class="topline"><div class="score"><span id="scB">0</span><small>à</small><span id="scW">0</span></div><button class="iconbtn" id="menuBtn" aria-label="Menu">≡</button></div>
     <div class="status" id="status"></div>
-    <div class="btns"><button class="btn ghost" id="undoBtn" hidden>Annuler</button><button class="btn primary" id="mainBtn">Lancer les dés</button></div>
+    <div class="btns"><button class="btn ghost" id="undoBtn" hidden>Annuler</button><button class="btn ghost" id="rerollBtn" hidden>Relancer</button><button class="btn primary" id="mainBtn">Lancer les dés</button></div>
   </aside>
 </div>
 
@@ -183,7 +189,7 @@ input.code { -webkit-user-select: text; user-select: text; font-size: 22px; widt
       <div class="joinrow"><input id="joinCode" class="code" type="text" inputmode="latin" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="4" placeholder="CODE" aria-label="Code de la partie"><button class="btn" id="joinBtn">Rejoindre</button></div>
       <button class="btn ghost wide" id="resumeBtn2" hidden>Reprendre la partie</button>
       <div class="onlinemsg" id="onlineMsg"></div>
-      <div class="rules" id="onlineRules">Votre ami doit avoir un compte Claude et être invité comme Éditeur depuis le menu Partager de cette page (sans lien public). Le créateur joue les pions nacre.</div>
+      <div class="rules" id="onlineRules">Votre ami doit avoir un compte Claude et être invité comme Éditeur depuis le menu Partager de cette page (sans lien public). Le créateur joue les pions clairs.</div>
     </div>
     <div id="levelBox">
       <h2>Niveau</h2>
@@ -194,9 +200,11 @@ input.code { -webkit-user-select: text; user-select: text; font-size: 22px; widt
       </div>
     </div>
     <div class="cta"><button class="btn primary" id="startBtn">Jouer</button></div>
-    <div class="opts"><button class="btn ghost ruleToggle" type="button">Maximum 5 pions par case : oui</button><button class="btn ghost soundToggle" type="button">Son activé</button></div>
-    <div class="rules">La limite de 5 pions vient d'anciennes règles anglaises. Les règles officielles actuelles n'en ont pas. En ligne, c'est le réglage du créateur de la partie qui compte.</div>
-    <div class="rules">Vous jouez les pions nacre et sortez par le coin en bas à droite. Touchez un pion, puis sa destination. Gammon ×2, backgammon ×3.</div>
+    <h2>Plateau</h2>
+    <div class="themes themeRow"></div>
+    <div class="opts"><button class="btn ghost ruleToggle" type="button">5 pions max : oui</button><button class="btn ghost rerollToggle" type="button">Relance au départ : oui</button><button class="btn ghost soundToggle" type="button">Son activé</button></div>
+    <div class="rules">Deux règles maison, absentes des règles officielles : au plus 5 pions par case, et le droit pour celui qui commence de relancer ses dés une fois. En ligne, ce sont les réglages du créateur de la partie qui s'appliquent.</div>
+    <div class="rules">Vous jouez les pions clairs et sortez par le coin en bas à droite. Touchez un pion, puis sa destination. Gammon ×2, backgammon ×3.</div>
   </div>
 </div>
 
@@ -225,6 +233,7 @@ input.code { -webkit-user-select: text; user-select: text; font-size: 22px; widt
     <div class="lead" id="pauseMsg">La partie est en attente</div>
     <div class="cta" style="flex-direction:column">
       <button class="btn primary" id="resumeBtn">Reprendre</button>
+      <div class="themes themeRow"></div>
       <button class="btn ghost soundToggle" type="button">Son activé</button>
       <button class="btn ghost" id="abandonBtn">Abandonner et revenir au menu</button>
     </div>

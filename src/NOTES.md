@@ -10,7 +10,7 @@ Le même code produit deux versions du jeu :
 ## Sources
 - `head.part` : styles, balisage et `/*__ENGINE__*/` (emplacement du moteur)
 - `engine.js` : règles, coups légaux, IA (3 niveaux), variante 5 pions max (`setMaxStack`)
-- `app.js` : rendu SVG, animations, sons synthétisés, interface, modes de jeu, jeu en ligne (adaptateur `makeRelay` hors de Claude, `db` dans Claude)
+- `app.js` : thèmes de plateau (`THEMES`, textures bois/feutre/ivoire générées sur canvas), rendu SVG, animations, sons synthétisés, interface, modes de jeu, lancer automatique, règles maison (5 pions max, relance à l'ouverture), jeu en ligne (adaptateur `makeRelay` hors de Claude, `db` dans Claude)
 - `vendor/mqtt.min.js` : mqtt.js 5.10.4 (navigateur), intégré dans `index.html`
 
 ## Construire

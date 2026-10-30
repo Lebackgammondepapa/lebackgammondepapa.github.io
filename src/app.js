@@ -86,7 +86,53 @@
     return top ? 18 + c : 5 - c;
   }
 
-  /* ===== Textures (nacre, marbre bleu, ivoire marbré) générées une fois sur canvas ===== */
+  /* ===== Thèmes du plateau ===== */
+  const WALNUT = { tex: 'wood', base: '#3a2314', dark: '#1f1209', light: '#6e482b', edge: '#120a04', hl: 'rgba(255,214,165,.22)', lip: 'rgba(0,0,0,.45)' };
+  const IVORY = { tex: 'ivory', base: '#f2e8d3', vary: '#e3d3b2', rim: '#9a845d', grooves: [.78, .5], grooveDark: 'rgba(105,80,40,.32)', grooveLight: 'rgba(255,255,255,.7)', shade: '#6b5636', gloss: '#ffffff', glossA: .8, text: '#5a4426' };
+  const EBONY = { tex: 'ebony', base: '#1c1b1e', vary: '#34323a', rim: '#000000', grooves: [.78, .5], grooveDark: 'rgba(0,0,0,.6)', grooveLight: 'rgba(255,255,255,.14)', shade: '#000000', gloss: '#eceef6', glossA: .5, text: '#efe5cf' };
+  const DICE_IVORY = { face: ['#fffbf2', '#f1e9d8', '#d6c9ae'], pip: ['#141212', '#2c2724'], inner: '#ffffff', innerA: .9, edge: '#ad9d80', hl: .5, pipHl: .25 };
+  const DICE_EBONY = { face: ['#4a484f', '#26252a', '#0f0f11'], pip: ['#f7f0e1', '#d6ccb6'], inner: '#ffffff', innerA: .14, edge: '#030303', hl: .2, pipHl: .7 };
+  const THEMES = {
+    club: {
+      name: 'Club', sides: ['Ivoire', 'Ébène'], ui: { bg: '#0c1210', bg2: '#16211b', fg: '#f0e9da', muted: '#a9b4a6', panel: 'rgba(22,33,27,.86)', line: 'rgba(240,233,218,.13)', accent: '#a9853f', accent2: '#d8b66c', ink: '#1a1306', chip: 'rgba(216,182,108,.16)' },
+      frame: WALNUT, field: { tex: 'felt', base: '#1f4b38', vary: ['#28604a', '#163a2b'], vig: '#020c07', vigA: .55 },
+      ptA: ['#f2e8cf', '#d9c7a0'], ptB: ['#93303b', '#681e27'], ptStroke: 'rgba(30,10,5,.3)', ptShine: 'rgba(255,255,255,.14)',
+      tray: { base: '#143326', edge: '#0a1d15' }, light: IVORY, dark: EBONY, diceL: DICE_IVORY, diceD: DICE_EBONY,
+      hi: '#f2cd72', hiRing: '#fff3d1', hinge: true, shadow: '#070402'
+    },
+    noyer: {
+      name: 'Noyer', sides: ['Ivoire', 'Ébène'], ui: { bg: '#120d0a', bg2: '#1f1611', fg: '#f2e8da', muted: '#b5a796', panel: 'rgba(31,22,17,.86)', line: 'rgba(242,232,218,.13)', accent: '#a7743f', accent2: '#d29a5a', ink: '#1b1007', chip: 'rgba(210,154,90,.16)' },
+      frame: { tex: 'wood', base: '#2c1a10', dark: '#160c06', light: '#55361f', edge: '#0c0603', hl: 'rgba(255,208,155,.2)', lip: 'rgba(0,0,0,.5)' },
+      field: { tex: 'wood', base: '#c99e68', dark: '#9b6f40', light: '#e3c08e', vig: '#3a1e08', vigA: .4 },
+      ptA: ['#5b3923', '#3f2614'], ptB: ['#f3e6c8', '#dcc79e'], ptStroke: 'rgba(40,20,5,.45)', ptShine: 'rgba(255,255,255,.18)',
+      tray: { base: '#26170d', edge: '#120a05' }, light: IVORY, dark: EBONY, diceL: DICE_IVORY, diceD: DICE_EBONY,
+      hi: '#fff0b8', hiRing: '#fffbe9', hinge: true, shadow: '#1a0d03'
+    },
+    marine: {
+      name: 'Marine', sides: ['Ivoire', 'Ébène'], ui: { bg: '#0a1020', bg2: '#121c33', fg: '#eef0f6', muted: '#a3adc4', panel: 'rgba(18,28,51,.86)', line: 'rgba(238,240,246,.13)', accent: '#b08d4a', accent2: '#d9b870', ink: '#14100a', chip: 'rgba(217,184,112,.16)' },
+      frame: WALNUT, field: { tex: 'felt', base: '#1b2d4f', vary: ['#22395f', '#142340'], vig: '#020610', vigA: .55 },
+      ptA: ['#f0e7d1', '#d8c8a4'], ptB: ['#7e9ccb', '#5a78a8'], ptStroke: 'rgba(5,10,30,.3)', ptShine: 'rgba(255,255,255,.16)',
+      tray: { base: '#13223d', edge: '#0a1428' }, light: IVORY, dark: EBONY, diceL: DICE_IVORY, diceD: DICE_EBONY,
+      hi: '#f2cd72', hiRing: '#fff3d1', hinge: true, shadow: '#03050c'
+    },
+    nacre: {
+      name: 'Nacre', sides: ['Nacre', 'Marbre'], ui: { bg: '#0a142c', bg2: '#101f42', fg: '#e9eef8', muted: '#94a3c4', panel: 'rgba(16,31,66,.78)', line: 'rgba(233,238,248,.10)', accent: '#6f9ae6', accent2: '#93b6f2', ink: '#ffffff', chip: 'rgba(147,182,242,.14)' },
+      frame: { tex: 'ivoireMarbre', base: '#c3cddd', edge: '#7f94b8', hl: 'rgba(255,255,255,.35)', lip: null },
+      field: { tex: 'gradient', base: '#1e3f7a', stops: [[0, '#2b5597'], [.6, '#1e3f7a'], [1, '#132c5a']], vig: '#000000', vigA: 0 },
+      ptA: ['#d7dee9', '#b4c0d3'], ptB: ['#7fa1d4', '#5579b7'], ptStroke: 'rgba(0,0,0,0)', ptShine: 'rgba(255,255,255,.25)',
+      tray: { base: '#102a58', edge: '#0b1f44' },
+      light: { tex: 'nacre', base: '#f7f6f1', rim: '#aab6c8', ring: '#ffffff', shade: '#5b6a84', gloss: '#ffffff', glossA: .85, text: '#2c4575' },
+      dark: { tex: 'marbre', base: '#2a5cae', rim: '#0b2250', ring: '#9cbbf0', shade: '#040f27', gloss: '#dbe8ff', glossA: .7, text: '#eaf1ff' },
+      diceL: { face: ['#ffffff', '#f4f4f1', '#d9dbd6'], pip: ['#0f244d', '#3b5588'], inner: '#ffffff', innerA: .95, edge: '#b9bdc4', hl: .5, pipHl: .55 },
+      diceD: { face: ['#5d8fd6', '#2f66b8', '#1b4690'], pip: ['#ffffff', '#c6dcf5'], inner: '#cfe9ff', innerA: .6, edge: '#0f2f66', hl: .32, pipHl: .9, glass: true },
+      hi: '#9ad0ff', hiRing: '#e6f4ff', hinge: false, shadow: '#06132e'
+    }
+  };
+  let THEME_KEY = 'club';
+  try { const t = localStorage.getItem('nacre.theme'); if (t && THEMES[t]) THEME_KEY = t; } catch (e) { }
+  let THEME = THEMES[THEME_KEY];
+
+  /* ===== Textures générées sur canvas ===== */
   function makeTexture(kind) {
     const S = 180, c = document.createElement('canvas'); c.width = S; c.height = S; const g = c.getContext('2d');
     if (kind === 'nacre') {
@@ -131,86 +177,185 @@
     return c.toDataURL('image/png');
   }
 
+  function rng(seed) { let s = seed >>> 0 || 1; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+  function canvasOf(S) { const c = document.createElement('canvas'); c.width = S; c.height = S; return [c, c.getContext('2d')]; }
+  // bois : veines ondulées horizontales, périodiques pour que le motif se raccorde
+  function texWood(o, S, seed) {
+    const [c, g] = canvasOf(S), r = rng(seed);
+    g.fillStyle = o.base; g.fillRect(0, 0, S, S);
+    const vein = (y0, A, k, ph, w, col, a) => { g.strokeStyle = col; g.globalAlpha = a; g.lineWidth = w; for (const off of [-S, 0, S]) { g.beginPath(); for (let x = -4; x <= S + 4; x += 4) { const y = y0 + off + A * Math.sin(2 * Math.PI * k * x / S + ph) + A * .35 * Math.sin(2 * Math.PI * (k + 2) * x / S + ph * 1.7); if (x === -4) g.moveTo(x, y); else g.lineTo(x, y); } g.stroke(); } };
+    for (let i = 0; i < 28; i++) vein(r() * S, 3 + r() * 9, 1 + Math.floor(r() * 2), r() * 6.28, 3 + r() * 12, r() < .6 ? o.dark : o.light, .08 + r() * .2);
+    for (let i = 0; i < 110; i++) vein(r() * S, 1 + r() * 5, 1 + Math.floor(r() * 3), r() * 6.28, .5 + r() * 1.4, r() < .72 ? o.dark : o.light, .07 + r() * .2);
+    g.globalAlpha = .16; g.fillStyle = o.dark;
+    for (let i = 0; i < 700; i++) g.fillRect(r() * S, r() * S, 2 + r() * 6, .8);
+    g.globalAlpha = 1;
+    return c.toDataURL('image/png');
+  }
+  // feutre : marbrures très douces + grain fin + quelques fibres
+  function texFelt(o, S, seed) {
+    const [c, g] = canvasOf(S), r = rng(seed);
+    g.fillStyle = o.base; g.fillRect(0, 0, S, S);
+    for (let i = 0; i < 16; i++) {
+      const x = r() * S, y = r() * S, rad = 40 + r() * 80, col = o.vary[i % 2];
+      for (const ox of [-S, 0, S]) for (const oy of [-S, 0, S]) { const gr = g.createRadialGradient(x + ox, y + oy, 0, x + ox, y + oy, rad); gr.addColorStop(0, col); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.globalAlpha = .4; g.fillStyle = gr; g.fillRect(x + ox - rad, y + oy - rad, 2 * rad, 2 * rad); }
+    }
+    g.globalAlpha = 1;
+    try { const id = g.getImageData(0, 0, S, S), d = id.data; for (let i = 0; i < d.length; i += 4) { const n = (r() - .5) * 20; d[i] += n; d[i + 1] += n; d[i + 2] += n; } g.putImageData(id, 0, 0); } catch (e) { }
+    g.globalAlpha = .07; g.strokeStyle = '#ffffff'; g.lineWidth = .6;
+    for (let i = 0; i < 220; i++) { const x = r() * S, y = r() * S, a = r() * 6.28, l = 3 + r() * 8; g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.cos(a) * l, y + Math.sin(a) * l); g.stroke(); }
+    g.globalAlpha = 1;
+    return c.toDataURL('image/png');
+  }
+  // pions : ivoire veiné, ou ébène laqué
+  function texChecker(o, S, seed) {
+    const [c, g] = canvasOf(S), r = rng(seed);
+    g.fillStyle = o.base; g.fillRect(0, 0, S, S);
+    for (let i = 0; i < 12; i++) { const x = r() * S, y = r() * S, rad = 30 + r() * 60; const gr = g.createRadialGradient(x, y, 0, x, y, rad); gr.addColorStop(0, o.vary); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.globalAlpha = o.tex === 'ivory' ? .5 : .55; g.fillStyle = gr; g.fillRect(0, 0, S, S); }
+    g.lineCap = 'round';
+    for (let i = 0; i < (o.tex === 'ivory' ? 18 : 12); i++) {
+      g.beginPath(); let x = r() * S, y = r() * S; g.moveTo(x, y);
+      for (let k = 0; k < 3; k++) { const nx = x + (r() - .5) * 140, ny = y + (r() - .5) * 40; g.quadraticCurveTo(x + (r() - .5) * 60, y + (r() - .5) * 30, nx, ny); x = nx; y = ny; }
+      g.strokeStyle = o.tex === 'ivory' ? 'rgba(140,110,60,.10)' : 'rgba(255,255,255,.07)'; g.lineWidth = 1 + r() * 3; g.stroke();
+    }
+    g.globalAlpha = 1;
+    return c.toDataURL('image/png');
+  }
+  const TEX_CACHE = {};
+  function textureFor(spec, slot) {
+    const key = THEME_KEY + ':' + slot;
+    if (TEX_CACHE[key]) return TEX_CACHE[key];
+    let out;
+    if (spec.tex === 'nacre' || spec.tex === 'marbre') out = [makeTexture(spec.tex), 180];
+    else if (spec.tex === 'ivoireMarbre') out = [makeTexture('ivoire'), 180];
+    else if (spec.tex === 'wood') out = [texWood(spec, 512, slot === 'field' ? 11 : 7), 512];
+    else if (spec.tex === 'felt') out = [texFelt(spec, 256, 5), 256];
+    else out = [texChecker(spec, 180, spec.tex === 'ivory' ? 3 : 9), 180];
+    return (TEX_CACHE[key] = out);
+  }
+
   /* ===== Construction du SVG ===== */
   const svg = $('board');
   svg.style.touchAction = 'none';
   const defs = el('defs', {}, svg);
-  function pattern(id, href, size) { const p = el('pattern', { id, patternUnits: 'userSpaceOnUse', width: size, height: size }, defs); el('image', { href, width: size, height: size, preserveAspectRatio: 'none' }, p); }
-  pattern('texNacre', makeTexture('nacre'), 180);
-  pattern('texMarbre', makeTexture('marbre'), 180);
-  pattern('texIvoire', makeTexture('ivoire'), 180);
+  function pattern(id, href, size, centered) { const p = el('pattern', { id, patternUnits: 'userSpaceOnUse', width: size, height: size, x: centered ? -size / 2 : 0, y: centered ? -size / 2 : 0 }, defs); el('image', { href, width: size, height: size, preserveAspectRatio: 'none' }, p); }
   function radial(id, stops, attrs) { const g = el('radialGradient', Object.assign({ id }, attrs || {}), defs); stops.forEach(s => el('stop', { offset: s[0], 'stop-color': s[1], 'stop-opacity': s[2] == null ? 1 : s[2] }, g)); }
   function linear(id, stops, attrs) { const g = el('linearGradient', Object.assign({ id }, attrs || {}), defs); stops.forEach(s => el('stop', { offset: s[0], 'stop-color': s[1], 'stop-opacity': s[2] == null ? 1 : s[2] }, g)); }
-  radial('shadeW', [[0, '#fff', 0], [.62, '#fff', 0], [.86, '#8d9ab0', .22], [1, '#5b6a84', .5]], { cx: '50%', cy: '50%', r: '50%' });
-  radial('shadeB', [[0, '#fff', 0], [.62, '#fff', 0], [.86, '#071a3e', .3], [1, '#040f27', .7]], { cx: '50%', cy: '50%', r: '50%' });
-  radial('glossW', [[0, '#fff', .85], [.5, '#fff', .18], [1, '#fff', 0]], { cx: '36%', cy: '30%', r: '45%' });
-  radial('glossB', [[0, '#dbe8ff', .7], [.5, '#dbe8ff', .14], [1, '#dbe8ff', 0]], { cx: '36%', cy: '30%', r: '45%' });
-  radial('field', [[0, '#2b5597'], [.6, '#1e3f7a'], [1, '#132c5a']], { cx: '50%', cy: '40%', r: '75%' });
-  // flèches claires : gris argenté légèrement bleuté, pour se distinguer du blanc nacré des pions
-  linear('ptLight', [[0, '#d7dee9'], [1, '#b4c0d3']], { x1: 0, y1: 0, x2: 0, y2: 1 });
-  linear('ptBlue', [[0, '#7fa1d4'], [1, '#5579b7']], { x1: 0, y1: 0, x2: 0, y2: 1 });
-  linear('diceW', [[0, '#ffffff'], [.55, '#f4f4f1'], [1, '#d9dbd6']], { x1: 0, y1: 0, x2: 1, y2: 1 });
-  linear('diceB', [[0, '#5d8fd6'], [.5, '#2f66b8'], [1, '#1b4690']], { x1: 0, y1: 0, x2: 1, y2: 1 });
-  radial('diceBglass', [[0, '#bfe4ff', .5], [.6, '#bfe4ff', .08], [1, '#bfe4ff', 0]], { cx: '40%', cy: '35%', r: '60%' });
-  radial('pipW', [[0, '#0f244d'], [.7, '#1f3b70'], [1, '#3b5588']], { cx: '40%', cy: '35%', r: '65%' });
-  radial('pipB', [[0, '#ffffff'], [.75, '#eaf4ff'], [1, '#c6dcf5']], { cx: '40%', cy: '35%', r: '65%' });
-  linear('slabW', [[0, '#ffffff', .55], [.35, '#ffffff', 0], [1, '#6b7891', .45]], { x1: 0, y1: 0, x2: 0, y2: 1 });
-  linear('slabB', [[0, '#ffffff', .4], [.35, '#ffffff', 0], [1, '#04122e', .6]], { x1: 0, y1: 0, x2: 0, y2: 1 });
-  const fsh = el('filter', { id: 'chkShadow', x: '-20%', y: '-20%', width: '140%', height: '140%' }, defs); el('feDropShadow', { dx: 0, dy: 3, stdDeviation: 2.2, 'flood-color': '#06132e', 'flood-opacity': .5 }, fsh);
-  const fdr = el('filter', { id: 'dragShadow', x: '-40%', y: '-40%', width: '180%', height: '180%' }, defs); el('feDropShadow', { dx: 0, dy: 10, stdDeviation: 6, 'flood-color': '#06132e', 'flood-opacity': .55 }, fdr);
-  const fin = el('filter', { id: 'inner', x: '-5%', y: '-5%', width: '110%', height: '110%' }, defs); el('feDropShadow', { dx: 0, dy: 2, stdDeviation: 3, 'flood-color': '#000', 'flood-opacity': .35 }, fin);
+  const VERT = { x1: 0, y1: 0, x2: 0, y2: 1 }, DIAG = { x1: 0, y1: 0, x2: 1, y2: 1 };
+  function buildDefs() {
+    const T = THEME; defs.innerHTML = '';
+    for (const [id, spec, slot] of [['texL', T.light, 'light'], ['texD', T.dark, 'dark'], ['texFrame', T.frame, 'frame']]) { const [u, s] = textureFor(spec, slot); pattern(id, u, s, slot !== 'frame'); }
+    if (T.field.tex !== 'gradient') { const [u, s] = textureFor(T.field, 'field'); pattern('texField', u, s); }
+    else radial('field', T.field.stops, { cx: '50%', cy: '40%', r: '75%' });
+    radial('fieldVig', [[0, T.field.vig, 0], [.6, T.field.vig, 0], [1, T.field.vig, T.field.vigA]], { cx: '50%', cy: '50%', r: '72%' });
+    radial('shadeW', [[0, '#fff', 0], [.62, '#fff', 0], [.86, T.light.shade, .22], [1, T.light.shade, .5]], { cx: '50%', cy: '50%', r: '50%' });
+    radial('shadeB', [[0, '#fff', 0], [.62, '#fff', 0], [.86, T.dark.shade, .3], [1, T.dark.shade, .7]], { cx: '50%', cy: '50%', r: '50%' });
+    radial('glossW', [[0, T.light.gloss, T.light.glossA], [.5, T.light.gloss, .16], [1, T.light.gloss, 0]], { cx: '36%', cy: '30%', r: '45%' });
+    radial('glossB', [[0, T.dark.gloss, T.dark.glossA], [.5, T.dark.gloss, .12], [1, T.dark.gloss, 0]], { cx: '36%', cy: '30%', r: '45%' });
+    linear('ptA', [[0, T.ptA[0]], [1, T.ptA[1]]], VERT);
+    linear('ptB', [[0, T.ptB[0]], [1, T.ptB[1]]], VERT);
+    linear('diceW', [[0, T.diceL.face[0]], [.55, T.diceL.face[1]], [1, T.diceL.face[2]]], DIAG);
+    linear('diceB', [[0, T.diceD.face[0]], [.5, T.diceD.face[1]], [1, T.diceD.face[2]]], DIAG);
+    if (T.diceD.glass) radial('diceBglass', [[0, '#bfe4ff', .5], [.6, '#bfe4ff', .08], [1, '#bfe4ff', 0]], { cx: '40%', cy: '35%', r: '60%' });
+    radial('pipW', [[0, T.diceL.pip[0]], [1, T.diceL.pip[1]]], { cx: '40%', cy: '35%', r: '65%' });
+    radial('pipB', [[0, T.diceD.pip[0]], [1, T.diceD.pip[1]]], { cx: '40%', cy: '35%', r: '65%' });
+    linear('slabW', [[0, '#ffffff', .55], [.35, '#ffffff', 0], [1, T.light.shade, .45]], VERT);
+    linear('slabB', [[0, '#ffffff', .3], [.35, '#ffffff', 0], [1, T.dark.shade, .6]], VERT);
+    linear('brass', [[0, '#f6e1a4'], [.45, '#b98f3e'], [1, '#e8c97e']], { x1: 0, y1: 0, x2: 1, y2: 0 });
+    const fsh = el('filter', { id: 'chkShadow', x: '-20%', y: '-20%', width: '140%', height: '140%' }, defs); el('feDropShadow', { dx: 0, dy: 3, stdDeviation: 2.2, 'flood-color': T.shadow, 'flood-opacity': .5 }, fsh);
+    const fdr = el('filter', { id: 'dragShadow', x: '-40%', y: '-40%', width: '180%', height: '180%' }, defs); el('feDropShadow', { dx: 0, dy: 10, stdDeviation: 6, 'flood-color': T.shadow, 'flood-opacity': .55 }, fdr);
+    const fin = el('filter', { id: 'inner', x: '-5%', y: '-5%', width: '110%', height: '110%' }, defs); el('feDropShadow', { dx: 0, dy: 2, stdDeviation: 3, 'flood-color': '#000', 'flood-opacity': .35 }, fin);
+  }
 
   const root = el('g', { id: 'root' }, svg);
   const gStatic = el('g', {}, root), gHi = el('g', {}, root), gChk = el('g', { filter: 'url(#chkShadow)' }, root), gDice = el('g', {}, root), gLabels = el('g', {}, root), gDrag = el('g', {}, root);
   function buildStatic() {
-    gStatic.innerHTML = '';
-    // cadre nacré
-    el('rect', { x: 0, y: 0, width: W, height: H, rx: 26, fill: 'url(#texIvoire)' }, gStatic);
-    el('rect', { x: 0, y: 0, width: W, height: H, rx: 26, fill: 'none', stroke: '#fff', 'stroke-opacity': .35, 'stroke-width': 2 }, gStatic);
-    el('rect', { x: 1.5, y: 1.5, width: W - 3, height: H - 3, rx: 25, fill: 'none', stroke: '#7f94b8', 'stroke-opacity': .6, 'stroke-width': 1.2 }, gStatic);
-    // champ bleu profond
-    el('rect', { x: innerL, y: innerT, width: innerR - innerL, height: innerB - innerT, rx: 10, fill: 'url(#field)', filter: 'url(#inner)' }, gStatic);
+    const T = THEME; gStatic.innerHTML = '';
+    // cadre
+    el('rect', { x: 0, y: 0, width: W, height: H, rx: 26, fill: 'url(#texFrame)' }, gStatic);
+    el('rect', { x: 0, y: 0, width: W, height: H, rx: 26, fill: 'none', stroke: T.frame.hl, 'stroke-width': 2 }, gStatic);
+    el('rect', { x: 1.5, y: 1.5, width: W - 3, height: H - 3, rx: 25, fill: 'none', stroke: T.frame.edge, 'stroke-opacity': .7, 'stroke-width': 1.3 }, gStatic);
+    if (T.frame.lip) el('rect', { x: innerL - 6, y: innerT - 6, width: innerR - innerL + 12, height: innerB - innerT + 12, rx: 13, fill: 'none', stroke: T.frame.lip, 'stroke-width': 3 }, gStatic);
+    // champ de jeu
+    el('rect', { x: innerL, y: innerT, width: innerR - innerL, height: innerB - innerT, rx: 10, fill: T.field.tex === 'gradient' ? 'url(#field)' : 'url(#texField)', filter: 'url(#inner)' }, gStatic);
+    if (T.field.vigA) el('rect', { x: innerL, y: innerT, width: innerR - innerL, height: innerB - innerT, rx: 10, fill: 'url(#fieldVig)' }, gStatic);
     for (let i = 0; i < 24; i++) {
       const x = pointX(i), top = isTop(i);
       const y0 = top ? innerT : innerB, y1 = top ? innerT + PH : innerB - PH;
-      el('path', { d: `M${x - PW / 2 + 2} ${y0} L${x + PW / 2 - 2} ${y0} L${x} ${y1} Z`, fill: i % 2 === 0 ? 'url(#ptLight)' : 'url(#ptBlue)', opacity: .97 }, gStatic);
-      el('path', { d: `M${x - PW / 2 + 2} ${y0} L${x} ${y1}`, fill: 'none', stroke: '#fff', 'stroke-opacity': .25, 'stroke-width': 1 }, gStatic);
+      el('path', { d: `M${x - PW / 2 + 2} ${y0} L${x + PW / 2 - 2} ${y0} L${x} ${y1} Z`, fill: i % 2 === 0 ? 'url(#ptA)' : 'url(#ptB)', opacity: .97, stroke: T.ptStroke, 'stroke-width': .8 }, gStatic);
+      el('path', { d: `M${x - PW / 2 + 2} ${y0} L${x} ${y1}`, fill: 'none', stroke: T.ptShine, 'stroke-width': 1 }, gStatic);
     }
-    // barre nacrée
-    el('rect', { x: barL, y: innerT - 2, width: BARW, height: innerB - innerT + 4, fill: 'url(#texIvoire)' }, gStatic);
-    el('rect', { x: barL, y: innerT - 2, width: BARW, height: innerB - innerT + 4, fill: 'none', stroke: '#6f86ad', 'stroke-opacity': .6 }, gStatic);
+    // barre centrale
+    el('rect', { x: barL, y: innerT - 2, width: BARW, height: innerB - innerT + 4, fill: 'url(#texFrame)' }, gStatic);
+    el('rect', { x: barL, y: innerT - 2, width: BARW, height: innerB - innerT + 4, fill: 'none', stroke: T.frame.edge, 'stroke-opacity': .6 }, gStatic);
+    if (T.hinge) {
+      const cx = barL + BARW / 2;
+      el('line', { x1: cx, y1: innerT, x2: cx, y2: innerB, stroke: '#000', 'stroke-opacity': .45, 'stroke-width': 1.2 }, gStatic);
+      el('line', { x1: cx + 1.2, y1: innerT, x2: cx + 1.2, y2: innerB, stroke: '#fff', 'stroke-opacity': .08, 'stroke-width': 1 }, gStatic);
+      for (const y of [innerT + 70, innerB - 120]) {
+        el('rect', { x: cx - 8, y, width: 16, height: 50, rx: 3, fill: 'url(#brass)', stroke: '#5a3f12', 'stroke-width': .8 }, gStatic);
+        el('line', { x1: cx, y1: y + 2, x2: cx, y2: y + 48, stroke: '#6b4a16', 'stroke-width': .8 }, gStatic);
+        for (const dy of [10, 40]) { el('circle', { cx: cx - 4, cy: y + dy, r: 1.6, fill: '#7a5a22' }, gStatic); el('circle', { cx: cx + 4, cy: y + dy, r: 1.6, fill: '#7a5a22' }, gStatic); }
+      }
+    }
     // casiers de sortie
-    el('rect', { x: trayX, y: H / 2 + 6, width: TRAY, height: innerB - H / 2 - 6, rx: 8, fill: '#102a58', filter: 'url(#inner)' }, gStatic);
-    el('rect', { x: trayX, y: innerT, width: TRAY, height: H / 2 - 6 - innerT, rx: 8, fill: '#102a58', filter: 'url(#inner)' }, gStatic);
+    for (const [y, hh] of [[H / 2 + 6, innerB - H / 2 - 6], [innerT, H / 2 - 6 - innerT]]) {
+      el('rect', { x: trayX, y, width: TRAY, height: hh, rx: 8, fill: T.tray.base, filter: 'url(#inner)' }, gStatic);
+      el('rect', { x: trayX, y, width: TRAY, height: hh, rx: 8, fill: 'none', stroke: T.tray.edge, 'stroke-width': 1.2 }, gStatic);
+    }
     const bottom = [H / 2 + 6, innerB - H / 2 - 6], top = [innerT, H / 2 - 6 - innerT];
-    for (const [r, [y, hh]] of [[trayHiW, flip ? top : bottom], [trayHiB, flip ? bottom : top]]) { r.setAttribute('x', trayX); r.setAttribute('y', y); r.setAttribute('width', TRAY); r.setAttribute('height', hh); }
+    for (const [r, [y, hh]] of [[trayHiW, flip ? top : bottom], [trayHiB, flip ? bottom : top]]) { r.setAttribute('x', trayX); r.setAttribute('y', y); r.setAttribute('width', TRAY); r.setAttribute('height', hh); r.setAttribute('fill', T.hi); r.setAttribute('stroke', T.hi); }
   }
-  const trayHiW = el('rect', { rx: 8, fill: '#9ad0ff', 'fill-opacity': .18, stroke: '#9ad0ff', 'stroke-width': 3, opacity: 0 });
-  const trayHiB = el('rect', { rx: 8, fill: '#9ad0ff', 'fill-opacity': .18, stroke: '#9ad0ff', 'stroke-width': 3, opacity: 0 });
-  buildStatic();
+  const trayHiW = el('rect', { rx: 8, 'fill-opacity': .18, 'stroke-width': 3, opacity: 0 });
+  const trayHiB = el('rect', { rx: 8, 'fill-opacity': .18, 'stroke-width': 3, opacity: 0 });
+  // couleurs de l'interface autour du plateau
+  function applyThemeUI() {
+    const T = THEME, u = T.ui, st = document.documentElement.style;
+    const set = (k, v) => st.setProperty(k, v);
+    set('--bg', u.bg); set('--bg2', u.bg2); set('--fg', u.fg); set('--muted', u.muted); set('--panel', u.panel); set('--panel-line', u.line);
+    set('--accent', u.accent); set('--accent-2', u.accent2); set('--accent-ink', u.ink); set('--chip', u.chip);
+    const lb = T.light.base, db = T.dark.base;
+    set('--pawn-w', `radial-gradient(circle at 35% 30%, #ffffff 0%, ${lb} 50%, ${T.light.shade} 130%)`);
+    set('--pawn-b', `radial-gradient(circle at 35% 30%, ${T.dark.tex === 'marbre' ? '#6d93d9' : '#6a6870'} 0%, ${db} 55%, #000 120%)`);
+    set('--pawn-pair', `linear-gradient(90deg, ${lb} 50%, ${db} 50%)`);
+    st.colorScheme = 'dark';
+    const meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', u.bg);
+  }
+  function themeSwatch(T) {
+    const fr = T.frame.base, fi = T.field.base;
+    return `radial-gradient(circle at 34% 50%, ${T.light.base} 0 19%, rgba(0,0,0,.35) 20%, transparent 23%), radial-gradient(circle at 66% 50%, ${T.dark.base} 0 19%, rgba(255,255,255,.25) 20%, transparent 23%), linear-gradient(90deg, ${fr} 0 13%, ${fi} 13% 87%, ${fr} 87%)`;
+  }
+  buildDefs(); applyThemeUI(); buildStatic();
 
   /* ===== État de la partie ===== */
-  const G = { mode: 'ai', level: 2, state: null, player: 1, phase: 'idle', dice: null, rem: [], required: 0, steps: [], selected: null, history: [], scores: loadScores(), busy: false, lastDicePlayer: 1, tilt: [0, 0, 0, 0], lift: null, drag: null, online: null, turnSteps: [] };
+  const G = { mode: 'ai', level: 2, state: null, player: 1, phase: 'idle', dice: null, rem: [], required: 0, steps: [], selected: null, history: [], scores: loadScores(), busy: false, lastDicePlayer: 1, tilt: [0, 0, 0, 0], lift: null, drag: null, online: null, turnSteps: [], gen: 0 };
   let RULE5 = true; try { RULE5 = localStorage.getItem('nacre.rule5') !== 'off'; } catch (e) { }
-  function syncRuleButtons() { document.querySelectorAll('.ruleToggle').forEach(b => { b.textContent = RULE5 ? 'Maximum 5 pions par case : oui' : 'Maximum 5 pions par case : non'; b.setAttribute('aria-pressed', RULE5 ? 'true' : 'false'); }); }
+  // règle maison : celui qui gagne le lancer d'ouverture peut relancer ses deux dés une fois
+  let RULE_REROLL = true; try { RULE_REROLL = localStorage.getItem('nacre.reroll') !== 'off'; } catch (e) { }
+  function syncRuleButtons() {
+    document.querySelectorAll('.ruleToggle').forEach(b => { b.textContent = RULE5 ? '5 pions max : oui' : '5 pions max : non'; b.setAttribute('aria-pressed', RULE5 ? 'true' : 'false'); });
+    document.querySelectorAll('.rerollToggle').forEach(b => { b.textContent = RULE_REROLL ? 'Relance au départ : oui' : 'Relance au départ : non'; b.setAttribute('aria-pressed', RULE_REROLL ? 'true' : 'false'); });
+  }
   function loadScores() { try { const s = JSON.parse(localStorage.getItem('nacre.scores') || 'null'); if (s && typeof s.w === 'number') return s; } catch (e) { } return { w: 0, b: 0 }; }
   function saveScores() { try { localStorage.setItem('nacre.scores', JSON.stringify(G.scores)); } catch (e) { } }
   const isHuman = p => G.mode === '2p' || (G.mode === 'online' ? !!G.online && p === G.online.color : p === 1);
   const isMe = p => G.mode === 'online' && !!G.online && p === G.online.color;
-  const nameOf = p => (G.mode === 'online' && G.online && G.online.names && G.online.names[p]) ? G.online.names[p] : (p === 1 ? 'Nacre' : 'Marbre');
+  const sideName = p => THEME.sides[p === 1 ? 0 : 1];
+  const nameOf = p => (G.mode === 'online' && G.online && G.online.names && G.online.names[p]) ? G.online.names[p] : sideName(p);
   const LEVELS = { 1: 'Débutant', 2: 'Intermédiaire', 3: 'Expert' };
   const kOf = p => (p === 1 ? 0 : 1);
 
   /* ===== Rendu ===== */
   function drawChecker(x, y, p, count, parent) {
+    const L = p === 1 ? THEME.light : THEME.dark;
     const g = el('g', { transform: `translate(${x} ${y})` }, parent || gChk);
-    el('circle', { r: R, fill: p === 1 ? 'url(#texNacre)' : 'url(#texMarbre)' }, g);
+    el('circle', { r: R, fill: p === 1 ? 'url(#texL)' : 'url(#texD)' }, g);
     el('circle', { r: R, fill: p === 1 ? 'url(#shadeW)' : 'url(#shadeB)' }, g);
+    if (L.grooves) for (const f of L.grooves) { el('circle', { r: R * f, fill: 'none', stroke: L.grooveDark, 'stroke-width': 1.7 }, g); el('circle', { cx: .5, cy: .8, r: R * f - 1.3, fill: 'none', stroke: L.grooveLight, 'stroke-width': .9 }, g); }
     el('circle', { r: R, fill: p === 1 ? 'url(#glossW)' : 'url(#glossB)' }, g);
-    el('circle', { r: R - .5, fill: 'none', stroke: p === 1 ? '#aab6c8' : '#0b2250', 'stroke-opacity': .7, 'stroke-width': 1.2 }, g);
-    el('circle', { r: R - 7, fill: 'none', stroke: p === 1 ? '#fff' : '#9cbbf0', 'stroke-opacity': .35, 'stroke-width': .8 }, g);
+    el('circle', { r: R - .5, fill: 'none', stroke: L.rim, 'stroke-opacity': .7, 'stroke-width': 1.2 }, g);
+    if (!L.grooves) el('circle', { r: R - 7, fill: 'none', stroke: L.ring, 'stroke-opacity': .35, 'stroke-width': .8 }, g);
     if (count > 1) {
-      const t = el('text', { x: 0, y: 0, 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-family': 'Manrope, sans-serif', 'font-weight': 700, 'font-size': 20 * fScale, fill: p === 1 ? '#2c4575' : '#eaf1ff' }, g);
+      const t = el('text', { x: 0, y: 0, 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-family': 'Manrope, sans-serif', 'font-weight': 700, 'font-size': 20 * fScale, fill: L.text }, g);
       t.textContent = count;
     }
     return g;
@@ -218,9 +363,9 @@
   // pion couché dans le casier, vu de la tranche
   function drawSlab(pos, p, k, parent) {
     const g = el('g', { transform: `translate(${pos.x + ((k * 7) % 3 - 1) * .8} ${pos.y})` }, parent || gChk);
-    el('rect', { x: -SLAB_W / 2, y: -SLAB_H / 2, width: SLAB_W, height: SLAB_H, rx: 3.5, fill: p === 1 ? 'url(#texNacre)' : 'url(#texMarbre)' }, g);
+    el('rect', { x: -SLAB_W / 2, y: -SLAB_H / 2, width: SLAB_W, height: SLAB_H, rx: 3.5, fill: p === 1 ? 'url(#texL)' : 'url(#texD)' }, g);
     el('rect', { x: -SLAB_W / 2, y: -SLAB_H / 2, width: SLAB_W, height: SLAB_H, rx: 3.5, fill: p === 1 ? 'url(#slabW)' : 'url(#slabB)' }, g);
-    el('rect', { x: -SLAB_W / 2, y: -SLAB_H / 2, width: SLAB_W, height: SLAB_H, rx: 3.5, fill: 'none', stroke: p === 1 ? '#9aa6b8' : '#0b2250', 'stroke-opacity': .7, 'stroke-width': .7 }, g);
+    el('rect', { x: -SLAB_W / 2, y: -SLAB_H / 2, width: SLAB_W, height: SLAB_H, rx: 3.5, fill: 'none', stroke: (p === 1 ? THEME.light : THEME.dark).rim, 'stroke-opacity': .7, 'stroke-width': .7 }, g);
     return g;
   }
   // position du pion du dessus à un emplacement, et position du prochain pion posé
@@ -243,9 +388,9 @@
     const dests = interactive ? destinationsFor(src) : [];
     if (src != null && src !== BAR && !G.drag) {
       const i = src, x = pointX(i), top = isTop(i);
-      el('path', { d: `M${x - PW / 2 + 2} ${top ? innerT : innerB} L${x + PW / 2 - 2} ${top ? innerT : innerB} L${x} ${top ? innerT + PH : innerB - PH} Z`, fill: '#9ad0ff', opacity: .3 }, gHi);
+      el('path', { d: `M${x - PW / 2 + 2} ${top ? innerT : innerB} L${x + PW / 2 - 2} ${top ? innerT : innerB} L${x} ${top ? innerT + PH : innerB - PH} Z`, fill: THEME.hi, opacity: .3 }, gHi);
     }
-    if (src === BAR && !G.drag) el('rect', { x: barL, y: innerT, width: BARW, height: innerB - innerT, fill: '#9ad0ff', opacity: .3 }, gHi);
+    if (src === BAR && !G.drag) el('rect', { x: barL, y: innerT, width: BARW, height: innerB - innerT, fill: THEME.hi, opacity: .3 }, gHi);
     const liftAt = G.drag ? G.drag.from : G.lift;
     for (let i = 0; i < 24; i++) {
       const c = s.pts[i]; if (!c) continue;
@@ -253,14 +398,14 @@
       if (liftAt === i) n--;
       const show = Math.min(n, 5);
       for (let k = 0; k < show; k++) { const pos = stackPos(i, show, k); drawChecker(pos.x, pos.y, p, k === show - 1 && n > 5 ? n : 1); }
-      if (movable.has(i) && src == null) { const pos = stackPos(i, Math.max(show, 1), Math.max(show - 1, 0)); el('circle', { cx: pos.x, cy: pos.y, r: R + 5, fill: 'none', stroke: '#9ad0ff', 'stroke-width': 2.5, class: 'pulse' }, gHi); }
+      if (movable.has(i) && src == null) { const pos = stackPos(i, Math.max(show, 1), Math.max(show - 1, 0)); el('circle', { cx: pos.x, cy: pos.y, r: R + 5, fill: 'none', stroke: THEME.hi, 'stroke-width': 2.5, class: 'pulse' }, gHi); }
     }
     for (const p of [1, -1]) {
       let n = s.bar[kOf(p)]; if (liftAt === BAR && p === G.player) n--;
       if (n <= 0) continue;
       const show = Math.min(n, 2);
       for (let k = 0; k < show; k++) { const pos = barPos(p, show, k); drawChecker(pos.x, pos.y, p, k === show - 1 && n > 2 ? n : 1); }
-      if (movable.has(BAR) && src == null && p === G.player) { const pos = barPos(p, show, show - 1); el('circle', { cx: pos.x, cy: pos.y, r: R + 5, fill: 'none', stroke: '#9ad0ff', 'stroke-width': 2.5, class: 'pulse' }, gHi); }
+      if (movable.has(BAR) && src == null && p === G.player) { const pos = barPos(p, show, show - 1); el('circle', { cx: pos.x, cy: pos.y, r: R + 5, fill: 'none', stroke: THEME.hi, 'stroke-width': 2.5, class: 'pulse' }, gHi); }
     }
     for (const p of [1, -1]) {
       const n = s.off[kOf(p)];
@@ -269,8 +414,8 @@
     for (const d of dests) {
       if (d.to === OFF) { (G.player === 1 ? trayHiW : trayHiB).setAttribute('opacity', 1); continue; }
       const pos = nextPos(d.to, G.player, s);
-      el('circle', { cx: pos.x, cy: pos.y, r: R - 2, fill: '#9ad0ff', opacity: d.composite ? .28 : .48, class: 'pulse' }, gHi);
-      el('circle', { cx: pos.x, cy: pos.y, r: R + 2, fill: 'none', stroke: '#e6f4ff', 'stroke-width': 2, opacity: .9 }, gHi);
+      el('circle', { cx: pos.x, cy: pos.y, r: R - 2, fill: THEME.hi, opacity: d.composite ? .28 : .48, class: 'pulse' }, gHi);
+      el('circle', { cx: pos.x, cy: pos.y, r: R + 2, fill: 'none', stroke: THEME.hiRing, 'stroke-width': 2, opacity: .9 }, gHi);
     }
     if (G.dice && !G.rolling) {
       if (G.phase === 'opening-roll') {
@@ -295,16 +440,16 @@
   function drawDie(cx, cy, v, p, used, tilt, parent) {
     const g = el('g', { opacity: used ? .32 : 1 }, parent || gDice);
     setDieTransform(g, cx, cy, tilt || 0, 1);
-    const w = p === 1;
+    const w = p === 1, D = w ? THEME.diceL : THEME.diceD;
     const k = DS / 46, rx = 10 * k;
     el('rect', { x: -DS / 2, y: -DS / 2, width: DS, height: DS, rx, fill: w ? 'url(#diceW)' : 'url(#diceB)', filter: 'url(#chkShadow)' }, g);
-    if (!w) el('rect', { x: -DS / 2, y: -DS / 2, width: DS, height: DS, rx, fill: 'url(#diceBglass)' }, g);
-    el('rect', { x: -DS / 2 + .8, y: -DS / 2 + .8, width: DS - 1.6, height: DS - 1.6, rx: rx - .6, fill: 'none', stroke: w ? '#fff' : '#cfe9ff', 'stroke-opacity': w ? .95 : .6, 'stroke-width': 1.2 }, g);
-    el('rect', { x: -DS / 2, y: -DS / 2, width: DS, height: DS, rx, fill: 'none', stroke: w ? '#b9bdc4' : '#0f2f66', 'stroke-opacity': .9, 'stroke-width': 1 }, g);
-    el('ellipse', { cx: -8 * k, cy: -12 * k, rx: 13 * k, ry: 6 * k, fill: '#fff', 'fill-opacity': w ? .5 : .32, transform: `rotate(-32 ${-8 * k} ${-12 * k})` }, g);
+    if (D.glass) el('rect', { x: -DS / 2, y: -DS / 2, width: DS, height: DS, rx, fill: 'url(#diceBglass)' }, g);
+    el('rect', { x: -DS / 2 + .8, y: -DS / 2 + .8, width: DS - 1.6, height: DS - 1.6, rx: rx - .6, fill: 'none', stroke: D.inner, 'stroke-opacity': D.innerA, 'stroke-width': 1.2 }, g);
+    el('rect', { x: -DS / 2, y: -DS / 2, width: DS, height: DS, rx, fill: 'none', stroke: D.edge, 'stroke-opacity': .9, 'stroke-width': 1 }, g);
+    el('ellipse', { cx: -8 * k, cy: -12 * k, rx: 13 * k, ry: 6 * k, fill: '#fff', 'fill-opacity': D.hl, transform: `rotate(-32 ${-8 * k} ${-12 * k})` }, g);
     for (const [dx, dy] of PIPS[v]) {
       el('circle', { cx: dx * 12.5 * k, cy: dy * 12.5 * k, r: 4.2 * k, fill: w ? 'url(#pipW)' : 'url(#pipB)' }, g);
-      el('circle', { cx: (dx * 12.5 - 1.2) * k, cy: (dy * 12.5 - 1.4) * k, r: 1.1 * k, fill: '#fff', 'fill-opacity': w ? .55 : .9 }, g);
+      el('circle', { cx: (dx * 12.5 - 1.2) * k, cy: (dy * 12.5 - 1.4) * k, r: 1.1 * k, fill: '#fff', 'fill-opacity': D.pipHl }, g);
     }
     return g;
   }
@@ -314,22 +459,30 @@
     const s = G.state;
     $('subW').textContent = s ? `${pipCount(s, 1)} pips · ${s.off[0]} sorti${s.off[0] > 1 ? 's' : ''}` : '';
     $('subB').textContent = s ? `${pipCount(s, -1)} pips · ${s.off[1]} sorti${s.off[1] > 1 ? 's' : ''}` : '';
-    $('lvlB').textContent = G.mode === 'ai' ? LEVELS[G.level] : (G.mode === 'online' ? (nameOf(-1) === 'Marbre' ? 'En ligne' : nameOf(-1)) : '');
-    $('lvlW').textContent = G.mode === 'online' ? (nameOf(1) === 'Nacre' ? 'En ligne' : nameOf(1)) : '';
+    $('nameW').textContent = sideName(1); $('nameB').textContent = sideName(-1);
+    $('lvlB').textContent = G.mode === 'ai' ? LEVELS[G.level] : (G.mode === 'online' ? (nameOf(-1) === sideName(-1) ? 'En ligne' : nameOf(-1)) : '');
+    $('lvlW').textContent = G.mode === 'online' ? (nameOf(1) === sideName(1) ? 'En ligne' : nameOf(1)) : '';
     $('whoW').style.order = flip ? 0 : 1; $('whoB').style.order = flip ? 1 : 0;
     $('whoW').classList.toggle('active', G.player === 1 && G.phase !== 'idle');
     $('whoB').classList.toggle('active', G.player === -1 && G.phase !== 'idle');
     $('scW').textContent = G.scores.w; $('scB').textContent = G.scores.b;
     const main = $('mainBtn'), undo = $('undoBtn'), st = $('status');
     undo.hidden = !(G.phase === 'move' && G.history.length > 0 && isHuman(G.player) && !G.busy);
+    $('rerollBtn').hidden = !(G.phase === 'choice' && isHuman(G.player) && !G.busy && !G.rolling);
     let title = '', hint = '', label = '';
     const you = G.mode === '2p' ? nameOf(G.player) : 'vous';
     const opp = G.mode === 'online' ? nameOf(-(G.online ? G.online.color : 1)) : 'Marbre';
     switch (G.phase) {
       case 'waiting': title = 'En attente de votre ami'; hint = `Code de la partie : ${G.online ? G.online.code : ''}`; break;
-      case 'opening': title = 'Qui commence ?'; hint = 'Chacun lance un dé, le plus fort joue les deux.'; if (G.mode !== 'online') label = 'Lancer'; break;
+      case 'opening': title = 'Qui commence ?'; hint = 'Chacun lance un dé, le plus fort joue les deux.'; break;
+      case 'choice': {
+        const d = G.dice || [0, 0];
+        if (isHuman(G.player)) { title = `${G.mode === '2p' ? nameOf(G.player) + ' commence' : 'Vous commencez'} avec ${d[0]} et ${d[1]}`; hint = 'Jouez ces dés ou relancez-les une fois.'; label = 'Jouer ces dés'; }
+        else { title = `${opp} commence avec ${d[0]} et ${d[1]}`; hint = 'Il garde ses dés ou les relance…'; }
+        break;
+      }
       case 'opening-roll': title = G.msg || ''; hint = G.hint || ''; break;
-      case 'roll': if (isHuman(G.player)) { title = `À ${you} de jouer`; if (!G.rolling) label = 'Lancer les dés'; } else { title = `${opp} lance les dés…`; if (G.mode === 'online') hint = G.online && G.online.oppOnline === false ? 'Votre ami n\'a pas la page ouverte.' : ''; } break;
+      case 'roll': if (isHuman(G.player)) { title = `À ${you} de jouer`; hint = 'Lancer des dés…'; } else { title = `${opp} lance les dés…`; if (G.mode === 'online') hint = G.online && G.online.oppOnline === false ? 'Votre ami n\'a pas la page ouverte.' : ''; } break;
       case 'move':
         if (isHuman(G.player)) {
           if (G.required === 0) { title = 'Tour terminé'; hint = 'Validez pour passer la main.'; label = 'Fin du tour'; }
@@ -422,6 +575,24 @@
   function syncSoundButtons() { document.querySelectorAll('.soundToggle').forEach(b => { b.textContent = SFX.on ? 'Son activé' : 'Son coupé'; b.setAttribute('aria-pressed', SFX.on ? 'true' : 'false'); }); }
   document.querySelectorAll('.soundToggle').forEach(b => b.addEventListener('click', () => { SFX.set(!SFX.on); syncSoundButtons(); if (SFX.on) setTimeout(() => SFX.place(false), 30); }));
   syncSoundButtons();
+  document.querySelectorAll('.rerollToggle').forEach(b => b.addEventListener('click', () => { RULE_REROLL = !RULE_REROLL; try { localStorage.setItem('nacre.reroll', RULE_REROLL ? 'on' : 'off'); } catch (e) { } syncRuleButtons(); }));
+  // choix du plateau
+  function setTheme(key) {
+    if (!THEMES[key]) return;
+    THEME_KEY = key; THEME = THEMES[key];
+    try { localStorage.setItem('nacre.theme', key); } catch (e) { }
+    buildDefs(); applyThemeUI(); buildStatic(); render(); syncThemeButtons();
+  }
+  function syncThemeButtons() { document.querySelectorAll('.themeBtn').forEach(b => { const on = b.dataset.theme === THEME_KEY; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); }); }
+  document.querySelectorAll('.themeRow').forEach(row => {
+    for (const [key, T] of Object.entries(THEMES)) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'themeBtn'; b.dataset.theme = key;
+      const sw = document.createElement('span'); sw.className = 'sw'; sw.style.background = themeSwatch(T);
+      const nm = document.createElement('span'); nm.textContent = T.name;
+      b.append(sw, nm); b.addEventListener('click', () => setTheme(key)); row.appendChild(b);
+    }
+  });
+  syncThemeButtons();
   document.querySelectorAll('.ruleToggle').forEach(b => b.addEventListener('click', () => { RULE5 = !RULE5; try { localStorage.setItem('nacre.rule5', RULE5 ? 'on' : 'off'); } catch (e) { } syncRuleButtons(); }));
   syncRuleButtons();
 
@@ -526,7 +697,7 @@
     if (!press.moved) {
       press.moved = true; G.drag = { from: press.dragFrom }; G.selected = null; render(); SFX.lift();
       press.ghost = drawChecker(pt.x, pt.y, G.player, 1, gDrag); press.ghost.setAttribute('filter', 'url(#dragShadow)');
-      press.hover = el('circle', { r: R + 6, fill: 'none', stroke: '#fff', 'stroke-width': 3, opacity: 0 }, gHi);
+      press.hover = el('circle', { r: R + 6, fill: 'none', stroke: THEME.hiRing, 'stroke-width': 3, opacity: 0 }, gHi);
     }
     press.ghost.setAttribute('transform', `translate(${pt.x} ${pt.y - 14}) scale(1.1)`);
     const z = zoneAt(pt); const d = destinationsFor(press.dragFrom).find(x => x.to === z);
@@ -620,6 +791,18 @@
     G.rolling = true; render();
     rollDice(list.map((v, i) => ({ cx: cx + (i - (n - 1) / 2) * span, cy: H / 2, v, p })), () => beginTurnWithDice(dice));
   }
+  // lance les dés tout seul au début d'un tour (pour soi, ou pour l'ordinateur)
+  function scheduleAutoRoll(ms) {
+    const gen = G.gen, p = G.player, seq = G.online ? G.online.doc.seq : null;
+    const tryRoll = n => {
+      if (G.gen !== gen || G.player !== p || G.phase !== 'roll') return;
+      if (G.online && G.online.doc.seq !== seq) return;
+      if (G.mode === 'online' && !isMe(p)) return;
+      if (G.busy || G.rolling) { if (n < 40) setTimeout(() => tryRoll(n + 1), 250); return; }
+      rollFor(p);
+    };
+    setTimeout(() => tryRoll(0), ms);
+  }
   function endTurn() {
     if (G.phase === 'over') return;
     if (G.mode === 'online' && isMe(G.player)) {
@@ -627,7 +810,7 @@
       netWrite({ state: G.state, player: -G.player, phase: 'roll', dice: null, rem: [], required: 0 }, { type: pass ? 'pass' : 'turn', steps: G.turnSteps.slice(), dice: G.dice, player: G.player });
     }
     G.player = -G.player; G.phase = 'roll'; G.selected = null; G.history = []; G.turnSteps = []; render(); snapshot();
-    if (G.mode === 'ai' && !isHuman(G.player)) setTimeout(() => rollFor(G.player), 700);
+    if (G.mode !== 'online') scheduleAutoRoll(650);
   }
   function aiPlay() {
     G.busy = true; render();
@@ -672,12 +855,43 @@
     if (G.mode === 'online') {
       if (!G.online || G.online.color !== 1) return;
       const starter = w === b ? 0 : (w > b ? 1 : -1);
-      if (starter) { const d = starter === 1 ? [w, b] : [b, w]; const t = startTurn(G.state, starter, d); netWrite({ player: starter, phase: t.required ? 'move' : 'nomove', dice: d, rem: t.rem, required: t.required, lastDicePlayer: starter }, { type: 'opening', w, b }); }
+      if (starter) {
+        const d = starter === 1 ? [w, b] : [b, w], t = startTurn(G.state, starter, d), ch = !!G.online.doc.reroll;
+        netWrite({ player: starter, phase: ch ? 'choice' : (t.required ? 'move' : 'nomove'), dice: d, rem: ch ? [] : t.rem, required: ch ? 0 : t.required, lastDicePlayer: starter }, { type: 'opening', w, b });
+      }
       else netWrite({}, { type: 'opening', w, b, tie: true });
       animateOpening(w, b, (tie) => { if (tie) { setTimeout(openingRoll, 300); return; } hardSync(G.online.doc); });
       return;
     }
-    animateOpening(w, b, (tie, p) => { if (tie) { openingRoll(); return; } G.player = p; beginTurnWithDice(p === 1 ? [w, b] : [b, w]); });
+    animateOpening(w, b, (tie, p) => { if (tie) { openingRoll(); return; } afterOpening(p, p === 1 ? [w, b] : [b, w]); });
+  }
+  function afterOpening(p, d) {
+    G.player = p; G.lastDicePlayer = p;
+    if (!RULE_REROLL) return beginTurnWithDice(d);
+    G.dice = d; G.rem = []; G.phase = 'choice'; render(); snapshot();
+    if (!isHuman(p)) {
+      const gen = G.gen;
+      setTimeout(() => { if (G.gen !== gen || G.phase !== 'choice') return; if (aiWantsReroll(d, p)) rollFor(p); else beginTurnWithDice(d); }, 1300);
+    }
+  }
+  // l'ordinateur relance quand ses dés d'ouverture valent moins qu'un lancer moyen
+  const OPEN_AVG = {};
+  function aiWantsReroll(d, p) {
+    const s = G.state;
+    const best = dice => { let b = -Infinity; for (const t of genTurns(s, p, dice)) { const v = evaluate(t.state, p); if (v > b) b = v; } return b; };
+    const key = p + ':' + (RULE5 ? 5 : 0);
+    if (OPEN_AVG[key] == null) { let avg = 0; for (let a = 1; a <= 6; a++) for (let c = a; c <= 6; c++) avg += (a === c ? 1 : 2) / 36 * best([a, c]); OPEN_AVG[key] = avg; }
+    const noise = G.level === 1 ? 8 : G.level === 2 ? 2 : 0;
+    return best(d) + (Math.random() - .5) * 2 * noise < OPEN_AVG[key];
+  }
+  function keepOpening() {
+    if (G.phase !== 'choice' || !isHuman(G.player) || G.busy || G.rolling) return;
+    if (G.mode === 'online') { const t = startTurn(G.state, G.player, G.dice); netWrite({ phase: t.required ? 'move' : 'nomove', rem: t.rem, required: t.required }, { type: 'keep', player: G.player }); }
+    beginTurnWithDice(G.dice);
+  }
+  function rerollOpening() {
+    if (G.phase !== 'choice' || !isHuman(G.player) || G.busy || G.rolling) return;
+    rollFor(G.player);
   }
   function newGame() {
     if (G.mode === 'online' && G.online) {
@@ -688,8 +902,10 @@
     if (G.mode === 'online') G.mode = 'ai';
     setMaxStack(RULE5 ? 5 : 0);
     G.state = initState(); G.player = 1; G.phase = 'opening'; G.dice = null; G.rem = []; G.required = 0; G.steps = []; G.selected = null; G.history = []; G.busy = false; G.drag = null; G.lift = null; G.turnSteps = [];
+    const gen = ++G.gen;
     $('home').hidden = true; $('endOv').hidden = true; $('pauseOv').hidden = true;
     updateOrientation(); render(); snapshot();
+    setTimeout(() => { if (G.gen === gen && G.phase === 'opening' && G.mode !== 'online' && !G.rolling) openingRoll(); }, 800);
   }
   function gameOver() {
     const w = winner(G.state); const pts = winPoints(G.state, w);
@@ -866,7 +1082,7 @@
     $('onlineMsg').textContent = '';
     const rules = $('onlineRules');
     if (rules) {
-      if (!IN_CLAUDE) rules.textContent = 'Créez la partie, puis envoyez le lien de cette page et le code à votre ami : il n\'a besoin d\'aucun compte. Le créateur joue les pions nacre.';
+      if (!IN_CLAUDE) rules.textContent = 'Créez la partie, puis envoyez le lien de cette page et le code à votre ami : il n\'a besoin d\'aucun compte. Le créateur joue les pions clairs.';
       else if (PUBLIC_URL) { rules.textContent = 'Pour jouer avec un ami qui n\'a que le lien, utilisez la version publique du jeu : '; const a = document.createElement('a'); a.href = PUBLIC_URL; a.target = '_blank'; a.rel = 'noopener'; a.textContent = PUBLIC_URL.replace(/^https?:\/\//, ''); rules.appendChild(a); }
     }
     if (G.mode === 'online') checkOnlineAccess();
@@ -881,7 +1097,7 @@
     return (e && e.message) ? e.message : 'Connexion impossible.';
   }
   function newDoc(code) {
-    return { v: 1, code, seq: 1, status: 'waiting', host: NET.myId, guest: null, createdAt: Date.now(), state: initState(), player: 1, phase: 'opening', dice: null, rem: [], required: 0, lastDicePlayer: 1, scores: { w: 0, b: 0 }, winner: 0, pts: 0, max5: RULE5, names: { '1': myName() }, event: { type: 'create', by: NET.myId, at: Date.now() } };
+    return { v: 1, code, seq: 1, status: 'waiting', host: NET.myId, guest: null, createdAt: Date.now(), state: initState(), player: 1, phase: 'opening', dice: null, rem: [], required: 0, lastDicePlayer: 1, scores: { w: 0, b: 0 }, winner: 0, pts: 0, max5: RULE5, reroll: RULE_REROLL, names: { '1': myName() }, event: { type: 'create', by: NET.myId, at: Date.now() } };
   }
   async function onlineCreate() {
     onlineMsg('Création de la partie…');
@@ -1049,6 +1265,7 @@
       if (G.state.bar[kOf(G.player)] > 0 && G.required > 0) G.selected = BAR;
     }
     if (G.phase === 'nomove' && isMe(G.player)) setTimeout(() => { if (G.online === on && G.phase === 'nomove') endTurn(); }, 1600);
+    if (G.phase === 'roll' && isMe(G.player)) scheduleAutoRoll(700);
     if (G.phase === 'opening' && d.status === 'playing' && on.color === 1) {
       if (on.openingTimer) clearTimeout(on.openingTimer);
       on.openingTimer = setTimeout(() => { on.openingTimer = null; if (G.online === on && on.doc.phase === 'opening' && on.doc.status === 'playing' && !G.busy && !G.rolling) openingRoll(); }, 900);
@@ -1104,15 +1321,17 @@
   function mainAction() {
     if (G.busy || G.rolling) return;
     if (G.phase === 'opening') { if (G.mode === 'online') return; return openingRoll(); }
+    if (G.phase === 'choice' && isHuman(G.player)) return keepOpening();
     if (G.phase === 'roll' && isHuman(G.player)) return rollFor(G.player);
     if (G.phase === 'move' && G.required === 0 && isHuman(G.player)) return endTurn();
     if (G.phase === 'over') return newGame();
   }
   $('mainBtn').addEventListener('click', mainAction);
   $('undoBtn').addEventListener('click', undo);
+  $('rerollBtn').addEventListener('click', rerollOpening);
   $('menuBtn').addEventListener('click', () => { if (G.phase === 'idle' || G.phase === 'over') { $('home').hidden = false; return; } $('pauseOv').hidden = false; });
   $('resumeBtn').addEventListener('click', () => { $('pauseOv').hidden = true; });
-  const toMenu = () => { $('pauseOv').hidden = true; $('endOv').hidden = true; $('lobbyOv').hidden = true; leaveOnline(); G.phase = 'idle'; G.state = initState(); G.dice = null; G.busy = false; G.drag = null; G.lift = null; render(); $('home').hidden = false; updateOrientation(); refreshHome(); };
+  const toMenu = () => { G.gen++; $('pauseOv').hidden = true; $('endOv').hidden = true; $('lobbyOv').hidden = true; leaveOnline(); G.phase = 'idle'; G.state = initState(); G.dice = null; G.busy = false; G.drag = null; G.lift = null; render(); $('home').hidden = false; updateOrientation(); refreshHome(); };
   $('abandonBtn').addEventListener('click', toMenu);
   $('endAgain').addEventListener('click', newGame);
   $('endMenu').addEventListener('click', toMenu);
@@ -1141,14 +1360,16 @@
       Object.assign(G, { mode: data.mode, level: data.level, state: data.state, player: data.player, dice: data.dice, rem: data.rem || [], required: data.required || 0, lastDicePlayer: data.lastDicePlayer || 1 });
       if (data.scores) G.scores = data.scores;
       setMaxStack(data.max5 == null ? (RULE5 ? 5 : 0) : (data.max5 ? 5 : 0));
-      G.phase = data.phase === 'move' ? 'move' : (data.phase === 'over' ? 'over' : (data.phase === 'opening' ? 'opening' : 'roll'));
+      G.phase = ['move', 'over', 'opening', 'choice'].includes(data.phase) ? data.phase : 'roll';
       if (G.phase === 'move') { G.steps = allowedSteps(G.state, G.player, G.rem, G.required); if (!isHuman(G.player)) G.phase = 'roll'; }
       $('home').hidden = true; updateOrientation();
       render();
-      if (G.phase === 'roll' && !isHuman(G.player)) setTimeout(() => rollFor(G.player), 500);
+      if (G.phase === 'roll') scheduleAutoRoll(600);
+      if (G.phase === 'opening') setTimeout(() => { if (G.phase === 'opening' && !G.rolling) openingRoll(); }, 800);
+      if (G.phase === 'choice' && G.dice) afterOpening(G.player, G.dice);
     } else { G.state = initState(); render(); }
   }
-  window.__nacre = { G, topPos, nextPos, beginTurnWithDice, NET, onlineCreate, onlineJoin };
+  window.__nacre = { G, topPos, nextPos, beginTurnWithDice, afterOpening, setTheme, NET, onlineCreate, onlineJoin };
   const boot = () => { window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {}); };
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(boot, boot); else boot();
   setTimeout(updateOrientation, 50);

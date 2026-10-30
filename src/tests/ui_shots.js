@@ -1,0 +1,22 @@
+const { chromium } = require('playwright'); const fs = require('fs'); const path = require('path');
+const html = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light}html{box-sizing:border-box}body{margin:0;font:14px system-ui}[hidden]{display:none!important}</style></head><body>' + fs.readFileSync(path.join(__dirname, '..', 'out', 'backgammon.html'), 'utf8') + '</body></html>';
+fs.writeFileSync('/tmp/bgui.html', html);
+(async () => {
+  const b = await chromium.launch();
+  const ctx = await b.newContext({ viewport: { width: 844, height: 390 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
+  await ctx.addInitScript(() => { try { localStorage.setItem('nacre.sound', 'off'); } catch (e) { } });
+  const p = await ctx.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
+  await p.goto('file:///tmp/bgui.html'); await p.waitForTimeout(500);
+  await p.screenshot({ path: '/tmp/ui-home.png' });
+  await p.evaluate(() => { const c = document.querySelector('#home .card'); c.scrollTop = c.scrollHeight; });
+  await p.screenshot({ path: '/tmp/ui-home2.png' });
+  await p.tap('#startBtn'); await p.waitForTimeout(200);
+  await p.evaluate(() => { const N = window.__nacre; N.G.gen++; N.G.rolling = false; N.G.tilt = [-5, 4]; N.afterOpening(1, [5, 2]); });
+  await p.waitForTimeout(300);
+  await p.screenshot({ path: '/tmp/ui-choice.png' });
+  const st = await p.evaluate(() => ({ phase: window.__nacre.G.phase, main: document.getElementById('mainBtn').textContent, reroll: !document.getElementById('rerollBtn').hidden }));
+  await p.tap('#rerollBtn'); await p.waitForTimeout(2200);
+  const st2 = await p.evaluate(() => ({ phase: window.__nacre.G.phase, dice: window.__nacre.G.dice, required: window.__nacre.G.required }));
+  console.log(JSON.stringify(st), JSON.stringify(st2), errs.join('|') || 'aucune erreur');
+  await b.close();
+})();

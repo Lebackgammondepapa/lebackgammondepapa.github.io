@@ -30,6 +30,7 @@ async function play(pairs, stop, max) {
     await wait(60);
     for (const [W, N] of pairs) { const G = N.G; if (G.busy || G.rolling || !G.online || G.player !== G.online.color) continue; const me = G.online.color;
       if (G.phase === 'roll') W.document.getElementById('mainBtn').click();
+      else if (G.phase === 'choice') W.document.getElementById(Math.random() < .5 ? 'mainBtn' : 'rerollBtn').click();
       else if (G.phase === 'move' && G.required > 0 && G.steps.length) { const st = G.steps[0]; const a = N.topPos(st.from, me, G.state), b = N.nextPos(st.to, me, G.state); const svg = W.document.getElementById('board'); const pe = (ty, x, y) => svg.dispatchEvent(new W.PointerEvent(ty, { pointerId: 1, clientX: x, clientY: y, bubbles: true })); pe('pointerdown', a.x, a.y); pe('pointermove', a.x + 20, a.y); pe('pointermove', b.x, b.y + 14); pe('pointerup', b.x, b.y + 14); }
       else if (G.phase === 'move' && G.required === 0) W.document.getElementById('mainBtn').click(); }
     if (stop()) return t;

@@ -22,7 +22,7 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
   d.getElementById('startBtn').click();
   const N = w.__nacre, G = N.G;
   d.getElementById('mainBtn').click();
-  for (let k = 0; k < 40 && !(G.phase === 'move' && G.player === 1); k++) { await wait(500); if (G.phase === 'roll' && G.player === 1 && !G.busy && !G.rolling) d.getElementById('mainBtn').click(); }
+  for (let k = 0; k < 40 && !(G.phase === 'move' && G.player === 1); k++) { await wait(500); if (G.phase === 'roll' && G.player === 1 && !G.busy && !G.rolling) d.getElementById('mainBtn').click(); if (G.phase === 'choice' && G.player === 1 && !G.busy && !G.rolling) d.getElementById('mainBtn').click(); }
   console.log('phase', G.phase, 'player', G.player, 'dice', G.dice, 'required', G.required);
   // drag the first legal step
   let st = G.steps[0]; let a = N.topPos(st.from, G.player, G.state), b = N.nextPos(st.to, G.player, G.state);
