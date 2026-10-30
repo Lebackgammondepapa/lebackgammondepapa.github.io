@@ -1,0 +1,26 @@
+const { chromium } = require('playwright'); const ws = require('ws'); const http = require('http'); const fs = require('fs'); const path = require('path');
+const aedes = require('aedes')(); const wss = new ws.WebSocketServer({ port: 18851 }); wss.on('connection', s => aedes.handle(ws.createWebSocketStream(s)));
+const srv = http.createServer((q, r) => { const f = path.join(__dirname, '..', '..', q.url.split('?')[0].split('#')[0] === '/' ? 'index.html' : q.url.split('?')[0]); fs.readFile(f, (e, d) => { if (e) { r.writeHead(404); r.end(); return; } r.writeHead(200, { 'content-type': f.endsWith('.html') ? 'text/html; charset=utf-8' : 'application/octet-stream' }); r.end(d); }); }).listen(8099);
+(async () => {
+  const b = await chromium.launch({ args: ['--no-proxy-server'] });
+  const mk = async (opts) => { const ctx = await b.newContext(Object.assign({ colorScheme: 'dark' }, opts)); await ctx.addInitScript(() => { window.NACRE_BROKERS = ['ws://127.0.0.1:18851']; }); const p = await ctx.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message)); p.on('console', m => { if (m.type() === 'error') errs.push(m.text()); }); return { p, errs }; };
+  const A = await mk({ viewport: { width: 1280, height: 760 } });
+  const B = await mk({ viewport: { width: 844, height: 390 }, isMobile: true, hasTouch: true });
+  await A.p.goto('http://127.0.0.1:8099/'); await A.p.waitForTimeout(500);
+  await A.p.click('.mode[data-mode="online"]'); await A.p.fill('#onlineName', 'Thomas');
+  await A.p.screenshot({ path: '/tmp/pub-home.png' });
+  await A.p.click('#createBtn'); await A.p.waitForTimeout(2500);
+  const code = await A.p.textContent('#lobbyCode');
+  await A.p.screenshot({ path: '/tmp/pub-lobby.png' });
+  console.log('code', code, 'bouton', await A.p.textContent('#copyCode'));
+  await B.p.goto('http://127.0.0.1:8099/#' + code); await B.p.waitForTimeout(800);
+  console.log('B préremplissage:', await B.p.inputValue('#joinCode'), '|', await B.p.textContent('#onlineMsg'));
+  await B.p.fill('#onlineName', 'Lucas'); await B.p.click('#joinBtn');
+  await B.p.waitForTimeout(6000);
+  const sa = await A.p.evaluate(() => ({ phase: window.__nacre.G.phase, player: window.__nacre.G.player, seq: window.__nacre.G.online.doc.seq, names: window.__nacre.G.online.names, state: JSON.stringify(window.__nacre.G.state) }));
+  const sb = await B.p.evaluate(() => ({ phase: window.__nacre.G.phase, player: window.__nacre.G.player, seq: window.__nacre.G.online.doc.seq, names: window.__nacre.G.online.names, state: JSON.stringify(window.__nacre.G.state) }));
+  console.log('A', sa.phase, sa.player, sa.seq, JSON.stringify(sa.names), '| B', sb.phase, sb.player, sb.seq, '| états égaux', sa.state === sb.state);
+  await A.p.screenshot({ path: '/tmp/pub-A.png' }); await B.p.screenshot({ path: '/tmp/pub-B.png' });
+  console.log('erreurs A:', A.errs.join(' | ') || 'aucune', '— B:', B.errs.join(' | ') || 'aucune');
+  await b.close(); srv.close(); wss.close(); aedes.close(); process.exit(0);
+})();

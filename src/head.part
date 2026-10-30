@@ -1,0 +1,236 @@
+<title>Backgammon Nacre</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Backgammon">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700&display=swap">
+<style>
+/* Plan : plein écran vertical — bandeau adversaire / plateau SVG qui prend toute la place / bandeau joueur + actions.
+   Le plateau est un objet unique (bleu profond, cadre et barre en nacre) qui ne change pas de thème ; seul l'habillage autour suit le thème. */
+:root {
+  --bg: #e9eff7;
+  --bg2: #f7f9fc;
+  --fg: #152445;
+  --muted: #5f6f8f;
+  --panel: rgba(255,255,255,.78);
+  --panel-line: rgba(21,36,69,.10);
+  --accent: #2755a8;
+  --accent-2: #4f82d6;
+  --accent-ink: #ffffff;
+  --chip: rgba(39,85,168,.10);
+  --shadow: 0 10px 30px rgba(21,36,69,.14);
+  --font-display: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
+  --font-ui: 'Manrope', -apple-system, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a142c; --bg2: #101f42; --fg: #e9eef8; --muted: #94a3c4;
+    --panel: rgba(16,31,66,.72); --panel-line: rgba(233,238,248,.10);
+    --accent: #6f9ae6; --accent-2: #93b6f2; --accent-ink: #0a142c; --chip: rgba(147,182,242,.14);
+    --shadow: 0 10px 30px rgba(0,0,0,.4); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0a142c; --bg2: #101f42; --fg: #e9eef8; --muted: #94a3c4;
+  --panel: rgba(16,31,66,.72); --panel-line: rgba(233,238,248,.10);
+  --accent: #6f9ae6; --accent-2: #93b6f2; --accent-ink: #0a142c; --chip: rgba(147,182,242,.14);
+  --shadow: 0 10px 30px rgba(0,0,0,.4); color-scheme: dark;
+}
+html, body { height: 100%; }
+html { background: var(--bg); }
+body {
+  margin: 0; background: radial-gradient(120% 90% at 50% 0%, var(--bg2) 0%, var(--bg) 70%);
+  color: var(--fg); font-family: var(--font-ui); font-size: 15px;
+  -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
+  overflow: hidden; touch-action: manipulation;
+}
+#app { height: 100%; display: flex; align-items: center; gap: 8px;
+  padding-left: max(6px, env(safe-area-inset-left, 0px)); padding-right: max(6px, env(safe-area-inset-right, 0px));
+  padding-block: 0; box-sizing: border-box; }
+.side { flex: 1 1 0; min-width: 0; align-self: stretch; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; padding-top: 70px; padding-bottom: 10px; box-sizing: border-box; }
+.side.right { align-items: stretch; }
+.who { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.who .wtxt { min-width: 0; }
+.who .pawn { width: 30px; height: 30px; border-radius: 50%; flex: none; box-shadow: 0 2px 6px rgba(0,0,0,.25), inset 0 -3px 6px rgba(0,0,0,.15), inset 0 2px 4px rgba(255,255,255,.7); }
+.pawn.w { background: radial-gradient(circle at 35% 30%, #fff 0%, #f1f0ea 45%, #d9dde4 100%); }
+.pawn.b { background: radial-gradient(circle at 35% 30%, #6d93d9 0%, #2a4f9a 50%, #15305f 100%); }
+.who .name { font-weight: 700; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.15; }
+.who .lvl { color: var(--accent-2); font-size: 11px; font-weight: 600; letter-spacing: .04em; }
+.who .lvl:empty { display: none; }
+.who .sub { color: var(--muted); font-size: 11.5px; font-variant-numeric: tabular-nums; line-height: 1.3; }
+.who.active .name::after { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent-2); margin-left: 6px; vertical-align: middle; box-shadow: 0 0 0 3px var(--chip); }
+.topline { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.score { font-family: var(--font-display); font-size: 26px; font-weight: 600; letter-spacing: .02em; font-variant-numeric: tabular-nums; display: flex; align-items: baseline; gap: 6px; }
+.score small { font-family: var(--font-ui); font-size: 11px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; font-weight: 600; }
+.iconbtn { border: 1px solid var(--panel-line); background: var(--panel); color: var(--fg); border-radius: 12px; width: 38px; height: 38px; display: grid; place-items: center; cursor: pointer; font-size: 18px; flex: none; padding: 0; }
+#boardwrap { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; }
+#board { display: block; filter: drop-shadow(0 14px 24px rgba(10,20,50,.35)); }
+.status { color: var(--fg); font-size: 14px; line-height: 1.3; min-width: 0; }
+.status b { font-weight: 700; display: block; }
+.status .hint { color: var(--muted); font-size: 11.5px; display: block; margin-top: 3px; }
+.btns { display: flex; flex-direction: column; gap: 8px; }
+.btn { font: 600 14px/1.1 var(--font-ui); border: 0; border-radius: 14px; padding: 13px 12px; cursor: pointer; color: var(--fg); background: var(--chip); transition: transform .08s ease, opacity .2s; text-align: center; }
+.btn:active { transform: scale(.97); }
+.btn.primary { background: linear-gradient(180deg, var(--accent-2), var(--accent)); color: #fff; box-shadow: 0 6px 16px rgba(39,85,168,.35); padding: 15px 12px; font-size: 15px; }
+.btn.ghost { background: transparent; border: 1px solid var(--panel-line); }
+.btn:disabled { opacity: .45; cursor: default; }
+.btn:focus-visible, .iconbtn:focus-visible, .level:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+@media (min-height: 560px) { .side { padding-top: 80px; padding-bottom: 18px; } .who .name { font-size: 17px; } .who .sub { font-size: 13px; } .status { font-size: 15px; } }
+
+/* Ordinateur et tablette : padding normal, et mise en page empilée quand la fenêtre est haute */
+body[data-device="desktop"] .side, body[data-device="tablet"] .side { padding-top: 24px; padding-bottom: 24px; }
+body.layout-stack #app { flex-direction: column; justify-content: center; align-items: stretch; gap: 12px; padding-block: 12px; }
+body.layout-stack .side { flex: 0 0 auto; align-self: stretch; flex-direction: row; align-items: center; justify-content: space-between; padding: 0; gap: 12px; }
+body.layout-stack #boardwrap { align-self: center; }
+body.layout-stack .side.right { flex-wrap: wrap; }
+body.layout-stack .side.right .topline { order: 2; gap: 10px; }
+body.layout-stack .side.right .status { order: 0; flex: 1 1 180px; }
+body.layout-stack .side.right .btns { order: 1; flex-direction: row; }
+body.layout-stack .side.right .btn { padding-inline: 18px; }
+body.layout-stack .who { order: 0 !important; }
+body.layout-stack #whoW { flex-direction: row-reverse; text-align: right; }
+
+/* Écran « tournez votre téléphone » */
+.rotate { text-align: center; color: #fff; }
+.rotate .phone { width: 34px; height: 60px; border: 3px solid #fff; border-radius: 8px; margin: 0 auto 18px; animation: turn 2.2s ease-in-out infinite; }
+@keyframes turn { 0%, 20% { transform: rotate(0); } 55%, 80% { transform: rotate(-90deg); } 100% { transform: rotate(0); } }
+.rotate .rt { font-family: var(--font-display); font-size: 30px; font-weight: 600; }
+.rotate .rs { color: rgba(255,255,255,.7); font-size: 13px; margin-top: 6px; }
+/* Overlays */
+.overlay { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(8,16,36,.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 20;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 16px; }
+.card { width: min(440px, 100%); background: var(--panel); border: 1px solid var(--panel-line); border-radius: 24px; padding: 26px 22px; box-shadow: var(--shadow); box-sizing: border-box; max-height: 100%; overflow: auto; }
+.card h1 { font-family: var(--font-display); font-weight: 500; font-size: 44px; line-height: 1; margin: 0 0 18px; letter-spacing: .01em; text-wrap: balance; }
+.card h1 em { font-style: italic; color: var(--accent); }
+.card .lead { color: var(--muted); margin: 6px 0 20px; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; }
+.card h2 { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 18px 0 8px; font-weight: 700; }
+.modes { display: grid; gap: 8px; }
+.mode { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; border: 1.5px solid var(--panel-line); background: transparent; color: var(--fg); cursor: pointer; text-align: left; font: inherit; }
+.mode.on { border-color: var(--accent); background: var(--chip); }
+.mode .t { font-weight: 700; }
+.mode .d { color: var(--muted); font-size: 12px; }
+.levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.level { border: 1.5px solid var(--panel-line); background: transparent; color: var(--fg); border-radius: 14px; padding: 10px 6px; font: 600 13px var(--font-ui); cursor: pointer; }
+.level.on { border-color: var(--accent); background: var(--chip); }
+.level small { display: block; font-weight: 500; color: var(--muted); font-size: 11px; margin-top: 3px; }
+.card .cta { margin-top: 20px; display: flex; gap: 10px; }
+.card .cta .btn { flex: 1; }
+.result { text-align: center; }
+.result .big { font-family: var(--font-display); font-size: 40px; font-weight: 600; margin: 4px 0; }
+.result .pts { color: var(--muted); }
+.tally { display: flex; justify-content: center; gap: 26px; margin: 18px 0 4px; }
+.tally div { text-align: center; }
+.tally .n { font-family: var(--font-display); font-size: 34px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.tally .l { font-size: 11px; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; font-weight: 600; }
+.rules { color: var(--muted); font-size: 12px; line-height: 1.5; margin-top: 14px; }
+.pawn.pair { width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(90deg, #f1f0ea 50%, #2a4f9a 50%); box-shadow: 0 2px 6px rgba(0,0,0,.25), inset 0 2px 4px rgba(255,255,255,.5); }
+.btn.wide { width: 100%; box-sizing: border-box; display: block; }
+.opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.opts .btn { font-size: 12.5px; padding: 11px 8px; }
+@media (max-width: 380px) { .opts { grid-template-columns: 1fr; } }
+#onlineBox { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+.joinrow { display: flex; gap: 8px; }
+.joinrow .btn { flex: none; }
+input.code { flex: 1; min-width: 0; font: 700 22px/1 var(--font-ui); letter-spacing: .35em; text-transform: uppercase; text-align: center; padding: 11px 8px 11px 14px; border-radius: 14px; border: 1.5px solid var(--panel-line); background: transparent; color: var(--fg); outline: none; }
+input.code:focus, input.name:focus { border-color: var(--accent); }
+input.name { width: 100%; box-sizing: border-box; font: 600 16px/1.2 var(--font-ui); padding: 12px 14px; border-radius: 14px; border: 1.5px solid var(--panel-line); background: transparent; color: var(--fg); outline: none; -webkit-user-select: text; user-select: text; }
+input.code { -webkit-user-select: text; user-select: text; font-size: 22px; width: 100%; min-width: 0; box-sizing: border-box; }
+.rules a { color: var(--accent); }
+.onlinemsg { font-size: 13px; color: var(--muted); min-height: 1.2em; }
+.onlinemsg.err { color: #d04a5a; }
+.bigcode { font-family: var(--font-display); font-size: 64px; font-weight: 600; letter-spacing: .18em; line-height: 1.1; margin: 4px 0 6px; color: var(--accent); -webkit-user-select: text; user-select: text; }
+.who .online { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #3fbf7f; margin-left: 5px; vertical-align: middle; }
+@media (max-height: 460px) { .bigcode { font-size: 44px; } .card { padding: 16px 18px; border-radius: 18px; } .card h1 { font-size: 30px; margin-bottom: 8px; } .card h2 { margin: 10px 0 6px; } .mode { padding: 8px 12px; } .level { padding: 8px 6px; } .card .cta { margin-top: 12px; } .result .big { font-size: 30px; } .tally { margin: 10px 0 0; } .rules { display: none; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+@keyframes pulse { 0% { opacity: .55; } 50% { opacity: 1; } 100% { opacity: .55; } }
+.pulse { animation: pulse 1.2s ease-in-out infinite; }
+</style>
+
+<div id="app">
+  <aside class="side left">
+    <div class="who" id="whoB"><div class="pawn b"></div><div class="wtxt"><div class="name" id="nameB">Marbre</div><div class="lvl" id="lvlB"></div><div class="sub" id="subB"></div></div></div>
+    <div class="who active" id="whoW"><div class="pawn w"></div><div class="wtxt"><div class="name" id="nameW">Nacre</div><div class="lvl" id="lvlW"></div><div class="sub" id="subW"></div></div></div>
+  </aside>
+  <div id="boardwrap"><svg id="board" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Plateau de backgammon"></svg></div>
+  <aside class="side right">
+    <div class="topline"><div class="score"><span id="scB">0</span><small>à</small><span id="scW">0</span></div><button class="iconbtn" id="menuBtn" aria-label="Menu">≡</button></div>
+    <div class="status" id="status"></div>
+    <div class="btns"><button class="btn ghost" id="undoBtn" hidden>Annuler</button><button class="btn primary" id="mainBtn">Lancer les dés</button></div>
+  </aside>
+</div>
+
+<div class="overlay" id="rotateOv" hidden>
+  <div class="rotate">
+    <div class="phone"></div>
+    <div class="rt">Tournez votre téléphone</div>
+    <div class="rs">Le jeu se joue en paysage, pour un plateau plein écran.</div>
+  </div>
+</div>
+
+<div class="overlay" id="home">
+  <div class="card">
+    <h1>Backgammon</h1>
+    <h2>Adversaire</h2>
+    <div class="modes">
+      <button class="mode on" data-mode="ai"><span class="pawn b" style="width:26px;height:26px;border-radius:50%;flex:none"></span><span><span class="t">Contre l'ordinateur</span><br><span class="d">Choisissez le niveau ci-dessous</span></span></button>
+      <button class="mode" data-mode="2p"><span class="pawn w" style="width:26px;height:26px;border-radius:50%;flex:none"></span><span><span class="t">À deux sur cet appareil</span><br><span class="d">On se passe le téléphone à chaque tour</span></span></button>
+      <button class="mode" data-mode="online"><span class="pawn pair" style="flex:none"></span><span><span class="t">En ligne avec un ami</span><br><span class="d">Un code à 4 lettres, chacun sur son téléphone</span></span></button>
+    </div>
+    <div id="onlineBox" hidden>
+      <h2>Partie en ligne</h2>
+      <input id="onlineName" class="name" type="text" autocomplete="nickname" maxlength="20" placeholder="Votre prénom" aria-label="Votre prénom">
+      <button class="btn primary wide" id="createBtn">Créer une partie</button>
+      <div class="joinrow"><input id="joinCode" class="code" type="text" inputmode="latin" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="4" placeholder="CODE" aria-label="Code de la partie"><button class="btn" id="joinBtn">Rejoindre</button></div>
+      <button class="btn ghost wide" id="resumeBtn2" hidden>Reprendre la partie</button>
+      <div class="onlinemsg" id="onlineMsg"></div>
+      <div class="rules" id="onlineRules">Votre ami doit avoir un compte Claude et être invité comme Éditeur depuis le menu Partager de cette page (sans lien public). Le créateur joue les pions nacre.</div>
+    </div>
+    <div id="levelBox">
+      <h2>Niveau</h2>
+      <div class="levels">
+        <button class="level" data-level="1">Débutant<small>Joue vite, se trompe</small></button>
+        <button class="level on" data-level="2">Intermédiaire<small>Solide, un peu prévisible</small></button>
+        <button class="level" data-level="3">Expert<small>Anticipe vos réponses</small></button>
+      </div>
+    </div>
+    <div class="cta"><button class="btn primary" id="startBtn">Jouer</button></div>
+    <div class="opts"><button class="btn ghost ruleToggle" type="button">Maximum 5 pions par case : oui</button><button class="btn ghost soundToggle" type="button">Son activé</button></div>
+    <div class="rules">La limite de 5 pions vient d'anciennes règles anglaises. Les règles officielles actuelles n'en ont pas. En ligne, c'est le réglage du créateur de la partie qui compte.</div>
+    <div class="rules">Vous jouez les pions nacre et sortez par le coin en bas à droite. Touchez un pion, puis sa destination. Gammon ×2, backgammon ×3.</div>
+  </div>
+</div>
+
+<div class="overlay" id="endOv" hidden>
+  <div class="card result">
+    <div class="lead" id="endLead">Partie terminée</div>
+    <div class="big" id="endTitle"></div>
+    <div class="pts" id="endPts"></div>
+    <div class="tally"><div><div class="n" id="tW">0</div><div class="l">Nacre</div></div><div><div class="n" id="tB">0</div><div class="l">Marbre</div></div></div>
+    <div class="cta"><button class="btn ghost" id="endMenu">Menu</button><button class="btn primary" id="endAgain">Rejouer</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="lobbyOv" hidden>
+  <div class="card result">
+    <div class="lead">Partie en ligne</div>
+    <div class="bigcode" id="lobbyCode">····</div>
+    <div class="pts">En attente de votre ami… Donnez-lui ce code et le lien de la page.</div>
+    <div class="cta"><button class="btn ghost" id="lobbyCancel">Annuler</button><button class="btn primary" id="copyCode">Copier le code</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="pauseOv" hidden>
+  <div class="card">
+    <h1>Pause</h1>
+    <div class="lead" id="pauseMsg">La partie est en attente</div>
+    <div class="cta" style="flex-direction:column">
+      <button class="btn primary" id="resumeBtn">Reprendre</button>
+      <button class="btn ghost soundToggle" type="button">Son activé</button>
+      <button class="btn ghost" id="abandonBtn">Abandonner et revenir au menu</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/*__ENGINE__*/
+</script>
