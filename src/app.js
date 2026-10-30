@@ -308,9 +308,9 @@
 
   /* ===== État de la partie ===== */
   const G = { mode: 'ai', level: 2, state: null, player: 1, phase: 'idle', dice: null, rem: [], required: 0, steps: [], selected: null, history: [], scores: loadScores(), busy: false, lastDicePlayer: 1, tilt: [0, 0, 0, 0], lift: null, drag: null, online: null, turnSteps: [], gen: 0 };
-  let RULE5 = true; try { RULE5 = localStorage.getItem('nacre.rule5') !== 'off'; } catch (e) { }
+  let RULE5 = true; // règle maison toujours active (le réglage a été retiré du menu)
   // règle maison : celui qui gagne le lancer d'ouverture peut relancer ses deux dés une fois
-  let RULE_REROLL = true; try { RULE_REROLL = localStorage.getItem('nacre.reroll') !== 'off'; } catch (e) { }
+  let RULE_REROLL = true; // règle maison toujours active (le réglage a été retiré du menu)
   function syncRuleButtons() {
     document.querySelectorAll('.ruleToggle').forEach(b => { b.textContent = RULE5 ? '5 pions max : oui' : '5 pions max : non'; b.setAttribute('aria-pressed', RULE5 ? 'true' : 'false'); });
     document.querySelectorAll('.rerollToggle').forEach(b => { b.textContent = RULE_REROLL ? 'Relance au départ : oui' : 'Relance au départ : non'; b.setAttribute('aria-pressed', RULE_REROLL ? 'true' : 'false'); });

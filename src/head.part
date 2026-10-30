@@ -197,9 +197,6 @@ input.code { -webkit-user-select: text; user-select: text; font-size: 22px; widt
       </div>
     </div>
     <div class="cta"><button class="btn primary" id="startBtn">Jouer</button></div>
-    <div class="opts"><button class="btn ghost ruleToggle" type="button">5 pions max : oui</button><button class="btn ghost rerollToggle" type="button">Relance au départ : oui</button><button class="btn ghost soundToggle" type="button">Son activé</button></div>
-    <div class="rules">Deux règles maison, absentes des règles officielles : au plus 5 pions par case, et le droit pour celui qui commence de relancer ses dés une fois. En ligne, ce sont les réglages du créateur de la partie qui s'appliquent.</div>
-    <div class="rules">Vous jouez les pions clairs et sortez par le coin en bas à droite. Touchez un pion, puis sa destination. Gammon ×2, backgammon ×3.</div>
   </div>
 </div>
 
