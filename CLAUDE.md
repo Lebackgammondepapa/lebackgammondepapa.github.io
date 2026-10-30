@@ -1,7 +1,7 @@
 # Backgammon — consignes pour Claude
 
 Jeu de Thomas, publié à deux endroits à partir des mêmes sources (`src/`) :
-- version publique : `index.html` à la racine, servie par GitHub Pages (https://tombrullefert-droid.github.io/Backgammon/)
+- version publique : `index.html` à la racine, servie par GitHub Pages (https://tombrullefert-droid.github.io/le-backgammon-de-papa/)
 - version Claude : artifact https://claude.ai/artifact/NBjETXSs8XWkMJmXhwCmmK (capacités db, user, room), construite dans `src/out/backgammon.html`
 
 Après toute modification : `python3 src/build.py`, republier l'artifact avec `src/out/backgammon.html`, puis commit et push de `index.html` + `src/` sur `main`.
